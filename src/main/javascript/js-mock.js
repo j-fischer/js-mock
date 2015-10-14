@@ -58,7 +58,7 @@
         
       },
       
-      assertIfSatisfied: function () {
+      verify: function () {
         
       }
       /* helpers*/
@@ -95,6 +95,10 @@
     },
     
     monitorMocks: function (factoryFunc) {
+      
+    },
+    
+    assertIfSatisfied: function () {
       
     }
   };
