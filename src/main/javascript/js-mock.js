@@ -14,9 +14,66 @@
 
 (function () {
   
-  function init() {
+  /* constants */
+  var _ALL_CALLS = -1;
+  
+  /* variables */
+  var _shouldMonitorMocks = false;
+  var _monitoredMocks = [];
+  
+ /** 
+  * This is a module. 
+  *
+  * @class
+  */
+  var Mock = function (args) {
     
+    var _scope = _ALL_CALLS;
+    var _expectTotalCalls = 0;
+    
+    var _name = args.name;
+    
+    var _expectations = {
+      
+    };
+    
+    function init() {
+      
+    }
+    
+    return {
+      exactly: function(count) {
+        
+      },
+      
+      withExactArgs: function () {
+        
+      }, 
+      
+      returns: function (arg) {
+        
+      },
+      
+      will: function (willArgs, func) {
+        
+      },
+      
+      assertIfSatisfied: function () {
+        
+      }
+      /* helpers*/
+      
+    }
+  };
+  
+  
+  function mock(name) {
+    // body...
   }
+  
+  function mockProperties(objName, obj) {
+    // body...
+  }  
   
   init();
   
@@ -33,7 +90,11 @@
      *
      * @module js-mock
      */
-    myFunc: function (args) {
+    mock: function (arg1, arg2) {
+
+    },
+    
+    monitorMocks: function (factoryFunc) {
       
     }
   };
