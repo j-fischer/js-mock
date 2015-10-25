@@ -2,7 +2,7 @@
   "private": true,
   "name": "js-mock",
   "description": "Javascript API",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "devDependencies": {
     "grunt": "0.4.2",
     "grunt-check-dependencies": "0.3.0",
