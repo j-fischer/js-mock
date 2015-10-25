@@ -1,21 +1,7 @@
-(function () { // initializes namepsace if neccessary
-  var namespaceString = 'JsMock';
-  
-    var parts = namespaceString.split('.'),
-        parent = window,
-        currentPart = '';    
-        
-    for(var i = 0, length = parts.length; i < length; i++) {
-        currentPart = parts[i];
-        parent[currentPart] = parent[currentPart] || {};
-        parent = parent[currentPart];
-    }
-})();
-
 (function () {
   
   /* constants */
-  var _ALL_CALLS = -1; // The scope of the invocations, i.e. exactly(3).returns('foo'); means return 'foo' for all invocations
+  var _ALL_CALLS = "ALL_INVOCATIONS"; // The scope of the invocations, i.e. exactly(3).returns('foo'); means return 'foo' for all invocations
   
   /* variables */
   var _shouldMonitorMocks = false;
@@ -24,9 +10,9 @@
   function _format() {
     var result = arguments[0];
     
-    var i; len = arguments.length;  
+    var i, len = arguments.length;  
     for (i = 1; i < len; i++) {
-      result = result.replace("{" + i + "}", arguments[i]);
+      result = result.replace("{" + (i-1) + "}", arguments[i]);
     }
     
     return result;
@@ -39,7 +25,7 @@
   */
   function ExpectationError(message) {
     this.name = 'ExpectationError';
-    this.message = message || 'Unkown expectation failed.';
+    this.message = message || 'Unknown expectation failed.';
     this.stack = (new Error()).stack;
   }
   ExpectationError.prototype = Object.create(Error.prototype);
@@ -50,7 +36,7 @@
   *
   * @class
   */
-  var Mock = function (args) {
+  var MockClass = function (args) {
     
     var _name = args.name;
     
@@ -60,86 +46,186 @@
       _scope = _ALL_CALLS;
       _callCount = 0;
       _expectTotalCalls = 0;
-      _expectations = {}; // {args, returns, will, fulfilled}
+      _expectations = {}; // {args, returnValue, will, fulfilled}
     }
     
-    function matchArgs(expectedArgs, actualArgs) {
-      if (expectedARgs === undefined) {
+    function doArgsMatch(expectedArgs, actualArgs) {
+      
+      if (expectedArgs === undefined) {
+        // Wildcard - any args match
         return true;
       }
       
-      // match args assuming type equality
+      if (expectedArgs.length !== actualArgs.length) {
+        return false;
+      }
+      
+      var i, len = expectedArgs.length;
+      for (i = 0; i < len; i++) {
+        //TODO: Add support for matchers here
+        if (expectedArgs[i] !== actualArgs[i]) {
+          return false;
+        }
+      }
+      
+      return true;
     }
     
-    function evalCall() {
-      if (_callCount === _expectedCallCount) {
-        throw new ExpectationError(_format("{0} already called {1} times", _name, _expectedCallCount));
+    function findMatchingExpectation(actualArguments) {
+      //find matching expectation, throw if no expectation is found
+      for (var index in _expectations) {
+        var expectation = _expectations[index];
+        
+        if (expectation.fulfilled) {
+          continue;
+        }
+        
+        if (!doArgsMatch(expectation.args, actualArguments)) {
+          break;
+        }
+        
+        return expectation;
+      }
+      
+      throw new ExpectationError(_format("Unexpected invocation of '{0}' for call {1}: actual arguments: {2}.", _name, index, JSON.stringify(actualArguments)));
+    }
+    
+    function setInScope(propertyName, value) {
+      if (_scope !== _ALL_CALLS) {
+        _expectations[_scope][propertyName] = value;
+        return;
+      }
+      
+      for (var index in _expectations) {
+        _expectations[index][propertyName] = value;
+      }
+    }
+    
+    var _thisMock = function evalCall() {
+      if (_callCount === _expectTotalCalls) {
+        throw new ExpectationError(_format("'{0}' already called {1} time(s).", _name, _expectTotalCalls));
       }
           
       _callCount++;
 
-      //find matching expectation, throw if no expectation is found
+      var actualArguments = arguments;
+      var expectation = findMatchingExpectation(actualArguments);
       
       //execute function if applicable
+      if (expectation.will) {
+        try {
+          expectation.will.apply(null, actualArguments);
+        } catch (ex) {
+          throw new ExpectationError(_format("Registered action for '{0}' threw an error: {1}.", _name, JSON.stringify(ex)));
+        }
+      }
       
       //set fulfilled
+      expectation.fulfilled = true;
       
       //return value
-    }
+      return expectation.returnValue;
+    };
         
-    this.exactly = function(count) {
+    _thisMock.exactly = function(count) {
       reset();
       
       _expectTotalCalls = count;
     };
+    
+    _thisMock.onCall = function (index) {
+      // TODO: verify index
       
-    this.withExactArgs = function () {
-        
+      _scope = index;
     };
       
-    this.returns = function (arg) {
-        
+    _thisMock.withExactArgs = function () {
+      setInScope("args", arguments);
+      return _thisMock;
     };
       
-    this.will = function (willArgs, func) {
-      
+    _thisMock.returns = function (returnValue) {
+      setInScope("returnValue", returnValue);
+      return _thisMock;
     };
       
-    this.verify = function () {
+    _thisMock.will = function (func) {
+      setInScope("will", func);
+      return _thisMock;
+    };
+      
+    _thisMock.verify = function () {
       //verify expectations
+      var unfulfilledExpectations = [];
+      
+      if (_callCount !== _expectTotalCalls) {
+        throw new ExpectationError(_format("Missing invocations for '{0}'. Expected {1} call(s) but only got {2}.", _name, _expectTotalCalls, _callCount));
+      }
+      
+      Object.keys(_expectations).forEach(function(expectation, index) {
+        if (!expectation.fulfilled) {
+          unfulfilledExpectations.push(_format("Expectation for call {0} with args {1},\nwill return {2}.", index, JSON.stringify(expectation.args), JSON.stringify(expectation.returnValue)));
+        }
+      });
+      
+      if (unfulfilledExpectations.length > 0) {
+        throw new ExpectationError(_format("Missing invocations for {0}: {1}.", _name, JSON.stringify(unfulfilledExpectations))); //TODO: improve message format
+      }
       
       reset();
-    }
+    };
 
     /* helpers, i.e. once, twice, onFirstCall, etc */
+    _thisMock.once = function () {
+      return _thisMock.exactly(1);
+    };
+    
+    _thisMock.twice = function () {
+      return _thisMock.exactly(2);
+    };
+    
+    _thisMock.thrice = function () {
+      return _thisMock.exactly(3);
+    };
+    
+    _thisMock.onFirstCall = function () {
+      return _thisMock.onCall(1);
+    };
+    
+    _thisMock.onSecondCall = function () {
+      return _thisMock.onCall(2);
+    };
+    
+    _thisMock.onThirdCall = function () {
+      return _thisMock.onCall(3);
+    };
       
+    reset();  
       
-    return evalCall;  
+    return _thisMock;  
   };
   
   
   function mock(name) {
-    var mock = new Mock({
+    var newMock = new MockClass({
       name: name
     });
     
     if (_shouldMonitorMocks) {
-      _monitoredMocks.push(mock);
+      _monitoredMocks.push(newMock);
     }
     
-    return mock;
+    return newMock;
   }
   
   function mockProperties(objName, obj) {
     var result = {};
-    Object.keys(obj).foreach(function(element, index, array) {
+    Object.keys(obj).forEach(function(element) {
       result[element] = mock(objName + "." + element);
     });
     
     return result;
   }  
-  
-  init();
   
  /** 
   * This is a module. 
@@ -180,7 +266,7 @@
     }
   };
   
-  if ( typeof define === "function" && define.amd ) {
+  if ( typeof define === "function") {
   	define("js-mock", [], function() {
   		return API;
   	});

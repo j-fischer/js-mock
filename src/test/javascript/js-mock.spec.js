@@ -1,4 +1,4 @@
-describe('My API', function(){
+describe('JsMock', function(){
   
   var _clock;
   
@@ -12,20 +12,24 @@ describe('My API', function(){
   /*
    * TESTS
    */
-  describe('myFunc', function(){
-    
-    beforeEach(function () {
-      _clock = sinon.useFakeTimers();
-    });
-    afterEach(function () {
-      _clock.restore();
-    });  
-		
+  describe('mock function', function(){
+    		
 		/*
 		 * TESTS
 		 */
-    it("should do something", function () {
-      JsMock.myFunc();
+    it("should succeed verification if no expectation is set", function () {
+      var myFunc = JsMock.mock("myFunc");
+      
+      myFunc.verify();
+		});
+    
+    it("should fail verification if expectation is set", function () {
+      var myFunc = JsMock.mock("myFunc");
+      
+      myFunc.once();
+      
+      expect(myFunc.verify).toThrow();
+      //TODO: replace with expect(myFunc.verify).toThrowError("Missing invocations for 'myFync'. Expected 1 call(s) but only got 0.");
 		});
   });
 });
