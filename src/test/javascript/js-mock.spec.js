@@ -13,7 +13,25 @@ describe('JsMock', function(){
    * TESTS
    */
   describe('mock function', function(){
-    		
+    	
+    it("should if first arg is not a string", function () {
+      expect(function () {
+        JsMock.mock();
+      }).toThrowError(TypeError, "The first argument must be a string");
+      
+      expect(function () {
+        JsMock.mock(null);
+      }).toThrowError(TypeError, "The first argument must be a string");
+      
+      expect(function () {
+        JsMock.mock({});
+      }).toThrowError(TypeError, "The first argument must be a string");
+      
+      expect(function () {
+        JsMock.mock(1);
+      }).toThrowError(TypeError, "The first argument must be a string");
+		});
+      	
     it("should succeed verification if no expectation is set", function () {
       var myFunc = JsMock.mock("myFunc");
       
@@ -35,6 +53,44 @@ describe('JsMock', function(){
       myFunc1.verify();
       expectExpectationError(myFunc2.verify, "ExpectationError: Missing invocations for 'myFunc'. Expected 1 call(s) but only got 0.");
 		});
+    
+    it("mock properties does not modify the original object", function () {
+      var obj = {
+        func1: function () {
+          return "foo";
+        },
+        
+        func2: function () {
+          return "bar";
+        }
+      };
+      
+      var mock = JsMock.mock("MyObject", obj);
+      
+      expect(obj.func1()).toBe("foo");
+      expect(obj.func2()).toBe("bar");      
+    });
+    
+    it("mock properties does not modify the original object", function () {
+      var obj = {
+        func1: function () {
+          return "foo";
+        },
+        
+        func2: function () {
+          return "bar";
+        }
+      };
+      
+      var mock = JsMock.mock("MyObject", obj);
+      
+      mock.func1.once();
+      
+      expectExpectationError(mock.func1.verify, "ExpectationError: Missing invocations for 'MyObject.func1'. Expected 1 call(s) but only got 0.");      
+      
+      mock.func1()
+      mock.func2.verify();
+    });
   });
   
   describe('monitorMocks function', function(){
@@ -43,6 +99,24 @@ describe('JsMock', function(){
       JsMock.monitorMocks(function () {
         // clean monitor
       })
+    });
+    
+    it("should throw if argument is not a function", function () {
+      expect(function () {
+        JsMock.monitorMocks();
+      }).toThrowError(TypeError, "The first argument must be a function");
+      
+      expect(function () {
+        JsMock.monitorMocks(null);
+      }).toThrowError(TypeError, "The first argument must be a function");
+      
+      expect(function () {
+        JsMock.monitorMocks({});
+      }).toThrowError(TypeError, "The first argument must be a function");
+      
+      expect(function () {
+        JsMock.monitorMocks([]);
+      }).toThrowError(TypeError, "The first argument must be a function");
     });
         
     it("should succeed verification if no expectation is set", function () {
