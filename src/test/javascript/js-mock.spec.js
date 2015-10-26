@@ -5,8 +5,8 @@ describe('JsMock', function(){
   /*
    * HELPER FUNCTIONS
    */
-  function doSomething() {
-    // do something
+  function expectExpectationError(func, expectedErrorMsg) {
+    expect(func).toThrowError(JsMock.ExpectationError, expectedErrorMsg);
   }
   
   /*
@@ -28,8 +28,7 @@ describe('JsMock', function(){
       
       myFunc.once();
       
-      expect(myFunc.verify).toThrow();
-      //TODO: replace with expect(myFunc.verify).toThrowError("Missing invocations for 'myFync'. Expected 1 call(s) but only got 0.");
+      expectExpectationError(myFunc.verify, "ExpectationError: Missing invocations for 'myFunc'. Expected 1 call(s) but only got 0.");
 		});
   });
 });

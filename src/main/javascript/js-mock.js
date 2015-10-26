@@ -25,7 +25,7 @@
   */
   function ExpectationError(message) {
     this.name = 'ExpectationError';
-    this.message = message || 'Unknown expectation failed.';
+    this.message = 'ExpectationError: ' + (message || 'Unknown expectation failed.');
     this.stack = (new Error()).stack;
   }
   ExpectationError.prototype = Object.create(Error.prototype);
@@ -265,6 +265,8 @@
       }
     }
   };
+  
+  API.ExpectationError = ExpectationError;
   
   if ( typeof define === "function") {
   	define("js-mock", [], function() {
