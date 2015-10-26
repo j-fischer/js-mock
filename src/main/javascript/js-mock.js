@@ -140,7 +140,9 @@
     };
     
     _thisMock.onCall = function (index) {
-      // TODO: verify index
+      if (index > _expectTotalCalls) {
+        throw new Error("Attempting to set the behaviour for a call that is not expected. Calls expected: " + _expectTotalCalls + ", call attempted to change: " + index);
+      }
       
       _scope = index;
       
