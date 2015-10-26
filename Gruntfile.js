@@ -96,24 +96,19 @@ module.exports = function (grunt) {
     },
     
     karma: {
-      unit: {
+      options: {
         configFile: '<%= config.test %>/karma.conf.js',
+      },
+      unit: {
         singleRun: true,
         browsers: ['PhantomJS'],
         reporters: ['dots', 'coverage']
       },
       watch: {
-        options: {
-          configFile: '<%= config.test %>/karma.conf.js',
-          browsers: ['PhantomJS'],
-          reporters: ['dots', 'coverage']
-        },
-        reporters: ['progress']
+        browsers: ['PhantomJS'],
+        reporters: ['dots', 'coverage']
       },
       debug: {
-        options: {
-          configFile: '<%= config.test %>/karma.conf.js'
-        },
         reporters: ['progress']
       }
     },
