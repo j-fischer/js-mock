@@ -105,10 +105,8 @@
       if (_callCount === _expectTotalCalls) {
         throw new ExpectationError(_format("'{0}' already called {1} time(s).", _name, _expectTotalCalls));
       }
-          
-      _callCount++;
 
-      var actualArguments = arguments;
+      var actualArguments = Array.prototype.slice.call(arguments);
       var expectation = findMatchingExpectation(actualArguments);
       
       //execute function if applicable
@@ -123,6 +121,8 @@
       //set fulfilled
       expectation.fulfilled = true;
       
+      _callCount++;
+      
       //return value
       return expectation.returnValue;
     };
@@ -131,12 +131,20 @@
       reset();
       
       _expectTotalCalls = count;
+      
+      for (var i = 1; i <= count; i++) {
+        _expectations[i] = {};
+      }
+      
+      return _thisMock;
     };
     
     _thisMock.onCall = function (index) {
       // TODO: verify index
       
       _scope = index;
+      
+      return _thisMock;
     };
       
     _thisMock.withExactArgs = function () {
@@ -162,9 +170,10 @@
         throw new ExpectationError(_format("Missing invocations for '{0}'. Expected {1} call(s) but only got {2}.", _name, _expectTotalCalls, _callCount));
       }
       
-      Object.keys(_expectations).forEach(function(expectation, index) {
+      Object.keys(_expectations).forEach(function(index) {
+        var expectation = _expectations[index];
         if (!expectation.fulfilled) {
-          unfulfilledExpectations.push(_format("Expectation for call {0} with args {1},\nwill return {2}.", index, JSON.stringify(expectation.args), JSON.stringify(expectation.returnValue)));
+          unfulfilledExpectations.push(_format("Expectation for call {0} with args {1}, will return {2}.", index, JSON.stringify(expectation.args), JSON.stringify(expectation.returnValue)));
         }
       });
       
@@ -255,6 +264,16 @@
     monitorMocks: function (factoryFunc) {
       if (typeof factoryFunc !== "function") {
         throw new TypeError("The first argument must be a function");
+      }
+      
+      // Clean up monitored mocks so that the same JsMock context can be used between test files      
+      _monitoredMocks = [];
+        
+      try {
+        _shouldMonitorMocks = true;
+        factoryFunc();
+      } finally {
+        _shouldMonitorMocks = false;
       }
     },
     
