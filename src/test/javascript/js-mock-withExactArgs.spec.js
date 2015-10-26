@@ -53,6 +53,13 @@ describe('JsMock - withExactArgs', function(){
       _myFunc("foo");
 		});
     
+    it("should match arguments if provided - object", function () {
+      var obj = {};
+      _myFunc.once().withExactArgs(obj);
+      
+      _myFunc(obj);
+		});
+    
     it("should match arguments if provided - boolean", function () {
       _myFunc.once().withExactArgs(false);
       
@@ -88,6 +95,15 @@ describe('JsMock - withExactArgs', function(){
       expectUnexpectedInvocationError("bar");
       
       _myFunc("foo");
+		});
+    
+    it("should throw unexpected invocation if wrong object reference was provided", function () {
+      var obj = {};
+      _myFunc.once().withExactArgs(obj);
+      
+      expectUnexpectedInvocationError({});
+      
+      _myFunc(obj);
 		});
     
     it("should throw unexpected invocation if too many arguments wer provided", function () {
