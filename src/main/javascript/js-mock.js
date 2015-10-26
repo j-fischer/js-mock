@@ -165,7 +165,6 @@
     };
       
     _thisMock.verify = function () {
-      //verify expectations
       var unfulfilledExpectations = [];
       
       if (_callCount !== _expectTotalCalls) {
