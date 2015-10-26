@@ -1,4 +1,4 @@
-describe('JsMock - withExactArgs', function(){
+describe('JsMock', function(){
   
   var _myFunc;
   
@@ -25,7 +25,7 @@ describe('JsMock - withExactArgs', function(){
   /*
    * TESTS
    */
-  describe('proper assertions', function(){
+  describe('exactly', function(){
     
     it("should ignore arguments if no expecation was set", function () {
       _myFunc.once();
