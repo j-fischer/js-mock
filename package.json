@@ -37,5 +37,12 @@
     "requirejs": "2.1.11",
     "sinon": "1.10.3",
     "time-grunt": "1.0.0"
-  }
+  },
+  "files": [
+    "lib",
+    "Changelog.txt",
+    "LICENSE.txt,
+    "README.md"
+  ],
+  "main": "./lib/js-mock.js",
 }
