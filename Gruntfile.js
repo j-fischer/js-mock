@@ -55,9 +55,11 @@ module.exports = function (grunt) {
     
     jsdoc : {
       dist : {
-        src: ['<%= config.app %>/*.js', '<%= config.app %>/**/*.js'], 
+        src: ['<%= config.app %>/*.js', '<%= config.app %>/**/*.js', 'README.md'], 
         options: {
-          destination: 'docs/jsdoc'
+          destination: 'docs/jsdoc',
+          configure: './conf/jsdoc.json',
+          template: './node_modules/jsdoc-oblivion/template'
         }
       }
     },
@@ -65,22 +67,12 @@ module.exports = function (grunt) {
     copy: {
       dist: {
         src: '<%= config.app %>/<%= pkg.name %>.js',
-        dest: '<%= config.dist %>/<%= pkg.name %>-<%= pkg.version %>.js',
+        dest: '<%= config.dist %>/<%= pkg.name %>.js',
         options: {
           process: function (content) {
-            return '/* ' + pkg.name + ' v' + pkg.version + ' ' + grunt.template.today("yyyy-mm-dd") + ' - Copyright notice here */\n' + content;
+            return '/* ' + pkg.name + ' v' + pkg.version + ' ' + grunt.template.today("yyyy-mm-dd") + ' - Copyright 2015, Johannes Fischer */\n' + content;
           },
         },
-      }
-    },
-    
-    uglify: {
-      options: {
-        banner: '/* <%= pkg.name %> v<%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd") %> - Copyright notice here */\n'
-      },
-      build: {
-        src: '<%= config.app %>/<%= pkg.name %>.js',
-        dest: '<%= config.dist %>/<%= pkg.name %>-<%= pkg.version %>.min.js'
       }
     },
     
@@ -136,7 +128,6 @@ module.exports = function (grunt) {
     'jshint',
     'karma:unit',
     'copy:dist',
-    'uglify',
     'jsdoc'
   ]);
   
