@@ -42,8 +42,8 @@
   "files": [
     "lib",
     "Changelog.txt",
-    "LICENSE.txt,
+    "LICENSE.txt",
     "README.md"
   ],
-  "main": "./lib/js-mock.js",
+  "main": "./lib/js-mock.js"
 }

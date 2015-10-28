@@ -129,7 +129,7 @@ module.exports = function (grunt) {
     'karma:unit'
   ]);
   
-  grunt.registerTask('release' [
+  grunt.registerTask('release', [
     'build',
     'copy:dist',
     'jsdoc'
