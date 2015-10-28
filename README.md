@@ -136,7 +136,7 @@ The following functions are helpers that will map their calls to the API functio
 
 Feel free to contact me if you like to contribute.
 
-If not, generator-js-api is fork-friendly and you can always maintain a custom version which you npm install && npm link to continue using via yo js-api or a name of your choosing.
+If not, js-mock is fork-friendly and you can always maintain a custom version which you npm link & npm install to continue using it under the given name or the name of your choosing. 
 
 ## License
 
