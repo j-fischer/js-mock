@@ -1,3 +1,11 @@
+/**
+ * JsMock - A simple Javascript mocking framework.
+ *
+ * @author Johannes Fischer (jh-fischer@web.de)
+ * @license BSD
+ *
+ * Copyright (c) 2015 Johannes Fischer
+ */
 (function () {
   
   /* constants */
@@ -19,9 +27,10 @@
   }
   
  /** 
-  * This is a class. 
+  * An ExpectationError will be thrown in any situation where a mock expectation
+  * has not been met.  
   *
-  * @class
+  * @class ExpectationError
   */
   function ExpectationError(message) {
     this.name = 'ExpectationError';
@@ -32,9 +41,10 @@
   ExpectationError.prototype.constructor = ExpectationError;
   
  /** 
-  * This is a class. 
+  * Object representing a mocked function
   *
-  * @class
+  * @class MockClass
+  * @private
   */
   var MockClass = function (args) {
     
@@ -230,36 +240,47 @@
   
   function mockProperties(objName, obj) {
     var result = {};
-    Object.keys(obj).forEach(function(element) {
-      result[element] = mock(objName + "." + element);
+    Object.keys(obj).forEach(function(propertyName) {
+      if (typeof obj[propertyName] === "function") { 
+        result[propertyName] = mock(objName + "." + propertyName);
+      } else {
+        result[propertyName] = obj[propertyName];
+      }
     });
     
     return result;
   }  
   
  /** 
-  * This is a module. 
-  *
+  * JavaScript mocking framework, which can be used with any test framework. JsMock is inspired by jMock and Sinon.js 
+  * with its interface being very similar to Sinon in order to make it easy to switch between those two frameworks.<br>
+  * <br>
+  * JsMock does only support mocks where all expectations have to be set prior to making the call to the function under test.<br>
+  *  
   * @exports js-mock
   */
   var API = {
     /** 
-     * This is an API method that does something.
-     * @param {object} args
-     *   @param {string} args.aParam: this is a parameter for this method
+     * Creates a mock object for a function.<br>
+     * <br>
+     * If the `objectToBeMocked` property is provided, the `mockName` will be used as a prefix for each mock of the object, while the function name will be the suffix.<br>
+     * Only functions of the object will be mocked. Any other types will simply be copied over.
+     * 
+     * @param {string} mockName A named to be used to idenfify this mock object. The name will be include in any thrown {@link ExpectationError}. 
+     * @param {object} objectToBeMocked (optional) The object to be cloned with mock functions. Only functions will be mocked, any other property values will simply be copied over.
      *
      * @module js-mock
      */
-    mock: function (arg1, arg2) {
-      if (typeof arg1 !== "string" || !arg1) {
+    mock: function (mockName, objectToBeMocked) {
+      if (typeof mockName !== "string" || !mockName) {
         throw new TypeError("The first argument must be a string");
       }
       
-      if (typeof arg2 === "object" && arg2 !== null) {
-        return mockProperties(arg1, arg2);
+      if (typeof objectToBeMocked === "object" && objectToBeMocked !== null) {
+        return mockProperties(mockName, objectToBeMocked);
       }
       
-      return mock(arg1);
+      return mock(mockName);
     },
     
     monitorMocks: function (factoryFunc) {

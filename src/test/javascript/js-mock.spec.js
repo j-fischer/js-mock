@@ -71,7 +71,25 @@ describe('JsMock', function(){
       expect(obj.func2()).toBe("bar");      
     });
     
-    it("mock properties does not modify the original object", function () {
+    it("mock properties should copy any non-function properties", function () {
+      var obj = {
+        myFunc: function () {
+          return "foo";
+        },
+        
+        anObject: {},
+        aString: "bar"
+      };
+      
+      var mock = JsMock.mock("MyObject", obj);
+      
+      expect(obj.myFunc()).toBe("foo");
+      expect(obj.aString).toBe("bar");
+      
+      expect(obj.anObject).toEqual({});
+    });
+    
+    it("should some if some property expectations are not fulfilled", function () {
       var obj = {
         func1: function () {
           return "foo";
@@ -88,7 +106,7 @@ describe('JsMock', function(){
       
       expectExpectationError(mock.func1.verify, "ExpectationError: Missing invocations for 'MyObject.func1'. Expected 1 call(s) but only got 0.");      
       
-      mock.func1()
+      mock.func1();
       mock.func2.verify();
     });
   });
