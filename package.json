@@ -3,7 +3,7 @@
   "name": "js-mock",
   "description": "Simple mocking framework for Javascript unit tests",
   "version": "0.1.0",
-  "license": "ISC",
+  "license": "BSD 3-clause",
   "devDependencies": {
     "grunt": "0.4.2",
     "grunt-check-dependencies": "0.3.0",

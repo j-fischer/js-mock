@@ -132,6 +132,16 @@ The following functions are helpers that will map their calls to the API functio
     mock.onSecondCall() // .onCall(2)
     mock.onThirdCall() // .onCall(3)
 
+## Contribute
+
+Feel free to contact me if you like to contribute.
+
+If not, generator-js-api is fork-friendly and you can always maintain a custom version which you npm install && npm link to continue using via yo js-api or a name of your choosing.
+
+## License
+
+BSD 3-clause, see [License.txt](License.txt)
+
 ## Note
 
 This project was created using [Yeoman](http://yeoman.io/) and the [js-api generator](https://www.npmjs.com/package/generator-js-api)
