@@ -126,9 +126,14 @@ module.exports = function (grunt) {
   grunt.registerTask('build', [
     'clean',
     'jshint',
-    'karma:unit',
+    'karma:unit'
+  ]);
+  
+  grunt.registerTask('release' [
+    'build',
     'copy:dist',
     'jsdoc'
+    // add more tasks like update version, npm publish, etc.
   ]);
   
   // Setup default task that runs when you just run 'grunt'
