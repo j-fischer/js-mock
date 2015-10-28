@@ -144,4 +144,6 @@ BSD 3-clause, see [License.txt](License.txt)
 
 ## Note
 
-This project was created using [Yeoman](http://yeoman.io/) and the [js-api generator](https://www.npmjs.com/package/generator-js-api)
+Until this library reaches version 1.0, there is a chance that backwards compatibility may be broken between minor versions. Please check the release note for conflicting changes before upgrading.
+
+This project was created using [Yeoman](http://yeoman.io/) and the [js-api generator](https://www.npmjs.com/package/generator-js-api).
