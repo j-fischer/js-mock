@@ -27,10 +27,13 @@
   }
   
  /** 
-  * An ExpectationError will be thrown in any situation where a mock expectation
-  * has not been met.  
-  *
   * @class ExpectationError
+  * @classdesc An ExpectationError will be thrown in any situation where a mock 
+  * expectation has not been met.  
+  *
+  * @property {string} name The name of the error, will always return 'ExpectationError'.
+  * @property {string} message The error message for this error instance.
+  * @property {string} stack A string containing the stack trace for this error instance. 
   */
   function ExpectationError(message) {
     this.name = 'ExpectationError';
@@ -41,10 +44,16 @@
   ExpectationError.prototype.constructor = ExpectationError;
   
  /** 
-  * Object representing a mocked function
-  *
-  * @class MockClass
+  * Internal - Instantiated by JsMock.
+  * 
+  * @name Mock
   * @private
+  * @class 
+  *
+  * @classdesc The object returned by <code>JsMock.mock</code> representing the mock 
+  * for a function. The object contains numerous methods to define expectations for the 
+  * invocations of the mocked function and will match every call of this function 
+  * against those expectations.
   */
   var MockClass = function (args) {
     
@@ -136,8 +145,19 @@
       //return value
       return expectation.returnValue;
     };
-        
+
+    /** 
+     * Set the expectation for the mock to be called 'x' number of times. 
+     *
+     * @param {number} count The number of times how often this mock is expected to be called.
+     *
+     * @returns {object} This {@link MockClass} instance. 
+     *
+     * @function Mock#exactly
+     */
     _thisMock.exactly = function(count) {
+      // validate count > 0
+      
       reset();
       
       _expectTotalCalls = count;
@@ -263,13 +283,11 @@
     /** 
      * Creates a mock object for a function.<br>
      * <br>
-     * If the `objectToBeMocked` property is provided, the `mockName` will be used as a prefix for each mock of the object, while the function name will be the suffix.<br>
+     * If the <code>objectToBeMocked</code> property is provided, the <code>mockName</code> will be used as a prefix for each mock of the object, while the function name will be the suffix.<br>
      * Only functions of the object will be mocked. Any other types will simply be copied over.
      * 
      * @param {string} mockName A named to be used to idenfify this mock object. The name will be include in any thrown {@link ExpectationError}. 
      * @param {object} objectToBeMocked (optional) The object to be cloned with mock functions. Only functions will be mocked, any other property values will simply be copied over.
-     *
-     * @module js-mock
      */
     mock: function (mockName, objectToBeMocked) {
       if (typeof mockName !== "string" || !mockName) {
@@ -283,6 +301,23 @@
       return mock(mockName);
     },
     
+    /** 
+     * When testing a module or file, the best way is to define a set of global mocks,
+     * which can be shared between the test cases using the <code>JsMock.monitorMocks()</code> function.
+     * All mocks created inside the factory function will be added to the current test
+     * context and can be verified with a single call to <code>JsMock.assertIfSatisfied()</code>.<br>
+     * <br>
+     * For example:     
+     * <pre>
+     *    var mockFunction1, mockFunction2;
+     *    JsMock.monitorMocks(function () {
+     *      mockFunction1 = JsMock.mock("name1");
+     *      mockFunction2 = JsMock.mock("name2");
+     *    });
+     * </pre>
+     * 
+     * @param {function} factoryFunc A function that will create mock objects for the current test context.
+     */
     monitorMocks: function (factoryFunc) {
       if (typeof factoryFunc !== "function") {
         throw new TypeError("The first argument must be a function");
@@ -299,6 +334,15 @@
       }
     },
     
+    /** 
+     * Verify all mocks registered in the current test context.<br>
+     * <br>
+     * All mock objects that where created in the factory function of <code>monitorMocks()</code> 
+     * will be verified and an {@link ExpectationError} will be thrown if any of those 
+     * mocks fails the verification.
+     * 
+     * @throws {ExpectationError} An error if a mock object in the current test context failed the verification.
+     */
     assertIfSatisfied: function () {
       var i, len = _monitoredMocks.length;
       for (i = 0; i < len; i++) {
