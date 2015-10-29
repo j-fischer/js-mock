@@ -4,6 +4,12 @@ JavaScript mocking framework, which can be used with any test framework. JsMock 
 
 JsMock does only support mocks where all expectations have to be set prior to making the call to the function under test.
 
+## How is JsMock different from other mock frameworks?
+
+JsMock only supports mock objects where the expectations have to be defined before the mock objects are used by the function under test. This may require a bit more effort when writing a test case, but the outcome should be that the interactions of the unit under test with the mock object are very clearly defined through the tests, which should expose bugs or unintended behavior that would otherwise remain hidden if stubs or spies are used, but not evaluated properly.  
+
+JsMock also has the goal to simplify the setup and validation of mocks by monitoring them for you. This will make it easy to evaluate that all expected calls have been made at the end of the test. 
+
 ## Installation
 
 Install JsMock via [npm](https://www.npmjs.com)
@@ -124,19 +130,13 @@ Will set all following expectations for a specific call.
 
 The following functions are helpers that will map their calls to the API functions above. 
 
-    mock.once() // .exactly(1)
-    mock.twice() // .exactly(2)
-    mock.thrice() // .exactly(3)
+    mock.once() // instead of .exactly(1)
+    mock.twice() // instead of .exactly(2)
+    mock.thrice() // instead of .exactly(3)
 
-    mock.onFirstCall() // .onCall(1)
-    mock.onSecondCall() // .onCall(2)
-    mock.onThirdCall() // .onCall(3)
-
-## Contribute
-
-Feel free to contact me if you like to contribute.
-
-If not, js-mock is fork-friendly and you can always maintain a custom version which you npm link & npm install to continue using it under the given name or the name of your choosing. 
+    mock.onFirstCall() // instead of .onCall(1)
+    mock.onSecondCall() // instead of .onCall(2)
+    mock.onThirdCall() // instead of .onCall(3)
 
 ## License
 
@@ -144,6 +144,6 @@ BSD 3-clause, see [License.txt](License.txt)
 
 ## Note
 
-Until this library reaches version 1.0, there is a chance that backwards compatibility may be broken between minor versions. Please check the release note for conflicting changes before upgrading.
+Until this library reaches version 1.0, there is a chance that backwards compatibility may get broken between minor versions. Please check the release notez for conflicting changes before upgrading.
 
 This project was created using [Yeoman](http://yeoman.io/) and the [js-api generator](https://www.npmjs.com/package/generator-js-api).
