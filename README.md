@@ -65,7 +65,7 @@ Calling this function will go through the list of all mocks that are currently m
 
 ### mock.exactly(<number>)
 
-Set the expectation for the mock to be called n times. 
+Set the expectation for the mock to be called n number of times. 
 
     var mock = JsMock.mock("aMock");
 
