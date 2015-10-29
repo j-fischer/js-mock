@@ -156,7 +156,7 @@
      * @function Mock#exactly
      */
     _thisMock.exactly = function(count) {
-      // validate count > 0
+      // TODO: validate count > 0
       
       reset();
       
