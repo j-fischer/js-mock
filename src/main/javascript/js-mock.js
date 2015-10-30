@@ -198,7 +198,7 @@
      * @function Mock#withExactArgs
      */
     _thisMock.withExactArgs = function () {
-      setInScope("args", arguments);
+      setInScope("args", Array.prototype.slice.call(arguments));
       return _thisMock;
     };
       
