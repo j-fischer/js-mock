@@ -151,7 +151,7 @@
      *
      * @param {number} count The number of times how often this mock is expected to be called.
      *
-     * @returns {object} This {@link MockClass} instance. 
+     * @returns {MockClass} This {@link MockClass} instance. 
      *
      * @function Mock#exactly
      */
@@ -169,6 +169,15 @@
       return _thisMock;
     };
     
+    /** 
+     * Will set all following expectations for the given call. 
+     *
+     * @param {number} number The index of the call (starting with 1) where the expectations should be set.
+     *
+     * @returns {MockClass} This {@link MockClass} instance. 
+     *
+     * @function Mock#onCall
+     */
     _thisMock.onCall = function (index) {
       if (index > _expectTotalCalls) {
         throw new Error("Attempting to set the behaviour for a call that is not expected. Calls expected: " + _expectTotalCalls + ", call attempted to change: " + index);
@@ -179,21 +188,58 @@
       return _thisMock;
     };
       
+    /** 
+     * Expects the function to be called with the given arguments.
+     *
+     * @param {...?(number|boolean|string|array|object|function)} arguments The index of the call (starting with 1) where the expectations should be set.
+     *
+     * @returns {MockClass} This {@link MockClass} instance. 
+     *
+     * @function Mock#withExactArgs
+     */
     _thisMock.withExactArgs = function () {
       setInScope("args", arguments);
       return _thisMock;
     };
       
+    /** 
+     * Expects the function to be called to return the given value.
+     *
+     * @param {?(number|boolean|string|array|object|function)} returnValue The value to be returned when the function is invoked.
+     *
+     * @returns {MockClass} This {@link MockClass} instance. 
+     *
+     * @function Mock#returns
+     */
     _thisMock.returns = function (returnValue) {
       setInScope("returnValue", returnValue);
       return _thisMock;
     };
       
+    /** 
+     * Executes a function if the mock was successfully matched. All arguments passed in to the mock function
+     * will be passed on to the function defined in here. The function will be executed before a value is returned. 
+     *
+     * @param {!function} func The function to be executed when the expectation is fulfilled.
+     *
+     * @returns {MockClass} This {@link MockClass} instance. 
+     *
+     * @function Mock#will
+     */
     _thisMock.will = function (func) {
+      // TODO: null check
       setInScope("will", func);
       return _thisMock;
     };
-      
+    
+    /** 
+     * Verifies of all set expectations of this mock are fulfilled. If not, an ExpectationError will be thrown. 
+     * If the verification passes, the mock will be reset to its original state.
+     * 
+     * @returns {MockClass} This {@link MockClass} instance. 
+     *
+     * @function Mock#verify
+     */  
     _thisMock.verify = function () {
       var unfulfilledExpectations = [];
       
@@ -203,6 +249,8 @@
       
       Object.keys(_expectations).forEach(function(index) {
         var expectation = _expectations[index];
+        
+        // TODO: Verify if this code branch can ever be executed. I think missing expectations would always fail in line 249.
         if (!expectation.fulfilled) {
           unfulfilledExpectations.push(_format("Expectation for call {0} with args {1}, will return {2}.", index, JSON.stringify(expectation.args), JSON.stringify(expectation.returnValue)));
         }
@@ -216,26 +264,80 @@
     };
 
     /* helpers, i.e. once, twice, onFirstCall, etc */
+    /** 
+     * Alias for exactly(1).
+     * 
+     * @see {@link Mock#exactly}
+     *
+     * @returns {MockClass} This {@link MockClass} instance. 
+     *
+     * @function Mock#once
+     */
     _thisMock.once = function () {
       return _thisMock.exactly(1);
     };
     
+   /** 
+    * Alias for exactly(2).
+    * 
+    * @see {@link Mock#exactly}
+    *
+    * @returns {MockClass} This {@link MockClass} instance. 
+    *
+    * @function Mock#twice
+    */
     _thisMock.twice = function () {
       return _thisMock.exactly(2);
     };
     
+   /** 
+    * Alias for exactly(3).
+    * 
+    * @see {@link Mock#exactly}
+    *
+    * @returns {MockClass} This {@link MockClass} instance. 
+    *
+    * @function Mock#thrice
+    */
     _thisMock.thrice = function () {
       return _thisMock.exactly(3);
     };
     
+   /** 
+    * Alias for onCall(1).
+    * 
+    * @see {@link Mock#onCall}
+    *
+    * @returns {MockClass} This {@link MockClass} instance. 
+    *
+    * @function Mock#onFirstCall
+    */
     _thisMock.onFirstCall = function () {
       return _thisMock.onCall(1);
     };
     
+   /** 
+    * Alias for onCall(2).
+    * 
+    * @see {@link Mock#onCall}
+    *
+    * @returns {MockClass} This {@link MockClass} instance. 
+    *
+    * @function Mock#onSecondCall
+    */
     _thisMock.onSecondCall = function () {
       return _thisMock.onCall(2);
     };
     
+   /** 
+    * Alias for onCall(3).
+    * 
+    * @see {@link Mock#onCall}
+    *
+    * @returns {MockClass} This {@link MockClass} instance. 
+    *
+    * @function Mock#onThirdCall
+    */
     _thisMock.onThirdCall = function () {
       return _thisMock.onCall(3);
     };
@@ -287,7 +389,7 @@
      * Only functions of the object will be mocked. Any other types will simply be copied over.
      * 
      * @param {string} mockName A named to be used to idenfify this mock object. The name will be include in any thrown {@link ExpectationError}. 
-     * @param {object} objectToBeMocked (optional) The object to be cloned with mock functions. Only functions will be mocked, any other property values will simply be copied over.
+     * @param {object=} objectToBeMocked The object to be cloned with mock functions. Only functions will be mocked, any other property values will simply be copied over.
      */
     mock: function (mockName, objectToBeMocked) {
       if (typeof mockName !== "string" || !mockName) {

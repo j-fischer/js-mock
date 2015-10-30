@@ -51,7 +51,7 @@ When testing a module or file, the best way is to define a set of global mocks, 
 
 ### JsMock.assertIfSatisfied()
 
-Calling this function will go through the list of all mocks that are currently monitored and will call `.verify()` on each of them. Should a mock fail the validation, an `ExpectationError` will be thrown.
+Calling this function will go through the list of all mocks that are currently monitored and will call `.`verify`()` on each of them. Should a mock fail the validation, an `ExpectationError` will be thrown.
 
     var mockFunction1, mockFunction2;
     JsMock.monitorMocks(function () {
@@ -112,7 +112,7 @@ Will execute the given function once the mock was successfully called. The argum
 
 ### mock.onCall(<number>)
 
-Will set all following expectations for a specific call. 
+Will set all following expectations for the given call. 
 
     var mock = JsMock.mock("aMock");
 
@@ -125,6 +125,19 @@ Will set all following expectations for a specific call.
     // On the second call, expect "bar" to be the argument and return 2
     mock.onCall(2).withExactArgs("bar").returns(2);
 
+
+### mock.verify()
+
+Verifies that all expectations of this mock have been fulfilled. If any expectation was
+not fullfiled, an ExpectationError will be thrown.
+
+    var mock = JsMock.mock("aMock");
+
+    // Expect the mock to be invoked once
+    mock.once();
+    
+    // will throw an ExpectationError
+    mock.verify();
 
 ### Helper functions
 
