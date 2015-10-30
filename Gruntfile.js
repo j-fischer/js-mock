@@ -111,6 +111,16 @@ module.exports = function (grunt) {
           npmInstall: true
         }
       }
+    },
+    
+    shell: {
+      "create-site": {
+        command: [
+          "rm -rf site",
+          "generate-md --layout mixu-gray --input ./README.md --output ./site",
+          "mv site/README.html site/index.html"
+        ].join("&&")
+      }
     }
   });
   
@@ -134,6 +144,10 @@ module.exports = function (grunt) {
     'copy:dist',
     'jsdoc'
     // add more tasks like update version, npm publish, etc.
+  ]);
+  
+  grunt.registerTask('website', [
+    "shell:create-site"
   ]);
   
   // Setup default task that runs when you just run 'grunt'

@@ -18,7 +18,7 @@
     "grunt-jsdoc": "1.0.0",
     "grunt-jslint": "1.1.5",
     "grunt-karma": "~0.11.0",
-    "grunt-shell": "0.6.4",
+    "grunt-shell": "^1.1.2",
     "istanbul": "0.2.7",
     "jquery": "2.1.1",
     "jsdoc-oblivion": "0.0.4",
