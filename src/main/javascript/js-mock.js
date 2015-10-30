@@ -100,12 +100,12 @@
     function findMatchingExpectation(actualArguments) {
       //find matching expectation, throw if no expectation is found
       if (_scope === _STUB) {
-        var expectation = _expectations[_STUB];
-        if (!doArgsMatch(expectation.args, actualArguments)) {
-          throw new ExpectationError(_format("Unexpected invocation of '{0}'. Actual arguments: {2}.", _name, index, JSON.stringify(actualArguments)));
+        var stub = _expectations[_STUB];
+        if (!doArgsMatch(stub.args, actualArguments)) {
+          throw new ExpectationError(_format("Unexpected invocation of '{0}'. Actual arguments: {1}.", _name, JSON.stringify(actualArguments)));
         }
         
-        return expectation;
+        return stub;
       }
       
       for (var index in _expectations) {
