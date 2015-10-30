@@ -126,6 +126,24 @@ Will set all following expectations for the given call.
     mock.onCall(2).withExactArgs("bar").returns(2);
 
 
+### mock.allowing()
+
+Converts this mock into a stub, which will never throw a missing invocation exceptions. 
+As a stub, it cannot have different behaviors for different calls. If `withExactArgs`
+is defined, any invocation other than the defined one will throw an unexpected invocation error.
+Note: Verifying the stub will reset the object into mocking mode with 0 calls expected.
+
+    var mock = JsMock.mock("aMock");
+
+    // Expect the mock to be invoked once
+    mock.allowing();
+    
+    mock("foo");
+    mock("bar");
+    
+    // will always succeed and reset the mock
+    mock.verify();
+
 ### mock.verify()
 
 Verifies that all expectations of this mock have been fulfilled. If any expectation was
@@ -143,6 +161,7 @@ not fullfiled, an ExpectationError will be thrown.
 
 The following functions are helpers that will map their calls to the API functions above. 
 
+    mock.never() // instead of .exactly(0)
     mock.once() // instead of .exactly(1)
     mock.twice() // instead of .exactly(2)
     mock.thrice() // instead of .exactly(3)
