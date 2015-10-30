@@ -1,14 +1,14 @@
 # JsMock
 
-JavaScript mocking framework, which can be used with any test framework. JsMock is inspired by [jMock](http://www.jmock.org/) and [Sinon.js](http://sinonjs.org/) with its interface being very similar to Sinon in order to make it easy to switch between those two frameworks. 
+A JavaScript mocking framework, which can be used with any test framework. JsMock is inspired by [jMock](http://www.jmock.org/) and [Sinon.js](http://sinonjs.org/) with its interface being very similar to Sinon in order to make it easy to switch between those two frameworks. 
 
-JsMock does only support mocks where all expectations have to be set prior to making the call to the function under test.
+JsMock should work with any test framework. 
 
 ## How is JsMock different from other mock frameworks?
 
-JsMock only supports mock objects where the expectations have to be defined before the mock objects are used by the function under test. This may require a bit more effort when writing a test case, but the outcome should be that the interactions of the unit under test with the mock object are very clearly defined through the tests, which should expose bugs or unintended behavior that would otherwise remain hidden if stubs or spies are used, but not evaluated properly.  
+JsMock only supports mock objects where the expectations have to be defined before the mock objects are used by the function/module under test. This may require a bit more effort when writing a test case, but the outcome should be that the interactions of the unit under test with the mock object are very clearly defined through the tests. This should expose bugs or unintended behavior that would otherwise remain hidden if stubs or spies are used, but not evaluated properly.  
 
-JsMock also has the goal to simplify the setup and validation of mocks by monitoring them for you. This will make it easy to evaluate that all expected calls have been made at the end of the test. 
+JsMock also has the goal to simplify the setup and validation of mocks by monitoring them for you. This will make it easy to evaluate that all expected calls have been made at the end of a test. 
 
 ## Installation
 
@@ -40,7 +40,7 @@ JsMock can create mock functions or objects.
 
 ### JsMock.monitorMocks()
 
-When testing a module or file, the best way is to define a set of global mocks, which can be shared between the test cases using the `monitorMocks()` function. All mocks created inside the factory function will be added to the current test context and can be verified with a single call to `JsMock.assertIfSatisfied()`.
+When testing a module or file, the best way is to define a set of global mocks using the `monitorMocks()` function, which can be shared between the test cases. All mocks created inside the factory function will be added to the current test context and can be verified with a single call to `JsMock.assertIfSatisfied()`.
 
     var mockFunction1, mockFunction2;
     JsMock.monitorMocks(function () {
@@ -51,7 +51,7 @@ When testing a module or file, the best way is to define a set of global mocks, 
 
 ### JsMock.assertIfSatisfied()
 
-Calling this function will go through the list of all mocks that are currently monitored and will call `.`verify`()` on each of them. Should a mock fail the validation, an `ExpectationError` will be thrown.
+Calling this function will go through the list of all mocks that are currently monitored and will call `.verify()` on each of them. Should a mock fail the validation, an `ExpectationError` will be thrown.
 
     var mockFunction1, mockFunction2;
     JsMock.monitorMocks(function () {
@@ -65,7 +65,7 @@ Calling this function will go through the list of all mocks that are currently m
 
 ### mock.exactly(<number>)
 
-Set the expectation for the mock to be called n number of times. 
+Set the expectation for the mock to be called N number of times. 
 
     var mock = JsMock.mock("aMock");
 
@@ -87,7 +87,6 @@ Set the expectation to be called with the exact arguments provided.
 
 Set the expectation for the mock to return a given value.
 
-
     var mock = JsMock.mock("aMock");
 
     // Expect the mock to be invoked once with no arguments, returning "foo"
@@ -97,8 +96,7 @@ Set the expectation for the mock to return a given value.
 
 ### mock.will(<function>)
 
-Will execute the given function once the mock was successfully called. The arguments passed to the mock function will be forwarded to the function to be executed. 
-
+Will execute the given function once the mock was successfully called. The arguments passed to the mock function will be forwarded to the provided function. 
 
     var mock = JsMock.mock("aMock");
 
@@ -128,7 +126,7 @@ Will set all following expectations for the given call.
 
 ### mock.allowing()
 
-Converts this mock into a stub, which will never throw a missing invocation exceptions. 
+Converts this mock into a stub, which will never throw a missing invocation error. 
 As a stub, it cannot have different behaviors for different calls. If `withExactArgs`
 is defined, any invocation other than the defined one will throw an unexpected invocation error.
 Note: Verifying the stub will reset the object into mocking mode with 0 calls expected.
@@ -176,6 +174,6 @@ BSD 3-clause, see [License.txt](License.txt)
 
 ## Note
 
-Until this library reaches version 1.0, there is a chance that backwards compatibility may get broken between minor versions. Please check the release notez for conflicting changes before upgrading.
+Until this library reaches version 1.0, there is a chance that backwards compatibility may get broken between minor versions. Please check the release notes for conflicting changes before upgrading.
 
 This project was created using [Yeoman](http://yeoman.io/) and the [js-api generator](https://www.npmjs.com/package/generator-js-api).
