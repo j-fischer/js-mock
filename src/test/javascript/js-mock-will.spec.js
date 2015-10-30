@@ -22,6 +22,14 @@ describe('JsMock', function(){
    */
   describe('will', function(){
     
+    it("should throw if no calls have been expected", function () {
+      expect(function () {
+        _myFunc.will(function () {
+          throw "Should not be registered.";
+        });
+      }).toThrowError(Error, "You must call allowing, exactly, never, once, twice or thrice before setting any other expectations for this mock.");
+    }); 
+    
     it("should throw AssertionError if function throws an exception", function () {
       _myFunc.once().will(function () {
         throw "some error";

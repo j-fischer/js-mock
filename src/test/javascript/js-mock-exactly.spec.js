@@ -34,6 +34,14 @@ describe('JsMock', function(){
     describe('once', function(){
       it("should fail if not invoked", function () {
         _myFunc.once();
+        
+        _myFunc.never();
+  		});
+    }); 
+    
+    describe('once', function(){
+      it("should fail if not invoked", function () {
+        _myFunc.once();
       
         expectMissingInvocationError(1);
   		});
@@ -117,6 +125,12 @@ describe('JsMock', function(){
     });
     
     describe('exactly', function(){
+      it("should fail count is less than 0", function () {
+        expect(function () {
+          _myFunc.exactly(-1);
+        }).toThrowError(Error, "'count' must be 0 or higher");        
+  		});
+      
       it("should fail if not invoked 5 times", function () {
         _myFunc.exactly(5);
       

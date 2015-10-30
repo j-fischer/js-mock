@@ -25,7 +25,13 @@ describe('JsMock', function(){
   /*
    * TESTS
    */
-  describe('exactly', function(){
+  describe('withExactArgs', function(){
+    
+    it("should throw if no calls have been expected", function () {
+      expect(function () {
+        _myFunc.withExactArgs("foo");
+      }).toThrowError(Error, "You must call allowing, exactly, never, once, twice or thrice before setting any other expectations for this mock.");
+    }); 
     
     it("should ignore arguments if no expecation was set", function () {
       _myFunc.once();

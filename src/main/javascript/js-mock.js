@@ -9,6 +9,7 @@
 (function () {
   
   /* constants */
+  var _STUB = "STUB"; // Makes a mock behave like a stub
   var _ALL_CALLS = "ALL_INVOCATIONS"; // The scope of the invocations, i.e. exactly(3).returns('foo'); means return 'foo' for all invocations
   
   /* variables */
@@ -62,10 +63,16 @@
     var _scope, _callCount, _expectTotalCalls, _expectations;
     
     function reset() {
-      _scope = _ALL_CALLS;
+      _scope = null;
       _callCount = 0;
       _expectTotalCalls = 0;
       _expectations = {}; // {args, returnValue, will, fulfilled}
+    }
+    
+    function verifyScope() {
+      if (_scope === null) {
+        throw new Error("You must call allowing, exactly, never, once, twice or thrice before setting any other expectations for this mock.");
+      }
     }
     
     function doArgsMatch(expectedArgs, actualArgs) {
@@ -92,6 +99,15 @@
     
     function findMatchingExpectation(actualArguments) {
       //find matching expectation, throw if no expectation is found
+      if (_scope === _STUB) {
+        var expectation = _expectations[_STUB];
+        if (!doArgsMatch(expectation.args, actualArguments)) {
+          throw new ExpectationError(_format("Unexpected invocation of '{0}'. Actual arguments: {2}.", _name, index, JSON.stringify(actualArguments)));
+        }
+        
+        return expectation;
+      }
+      
       for (var index in _expectations) {
         var expectation = _expectations[index];
         
@@ -110,6 +126,8 @@
     }
     
     function setInScope(propertyName, value) {
+      verifyScope();
+      
       if (_scope !== _ALL_CALLS) {
         _expectations[_scope][propertyName] = value;
         return;
@@ -146,6 +164,26 @@
       return expectation.returnValue;
     };
 
+
+    /** 
+     * Set the expectation for the mock to be called 'x' number of times. 
+     *
+     * @param {number} count The number of times how often this mock is expected to be called.
+     *
+     * @returns {MockClass} This {@link MockClass} instance. 
+     *
+     * @function Mock#exactly
+     */
+    _thisMock.allowing = function() {      
+      reset();
+      
+      _expectTotalCalls = -1;
+      _expectations[_STUB] = {};
+      _scope = _STUB;
+      
+      return _thisMock;
+    };
+
     /** 
      * Set the expectation for the mock to be called 'x' number of times. 
      *
@@ -156,10 +194,13 @@
      * @function Mock#exactly
      */
     _thisMock.exactly = function(count) {
-      // TODO: validate count > 0
+      if (count < 0) {
+        throw new Error("'count' must be 0 or higher");
+      }
       
       reset();
       
+      _scope = _ALL_CALLS;
       _expectTotalCalls = count;
       
       for (var i = 1; i <= count; i++) {
@@ -179,6 +220,14 @@
      * @function Mock#onCall
      */
     _thisMock.onCall = function (index) {
+      if (index < 1) {
+        throw new Error("Call index must be larger than 0");
+      }
+      
+      if (_expectTotalCalls < 0) {
+          throw new Error("Mock is set up as a stub. Cannot set expectations for a specific call.");
+      }
+      
       if (index > _expectTotalCalls) {
         throw new Error("Attempting to set the behaviour for a call that is not expected. Calls expected: " + _expectTotalCalls + ", call attempted to change: " + index);
       }
@@ -241,8 +290,12 @@
      * @function Mock#verify
      */  
     _thisMock.verify = function () {
-      var unfulfilledExpectations = [];
+      if (_scope === _STUB) {
+        reset();
+        return;
+      }
       
+      var unfulfilledExpectations = [];
       Object.keys(_expectations).forEach(function(index) {
         var expectation = _expectations[index];
         
@@ -258,6 +311,20 @@
       
       reset();
     };
+
+   /* helpers, i.e. once, twice, onFirstCall, etc */
+   /** 
+    * Alias for exactly(0).
+    * 
+    * @see {@link Mock#exactly}
+    *
+    * @returns {MockClass} This {@link MockClass} instance. 
+    *
+    * @function Mock#never
+    */
+   _thisMock.never = function () {
+     return _thisMock.exactly(0);
+   };
 
     /* helpers, i.e. once, twice, onFirstCall, etc */
     /** 

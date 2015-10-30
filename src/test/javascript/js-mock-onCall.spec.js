@@ -3,7 +3,7 @@ describe('JsMock', function(){
   var _myFunc;
   
   JsMock.monitorMocks(function () {
-    _myFunc = JsMock.mock("WithExactArgs.myFunc");
+    _myFunc = JsMock.mock("OnCall.myFunc");
   });
   
   afterEach(function () {
@@ -18,7 +18,7 @@ describe('JsMock', function(){
   }
   
   function expectUnexpectedInvocationError(func, numOfCall) {
-    expectExpectationError(func, "ExpectationError: Unexpected invocation of 'WithExactArgs.myFunc' for call " + numOfCall + ": actual arguments: [].");
+    expectExpectationError(func, "ExpectationError: Unexpected invocation of 'OnCall.myFunc' for call " + numOfCall + ": actual arguments: [].");
   }
   
   
@@ -65,6 +65,10 @@ describe('JsMock', function(){
     });
     
     describe('onCall', function(){
+      beforeEach(function () {
+        _myFunc.never();
+      });
+      
       it("should replace expectations of third call", function () {
         _myFunc.exactly(5).returns(123);
         
@@ -77,13 +81,33 @@ describe('JsMock', function(){
         expect(_myFunc()).toBe(123);
   		});
       
+      it("should throw if index is less than 1", function () {        
+        expect(function () {
+          _myFunc.onCall(0);
+        }).toThrowError(Error, "Call index must be larger than 0");      
+  		});
+      
       it("should throw if call does not exist", function () {
         _myFunc.once();
         
         expect(function () {
-          _myFunc.onCall(2).returns("bar");
+          _myFunc.onCall(2);
         }).toThrowError(Error, "Attempting to set the behaviour for a call that is not expected. Calls expected: 1, call attempted to change: 2");      
-  		});      
+  		}); 
+      
+      it("should throw if no calls have been expected", function () {
+        expect(function () {
+          _myFunc.onCall(3);
+        }).toThrowError(Error, "Attempting to set the behaviour for a call that is not expected. Calls expected: 0, call attempted to change: 3");
+      }); 
+      
+      it("should throw if mock is set up as a stub", function () {
+        _myFunc.allowing();
+        
+        expect(function () {
+          _myFunc.onCall(2);
+        }).toThrowError(Error, "Mock is set up as a stub. Cannot set expectations for a specific call.");      
+  		});     
     });
   });
 });
