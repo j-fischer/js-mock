@@ -22,7 +22,7 @@ describe('JsMock', function(){
   }
   
   function expectMissingInvocationError(numOfExpectedInvocations) {
-    expectExpectationError(_myFunc.verify, "ExpectationError: Missing invocations for 'WithExactArgs.myFunc'. Expected " + numOfExpectedInvocations + " call(s) but only got " + (numOfExpectedInvocations-1) + ".");
+    expectExpectationError(_myFunc.verify, 'ExpectationError: Missing invocations for WithExactArgs.myFunc: ["Expectation for call ' + numOfExpectedInvocations + ' with args undefined, will return undefined."].');
   }
   
   

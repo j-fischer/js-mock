@@ -243,10 +243,6 @@
     _thisMock.verify = function () {
       var unfulfilledExpectations = [];
       
-      if (_callCount !== _expectTotalCalls) {
-        throw new ExpectationError(_format("Missing invocations for '{0}'. Expected {1} call(s) but only got {2}.", _name, _expectTotalCalls, _callCount));
-      }
-      
       Object.keys(_expectations).forEach(function(index) {
         var expectation = _expectations[index];
         
