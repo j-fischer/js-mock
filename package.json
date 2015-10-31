@@ -4,6 +4,11 @@
   "description": "Simple mocking framework for Javascript unit tests",
   "version": "0.1.0",
   "license": "BSD 3-clause",
+  author": {
+    "name": "Johannes Fischer",
+    "email": "johannes@jsmock.org",
+    "url": "https://github.com/j-fischer/js-mock"
+  },
   "devDependencies": {
     "grunt": "0.4.2",
     "grunt-check-dependencies": "0.3.0",
