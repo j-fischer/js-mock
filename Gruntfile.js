@@ -118,7 +118,8 @@ module.exports = function (grunt) {
         command: [
           "rm -rf site",
           "generate-md --layout mixu-gray --input ./README.md --output ./site",
-          "mv site/README.html site/index.html"
+          "mv site/README.html site/index.html",
+          "cp -r docs/jsdoc site/docs"
         ].join("&&")
       }
     }
