@@ -20,7 +20,7 @@ and include node_modules/js-mock/lib/js-mock.js in your project.
 
 ## Getting Started
 
-The following list highlights some simple use cases of JsMock and includes some best practices. For a full reference, please check out the [API docs](https://github.com/j-fischer/js-mock/docs/index.html) or take a look at the [unit tests](https://github.com/j-fischer/js-mock/src/test/javascript).
+The following list highlights some simple use cases of JsMock and includes some best practices. For a full reference, please check out the [API docs](https://www.jsmock.org/docs/index.html) or take a look at the [unit tests](https://github.com/j-fischer/js-mock/src/test/javascript).
 
 ### JsMock.mock()
 
