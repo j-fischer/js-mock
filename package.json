@@ -4,7 +4,7 @@
   "description": "Simple mocking framework for Javascript unit tests",
   "version": "0.1.0",
   "license": "BSD 3-clause",
-  author": {
+  "author": {
     "name": "Johannes Fischer",
     "email": "johannes@jsmock.org",
     "url": "https://github.com/j-fischer/js-mock"
