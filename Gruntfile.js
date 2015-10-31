@@ -67,12 +67,7 @@ module.exports = function (grunt) {
     copy: {
       dist: {
         src: '<%= config.app %>/<%= pkg.name %>.js',
-        dest: '<%= config.dist %>/<%= pkg.name %>.js',
-        options: {
-          process: function (content) {
-            return '/* ' + pkg.name + ' v' + pkg.version + ' ' + grunt.template.today("yyyy-mm-dd") + ' - Copyright 2015, Johannes Fischer */\n' + content;
-          },
-        },
+        dest: '<%= config.dist %>/<%= pkg.name %>.js'
       }
     },
     
@@ -121,6 +116,19 @@ module.exports = function (grunt) {
           "mv site/README.html site/index.html",
           "cp -r docs/jsdoc site/docs"
         ].join("&&")
+      },
+      "version": {
+        command: function (newVersion) {
+          var versionRegex = /^\d+\.\d+\.\d+$/;
+          if (!versionRegex.test(newVersion)) {
+            grunt.fail.fatal(newVersion + " is not a proper version.");
+          }
+        
+          return "npm version " + newVersion;
+        }
+      },
+      "publish": {
+        command: "npm publish"
       }
     }
   });
@@ -140,12 +148,18 @@ module.exports = function (grunt) {
     'karma:unit'
   ]);
   
-  grunt.registerTask('release', [
-    'build',
-    'copy:dist',
-    'jsdoc'
-    // add more tasks like update version, npm publish, etc.
-  ]);
+  grunt.registerTask('release', 'Build a new version and publish to NPM', function (newVersion) {    
+    var tasks = [
+      'build',
+      'copy:dist',
+      'jsdoc'
+    ];
+    
+    tasks.push('shell:version:' + newVersion);
+    tasks.push('shell:publish');
+    
+    grunt.task.run(tasks);
+  });
   
   grunt.registerTask('website', [
     "shell:create-site"
