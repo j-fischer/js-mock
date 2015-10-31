@@ -1,5 +1,4 @@
 {
-  "private": true,
   "name": "js-mock",
   "description": "Simple mocking framework for Javascript unit tests",
   "version": "0.1.1",
