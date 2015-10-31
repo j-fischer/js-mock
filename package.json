@@ -44,10 +44,10 @@
     "time-grunt": "1.0.0"
   },
   "files": [
-    "lib",
+    "dist",
     "Changelog.txt",
     "LICENSE.txt",
     "README.md"
   ],
-  "main": "./lib/js-mock.js"
+  "main": "./dist/js-mock.js"
 }
