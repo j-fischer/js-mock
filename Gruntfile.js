@@ -129,7 +129,15 @@ module.exports = function (grunt) {
       },
       "publish": {
         command: "npm publish"
-      }
+      },
+      "commit":(newVersion) {
+          var versionRegex = /^\d+\.\d+\.\d+$/;
+          if (!versionRegex.test(newVersion)) {
+            grunt.fail.fatal(newVersion + " is not a proper version.");
+          }
+        
+          return 'git commit -m "Updated artifacts for version ' + newVersion + '"';
+        }
     }
   });
   
@@ -155,6 +163,7 @@ module.exports = function (grunt) {
       'jsdoc'
     ];
     
+    tasks.push('shell:commit:' + newVersion);
     tasks.push('shell:version:' + newVersion);
     tasks.push('shell:publish');
     
