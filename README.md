@@ -14,7 +14,7 @@ JsMock also has the goal to simplify the setup and validation of mocks by monito
 
 Install JsMock via [npm](https://www.npmjs.com)
 
-$ npm install js-mock
+    $ npm install js-mock --save-dev
 
 and include node_modules/js-mock/lib/js-mock.js in your project. 
 
