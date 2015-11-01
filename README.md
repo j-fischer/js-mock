@@ -1,4 +1,6 @@
-# JsMock [![Build Status](https://travis-ci.org/j-fischer/js-mock.svg?branch=master)](https://travis-ci.org/j-fischer/js-mock)
+# JsMock
+
+[![Build Status](https://travis-ci.org/j-fischer/js-mock.svg?branch=master)](https://travis-ci.org/j-fischer/js-mock)
 
 A JavaScript mocking framework, which can be used with any test framework. JsMock is inspired by [jMock](http://www.jmock.org/) and [Sinon.js](http://sinonjs.org/) with its interface being very similar to Sinon in order to make it easy to switch between those two frameworks. 
 
