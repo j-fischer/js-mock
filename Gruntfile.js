@@ -50,7 +50,7 @@ module.exports = function (grunt) {
       options: {
         force: true
       },
-      links: ["dist/**", "coverage/**"]
+      links: ["coverage/**"]
     },
     
     jsdoc : {
