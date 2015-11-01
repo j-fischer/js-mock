@@ -130,7 +130,8 @@ module.exports = function (grunt) {
       "publish": {
         command: "npm publish"
       },
-      "commit":(newVersion) {
+      "commit": {
+        command: function (newVersion) {
           var versionRegex = /^\d+\.\d+\.\d+$/;
           if (!versionRegex.test(newVersion)) {
             grunt.fail.fatal(newVersion + " is not a proper version.");
@@ -138,6 +139,7 @@ module.exports = function (grunt) {
         
           return 'git commit -m "Updated artifacts for version ' + newVersion + '"';
         }
+      }
     }
   });
   
