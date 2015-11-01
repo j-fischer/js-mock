@@ -49,5 +49,8 @@
     "LICENSE.txt",
     "README.md"
   ],
-  "main": "./dist/js-mock.js"
+  "main": "./dist/js-mock.js",
+  "scripts": {
+    "test": "grunt build"
+  }
 }

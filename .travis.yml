@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - '4.1'
+before_install:
+  - currentfolder=${PWD##*/}
+  - if [ "$currentfolder" != 'js-mock' ]; then cd .. && eval "mv $currentfolder js-mock" && cd js-mock; fi
+  - npm install -g grunt-cli
+install:
+  - npm install
