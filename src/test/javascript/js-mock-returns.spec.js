@@ -25,6 +25,12 @@ describe('JsMock', function(){
       }).toThrowError(Error, "You must call allowing, exactly, never, once, twice or thrice before setting any other expectations for this mock.");
     }); 
     
+    it("should throw if callsAndReturns is already defined", function () {
+      expect(function () {
+        _myFunc.once().callsAndReturns(function () {}).returns("foo");
+      }).toThrowError(Error, "callsAndReturns() is already set for this expectation. You can only define one of those two functions for you mock");
+    });
+    
     it("should return undefined if nothing else was specified", function () {
       _myFunc.once().returns();
       

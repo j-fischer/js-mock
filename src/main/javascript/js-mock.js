@@ -66,7 +66,7 @@
       _scope = null;
       _callCount = 0;
       _expectTotalCalls = 0;
-      _expectations = {}; // {args, returnValue, will, fulfilled}
+      _expectations = {}; // {args, returnValue, calls, fulfilled}
     }
     
     function verifyScope() {
@@ -125,16 +125,31 @@
       throw new ExpectationError(_format("Unexpected invocation of '{0}' for call {1}: actual arguments: {2}.", _name, index, JSON.stringify(actualArguments)));
     }
     
+    function setProperty(obj, propertyName, value) {
+      if (propertyName === "returnValue") {
+        if ("calls" in obj) {
+          throw Error("callsAndReturns() is already set for this expectation. You can only define one of those two functions for you mock");
+        }
+      }
+      if (propertyName === "calls") {
+        if ("returnValue" in obj) {
+          throw Error("returns() is already set for this expectation. You can only define one of those two functions for you mock");
+        }
+      }
+      
+      obj[propertyName] = value;
+    }
+    
     function setInScope(propertyName, value) {
       verifyScope();
       
       if (_scope !== _ALL_CALLS) {
-        _expectations[_scope][propertyName] = value;
+        setProperty(_expectations[_scope], propertyName, value);
         return;
       }
       
       for (var index in _expectations) {
-        _expectations[index][propertyName] = value;
+        setProperty(_expectations[index], propertyName, value);
       }
     }
     
@@ -146,19 +161,19 @@
       var actualArguments = Array.prototype.slice.call(arguments);
       var expectation = findMatchingExpectation(actualArguments);
       
-      //execute function if applicable
-      if (expectation.will) {
-        try {
-          expectation.will.apply(null, actualArguments);
-        } catch (ex) {
-          throw new ExpectationError(_format("Registered action for '{0}' threw an error: {1}.", _name, JSON.stringify(ex)));
-        }
-      }
-      
       //set fulfilled
       expectation.fulfilled = true;
       
       _callCount++;
+      
+      //execute function if applicable
+      if (expectation.calls) {
+        try {
+          return expectation.calls.apply(null, actualArguments);
+        } catch (ex) {
+          throw new ExpectationError(_format("Registered action for '{0}' threw an error: {1}.", _name, JSON.stringify(ex)));
+        }
+      }
       
       //return value
       return expectation.returnValue;
@@ -258,6 +273,9 @@
      *
      * @returns {MockClass} This {@link MockClass} instance. 
      *
+     * @throws {TypeError} An error if the given argument is not a function.
+     * @throws {Error} An error if {@link Mock#callsAndReturns} has already been defined for this expectation.
+     *
      * @function Mock#returns
      */
     _thisMock.returns = function (returnValue) {
@@ -273,11 +291,17 @@
      *
      * @returns {MockClass} This {@link MockClass} instance. 
      *
-     * @function Mock#will
+     * @throws {TypeError} An error if the given argument is not a function.
+     * @throws {Error} An error if {@link Mock#returns} has already been defined for this expectation.
+     * 
+     * @function Mock#callsAndReturns
      */
-    _thisMock.will = function (func) {
-      // TODO: null check
-      setInScope("will", func);
+    _thisMock.callsAndReturns = function (func) {
+      if (typeof (func) !== "function") {
+        throw new TypeError("Argument must be a function"); 
+      }
+      
+      setInScope("calls", func);
       return _thisMock;
     };
     
@@ -403,6 +427,19 @@
     */
     _thisMock.onThirdCall = function () {
       return _thisMock.onCall(3);
+    };
+    
+   /** 
+    * Alias for callsAndReturns.
+    * 
+    * @see {@link Mock#callsAndReturns}
+    *
+    * @returns {MockClass} This {@link MockClass} instance. 
+    *
+    * @function Mock#will
+    */
+    _thisMock.will = function (func) {
+      return _thisMock.callsAndReturns(func);
     };
       
     reset();  
