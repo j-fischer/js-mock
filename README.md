@@ -172,7 +172,7 @@ The following functions are helpers that will map their calls to the API functio
 
 ## License
 
-BSD 3-clause, see [License.txt](https://github.com/j-fischer/js-mock/License.txt)
+BSD 3-clause, see [License.txt](https://github.com/j-fischer/js-mock/blob/master/LICENSE.txt)
 
 ## Note
 
