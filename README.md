@@ -183,3 +183,14 @@ BSD 3-clause, see [License.txt](https://github.com/j-fischer/js-mock/blob/master
 Until this library reaches version 1.0, there is a chance that backwards compatibility may get broken between minor versions. Please check the release notes for conflicting changes before upgrading.
 
 This project was created using [Yeoman](http://yeoman.io/) and the [js-api generator](https://www.npmjs.com/package/generator-js-api).
+
+## Changelog
+
+### 0.4.0
+
+- Minor refactoring: Made will() a alias function for the now called callsAndReturns() function. 
+- Added validation that only one return function, callsAndReturns() or returns(), can be expected. 
+
+### 0.3.0
+
+- Initial release
