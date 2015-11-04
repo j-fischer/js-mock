@@ -8,6 +8,7 @@
     "email": "johannes@jsmock.org",
     "url": "https://github.com/j-fischer/js-mock"
   },
+  "keywords": ["test", "testing", "mock", "mocking"],
   "devDependencies": {
     "grunt": "0.4.2",
     "grunt-check-dependencies": "0.3.0",
