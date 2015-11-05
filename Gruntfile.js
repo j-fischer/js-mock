@@ -53,6 +53,26 @@ module.exports = function (grunt) {
       links: ["coverage/**"]
     },
     
+    todo: {
+        options: {
+          marks: [
+            {
+              name: "FIX",
+              pattern: /FIXME/,
+              color: "red"
+            },
+            {
+              name: "TODO",
+              pattern: /TODO/,
+              color: "yellow"
+            }
+          ]
+        },
+        src: [
+          'src/**/*.js'
+        ],
+      },
+    
     jsdoc : {
       dist : {
         src: ['<%= config.app %>/*.js', '<%= config.app %>/**/*.js', 'README.md'], 
@@ -153,6 +173,7 @@ module.exports = function (grunt) {
   grunt.registerTask('build', [
     'clean',
     'jshint',
+    'todo',
     'karma:unit'
   ]);
   
