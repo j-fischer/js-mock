@@ -42,7 +42,7 @@ describe('JsMock', function(){
       expect(_myFunc("bar")).toBe("foo");
 		});
     
-    it("should if invoked different from what was expected", function () {
+    it("should throw if invoked different from what was expected", function () {
       _myFunc.allowing().withExactArgs("foo").returns("bar");
       
       expect(_myFunc("foo")).toBe("bar");
