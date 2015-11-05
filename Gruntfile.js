@@ -88,12 +88,10 @@ module.exports = function (grunt) {
       },
       unit: {
         singleRun: true,
-        browsers: ['PhantomJS'],
-        reporters: ['dots', 'coverage']
+        browsers: ['PhantomJS']
       },
       watch: {
-        browsers: ['PhantomJS'],
-        reporters: ['dots', 'coverage']
+        browsers: ['PhantomJS']
       },
       debug: {
         reporters: ['progress']

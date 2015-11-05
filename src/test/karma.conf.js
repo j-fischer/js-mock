@@ -31,7 +31,7 @@ module.exports = function (config) {
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-    reporters: ['progress', 'coverage'],
+    reporters: ['spec', 'coverage'],
     
     coverageReporter: {
       reporters: [
@@ -87,7 +87,8 @@ module.exports = function (config) {
       'karma-jasmine',
       'karma-coverage',
       'karma-phantomjs-launcher',
-      'karma-chrome-launcher'
+      'karma-chrome-launcher',
+      'karma-spec-reporter'
     ]
   });
 };
