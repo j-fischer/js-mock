@@ -23,7 +23,7 @@
     "node_modules",
     "bower_components",
     "conf",
-    "src/test",
+    "src",
     "Gruntfile.js",
     "package.json"
   ]
