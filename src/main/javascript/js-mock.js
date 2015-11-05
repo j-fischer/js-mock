@@ -75,6 +75,13 @@
       }
     }
     
+    function isMatcher(obj) {
+      return obj !== null &&
+        typeof obj === "object" &&
+        typeof obj.matches === "function" &&
+        typeof obj.describeTo === "function";
+    }
+    
     function doArgsMatch(expectedArgs, actualArgs) {
       
       if (expectedArgs === undefined) {
@@ -88,8 +95,17 @@
       
       var i, len = expectedArgs.length;
       for (i = 0; i < len; i++) {
-        //TODO: Add support for matchers here
-        if (expectedArgs[i] !== actualArgs[i]) {
+        var expectedArgument = expectedArgs[i];
+        var actualArgument = actualArgs[i];
+          
+        if (isMatcher(expectedArgument)) {
+          if (expectedArgument.matches(actualArgument)) {
+            continue;
+          }
+          return false;
+        }
+        
+        if (expectedArgument !== actualArgument) {
           return false;
         }
       }

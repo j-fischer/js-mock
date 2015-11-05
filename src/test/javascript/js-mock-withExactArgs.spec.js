@@ -95,6 +95,43 @@ describe('JsMock', function(){
       _myFunc.verify();
 		});
     
+    it("should match arguments if provided - array", function () {
+      var arr = ["foo", "bar"];
+      _myFunc.once().withExactArgs(arr);
+      
+      expectUnexpectedInvocationError(["foo", "bar"]);
+      
+      _myFunc(arr);
+		});
+    
+    it("should support JsHamcrest.Matchers", function () {
+      _myFunc.once().withExactArgs(JsHamcrest.Matchers.equivalentArray(["foo", "bar"]));
+      
+      _myFunc(["foo", "bar"]);
+      _myFunc.verify();
+      
+      _myFunc.thrice().withExactArgs(JsHamcrest.Matchers.between(4).and(7));
+      
+      _myFunc(4);
+      _myFunc(6);
+      _myFunc(7);
+    }); 
+    
+    it("should support custom matchers", function () {
+      _myFunc.thrice().withExactArgs({
+        matches: function () {
+          return true;
+        },
+        describeTo: function () {
+          return "Matches everything";
+        }
+      });
+      
+      _myFunc(["foo", "bar"]);
+      _myFunc(7);
+      _myFunc("foo");
+    }); 
+    
     it("should throw unexpected invocation if wrong argument was provided", function () {
       _myFunc.once().withExactArgs("foo");
       

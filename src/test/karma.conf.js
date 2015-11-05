@@ -14,8 +14,7 @@ module.exports = function (config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'node_modules/sinon/pkg/sinon.js',
-      'node_modules/jquery/dist/jquery.js',
+      'node_modules/jshamcrest/jshamcrest.js',
       {pattern: 'src/test/lib/*.js'},
       {pattern: 'src/main/javascript/*.js'},
       {pattern: 'src/test/javascript/*.spec.js'}

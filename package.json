@@ -8,7 +8,12 @@
     "email": "johannes@jsmock.org",
     "url": "https://github.com/j-fischer/js-mock"
   },
-  "keywords": ["test", "testing", "mock", "mocking"],
+  "keywords": [
+    "test",
+    "testing",
+    "mock",
+    "mocking"
+  ],
   "devDependencies": {
     "grunt": "0.4.2",
     "grunt-check-dependencies": "0.3.0",
@@ -27,6 +32,7 @@
     "istanbul": "0.2.7",
     "jquery": "2.1.1",
     "jsdoc-oblivion": "0.0.4",
+    "jshamcrest": "^0.7.0",
     "jshint-stylish": "1.0.0",
     "karma": "~0.12.0",
     "karma-chrome-launcher": "0.1.2",
