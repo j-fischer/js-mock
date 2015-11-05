@@ -83,12 +83,14 @@ Set the expectation for the mock to be called N number of times.
 
 ### mock.withExactArgs(<anything>...)
 
-Set the expectation to be called with the exact arguments provided. 
+Set the expectation to be called with the exact arguments provided. Any of the given arguments can be 
+a JsHamcrest style matcher. If a matcher is provided as an argument, the actual argument will
+be passed on to the `matches()` function of the matcher object.
 
     var mock = JsMock.mock("aMock");
 
     // Expect to be called like this: mock("foo", "bar");
-    mock.once().withExactArgs("foo", "bar"); 
+    mock.once().withExactArgs("foo", "bar");
 
 
 ### mock.returns(<anything>)
@@ -105,7 +107,7 @@ Set the expectation for the mock to return a given value.
 ### mock.callsAndReturns(<function>)
 
 Will execute the given function once the mock was successfully called. The arguments passed to the mock function 
-will be forwarded to the provided function and the value returned by this function will also be returned by the mock.
+will be forwarded to the provided function and the value returned by the given function will also be returned by the mock.
 
     var mock = JsMock.mock("aMock");
 
@@ -194,6 +196,7 @@ This project was created using [Yeoman](http://yeoman.io/) and the [js-api gener
 
 ### 0.4.0
 
+- Added support for JsHamcrest style matchers for withExactArgs()
 - Minor refactoring: Made will() a alias function for the now called callsAndReturns() function. 
 - Added validation that only one return function, callsAndReturns() or returns(), can be expected. 
 

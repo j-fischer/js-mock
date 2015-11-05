@@ -269,9 +269,11 @@
     };
       
     /** 
-     * Expects the function to be called with the given arguments.
+     * Expects the function to be called with the given arguments. Any of the given arguments can be 
+     * a JsHamcrest style matcher. If a matcher is provided as an argument, the actual argument will
+     * be passed on to the `matches()` function of the matcher object.
      *
-     * @param {...?(number|boolean|string|array|object|function)} arguments The index of the call (starting with 1) where the expectations should be set.
+     * @param {...?(number|boolean|string|array|object|function)} arguments The arguments to be expected when the function is invoked.
      *
      * @returns {MockClass} This {@link MockClass} instance. 
      *
@@ -301,7 +303,8 @@
       
     /** 
      * Executes a function if the mock was successfully matched. All arguments passed in to the mock function
-     * will be passed on to the function defined in here. The function will be executed before a value is returned. 
+     * will be passed on to the function defined in here. The function will be executed immediately and the
+     * value returned by the function will also be the return value of the mock. 
      *
      * @param {!function} func The function to be executed when the expectation is fulfilled.
      *
