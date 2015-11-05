@@ -155,7 +155,7 @@ module.exports = function (grunt) {
             grunt.fail.fatal(newVersion + " is not a proper version.");
           }
         
-          return 'git commit -m "Updated artifacts for version ' + newVersion + '"';
+          return 'git commit -am "Updated artifacts for version ' + newVersion + '"';
         }
       }
     }

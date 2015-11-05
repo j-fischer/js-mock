@@ -1,9 +1,8 @@
-/* js-mock v0.2.0 2015-10-30 - Copyright 2015, Johannes Fischer */
 /**
  * JsMock - A simple Javascript mocking framework.
  *
- * @author Johannes Fischer (jh-fischer@web.de)
- * @license BSD
+ * @author Johannes Fischer (johannes@jsmock.org)
+ * @license BSD-3-Clause
  *
  * Copyright (c) 2015 Johannes Fischer
  */
@@ -67,13 +66,20 @@
       _scope = null;
       _callCount = 0;
       _expectTotalCalls = 0;
-      _expectations = {}; // {args, returnValue, will, fulfilled}
+      _expectations = {}; // {args, returnValue, calls, fulfilled}
     }
     
     function verifyScope() {
       if (_scope === null) {
         throw new Error("You must call allowing, exactly, never, once, twice or thrice before setting any other expectations for this mock.");
       }
+    }
+    
+    function isMatcher(obj) {
+      return obj !== null &&
+        typeof obj === "object" &&
+        typeof obj.matches === "function" &&
+        typeof obj.describeTo === "function";
     }
     
     function doArgsMatch(expectedArgs, actualArgs) {
@@ -89,8 +95,17 @@
       
       var i, len = expectedArgs.length;
       for (i = 0; i < len; i++) {
-        //TODO: Add support for matchers here
-        if (expectedArgs[i] !== actualArgs[i]) {
+        var expectedArgument = expectedArgs[i];
+        var actualArgument = actualArgs[i];
+          
+        if (isMatcher(expectedArgument)) {
+          if (expectedArgument.matches(actualArgument)) {
+            continue;
+          }
+          return false;
+        }
+        
+        if (expectedArgument !== actualArgument) {
           return false;
         }
       }
@@ -126,16 +141,31 @@
       throw new ExpectationError(_format("Unexpected invocation of '{0}' for call {1}: actual arguments: {2}.", _name, index, JSON.stringify(actualArguments)));
     }
     
+    function setProperty(obj, propertyName, value) {
+      if (propertyName === "returnValue") {
+        if ("calls" in obj) {
+          throw Error("callsAndReturns() is already set for this expectation. You can only define one of those two functions for you mock");
+        }
+      }
+      if (propertyName === "calls") {
+        if ("returnValue" in obj) {
+          throw Error("returns() is already set for this expectation. You can only define one of those two functions for you mock");
+        }
+      }
+      
+      obj[propertyName] = value;
+    }
+    
     function setInScope(propertyName, value) {
       verifyScope();
       
       if (_scope !== _ALL_CALLS) {
-        _expectations[_scope][propertyName] = value;
+        setProperty(_expectations[_scope], propertyName, value);
         return;
       }
       
       for (var index in _expectations) {
-        _expectations[index][propertyName] = value;
+        setProperty(_expectations[index], propertyName, value);
       }
     }
     
@@ -147,19 +177,19 @@
       var actualArguments = Array.prototype.slice.call(arguments);
       var expectation = findMatchingExpectation(actualArguments);
       
-      //execute function if applicable
-      if (expectation.will) {
-        try {
-          expectation.will.apply(null, actualArguments);
-        } catch (ex) {
-          throw new ExpectationError(_format("Registered action for '{0}' threw an error: {1}.", _name, JSON.stringify(ex)));
-        }
-      }
-      
       //set fulfilled
       expectation.fulfilled = true;
       
       _callCount++;
+      
+      //execute function if applicable
+      if (expectation.calls) {
+        try {
+          return expectation.calls.apply(null, actualArguments);
+        } catch (ex) {
+          throw new ExpectationError(_format("Registered action for '{0}' threw an error: {1}.", _name, JSON.stringify(ex)));
+        }
+      }
       
       //return value
       return expectation.returnValue;
@@ -239,9 +269,11 @@
     };
       
     /** 
-     * Expects the function to be called with the given arguments.
+     * Expects the function to be called with the given arguments. Any of the given arguments can be 
+     * a JsHamcrest style matcher. If a matcher is provided as an argument, the actual argument will
+     * be passed on to the `matches()` function of the matcher object.
      *
-     * @param {...?(number|boolean|string|array|object|function)} arguments The index of the call (starting with 1) where the expectations should be set.
+     * @param {...?(number|boolean|string|array|object|function)} arguments The arguments to be expected when the function is invoked.
      *
      * @returns {MockClass} This {@link MockClass} instance. 
      *
@@ -259,6 +291,9 @@
      *
      * @returns {MockClass} This {@link MockClass} instance. 
      *
+     * @throws {TypeError} An error if the given argument is not a function.
+     * @throws {Error} An error if {@link Mock#callsAndReturns} has already been defined for this expectation.
+     *
      * @function Mock#returns
      */
     _thisMock.returns = function (returnValue) {
@@ -268,17 +303,24 @@
       
     /** 
      * Executes a function if the mock was successfully matched. All arguments passed in to the mock function
-     * will be passed on to the function defined in here. The function will be executed before a value is returned. 
+     * will be passed on to the function defined in here. The function will be executed immediately and the
+     * value returned by the function will also be the return value of the mock. 
      *
      * @param {!function} func The function to be executed when the expectation is fulfilled.
      *
      * @returns {MockClass} This {@link MockClass} instance. 
      *
-     * @function Mock#will
+     * @throws {TypeError} An error if the given argument is not a function.
+     * @throws {Error} An error if {@link Mock#returns} has already been defined for this expectation.
+     * 
+     * @function Mock#callsAndReturns
      */
-    _thisMock.will = function (func) {
-      // TODO: null check
-      setInScope("will", func);
+    _thisMock.callsAndReturns = function (func) {
+      if (typeof (func) !== "function") {
+        throw new TypeError("Argument must be a function"); 
+      }
+      
+      setInScope("calls", func);
       return _thisMock;
     };
     
@@ -404,6 +446,19 @@
     */
     _thisMock.onThirdCall = function () {
       return _thisMock.onCall(3);
+    };
+    
+   /** 
+    * Alias for callsAndReturns.
+    * 
+    * @see {@link Mock#callsAndReturns}
+    *
+    * @returns {MockClass} This {@link MockClass} instance. 
+    *
+    * @function Mock#will
+    */
+    _thisMock.will = function (func) {
+      return _thisMock.callsAndReturns(func);
     };
       
     reset();  
