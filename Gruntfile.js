@@ -192,6 +192,7 @@ module.exports = function (grunt) {
   });
   
   grunt.registerTask('website', [
+    "jsdoc",
     "shell:create-site"
   ]);
   
