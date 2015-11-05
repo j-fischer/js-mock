@@ -167,7 +167,7 @@ not fullfiled, an ExpectationError will be thrown.
     // will throw an ExpectationError
     mock.verify();
 
-### Helper functions
+### Aliases and Helpers
 
 The following functions are helpers that will map their calls to the API functions above. 
 
