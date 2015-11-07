@@ -126,6 +126,18 @@ module.exports = function (grunt) {
       }
     },
     
+    bump: {
+        options: {
+          files: ['bower.json'],
+          updateConfigs: [],
+          commit: true,
+          commitMessage: 'Updated bower.json to version v%VERSION%',
+          commitFiles: ['bower.json'],
+          createTag: false,
+          push: false
+        }
+      },
+    
     shell: {
       "create-site": {
         command: [
@@ -177,7 +189,14 @@ module.exports = function (grunt) {
     'karma:unit'
   ]);
   
-  grunt.registerTask('release', 'Build a new version and publish to NPM', function (newVersion) {    
+  grunt.registerTask('release', 'Build a new version and publish to NPM', function () {    
+    
+    var newVersion = grunt.option("setversion");
+    var versionRegex = /^\d+\.\d+\.\d+$/;
+    if (!versionRegex.test(newVersion)) {
+      grunt.fail.fatal(newVersion + " is not a proper version. Please set version using the 'setversion' option, i.e.: --setversion=0.5.0");
+    }
+    
     var tasks = [
       'build',
       'copy:dist',
@@ -185,6 +204,7 @@ module.exports = function (grunt) {
     ];
     
     tasks.push('shell:commit:' + newVersion);
+    tasks.push('bump');
     tasks.push('shell:version:' + newVersion);
     tasks.push('shell:publish');
     
