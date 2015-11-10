@@ -26,6 +26,10 @@ Or install it using [Bower](http://bower.io/)
 
 and include bower_components/js-mock/dist/js-mock.js in your project. 
 
+## Using Ember CLI
+
+Please see the [Ember JsMock](https://github.com/j-fischer/ember-js-mock) addon to add JsMock to your Ember CLI application tests.
+
 ## Getting Started
 
 The following list highlights some simple use cases of JsMock and includes some best practices. For a full reference, please check out the [API docs](http://www.jsmock.org/docs/index.html) or take a look at the [unit tests](https://github.com/j-fischer/js-mock/src/test/javascript).
