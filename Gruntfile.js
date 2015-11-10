@@ -189,6 +189,11 @@ module.exports = function (grunt) {
     'karma:unit'
   ]);
   
+  grunt.registerTask('website', [
+    "jsdoc",
+    "shell:create-site"
+  ]);
+  
   grunt.registerTask('release', 'Build a new version and publish to NPM', function () {    
     
     var newVersion = grunt.option("setversion");
@@ -200,7 +205,7 @@ module.exports = function (grunt) {
     var tasks = [
       'build',
       'copy:dist',
-      'jsdoc'
+      'website'
     ];
     
     tasks.push('shell:commit:' + newVersion);
@@ -210,11 +215,6 @@ module.exports = function (grunt) {
     
     grunt.task.run(tasks);
   });
-  
-  grunt.registerTask('website', [
-    "jsdoc",
-    "shell:create-site"
-  ]);
   
   // Setup default task that runs when you just run 'grunt'
   grunt.registerTask('default', ['build']);
