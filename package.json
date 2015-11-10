@@ -6,6 +6,10 @@
   "author": {
     "name": "Johannes Fischer",
     "email": "johannes@jsmock.org",
+    "url": "http://jsmock.org"
+  },
+  "repository": {
+    "type": "git",
     "url": "https://github.com/j-fischer/js-mock"
   },
   "keywords": [
