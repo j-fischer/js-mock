@@ -13,7 +13,7 @@
     "default": {
       "outputSourceFiles": true
     },
-    "systemName"      : "Oblivion",
+    "systemName"      : "JsMock",
     "footer"          : "",
     "copyright"       : "Copyright © 2015, Johannes Fischer",
     "navType"         : "vertical",
