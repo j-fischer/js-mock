@@ -563,12 +563,16 @@
      * mocks fails the verification.
      * 
      * @throws {ExpectationError} An error if a mock object in the current test context failed the verification.
+     * @returns {boolean} Returns <code>true</code> if all mocks were satisfied. This is useful for simple assertions
+     *                    in case a test framework requires one.
      */
     assertIfSatisfied: function () {
       var i, len = _monitoredMocks.length;
       for (i = 0; i < len; i++) {
         _monitoredMocks[i].verify();
       }
+      
+      return true;
     }
   };
   

@@ -206,7 +206,16 @@ describe('JsMock', function(){
       
       expectExpectationError(myFunc.verify, 'ExpectationError: Missing invocations for myFunc: ["Expectation for call 1 with args undefined, will return undefined."].');
       
-      JsMock.assertIfSatisfied();
-    });    
+      expect(JsMock.assertIfSatisfied()).toBe(true);
+    });
+    
+    it("returns true if all mocks are satisfied", function () {
+      var myFunc;
+      JsMock.monitorMocks(function () {
+        myFunc = JsMock.mock("myFunc");
+      });
+      
+      expect(JsMock.assertIfSatisfied()).toBe(true);
+    });
   });
 });

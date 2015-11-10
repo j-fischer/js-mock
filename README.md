@@ -59,7 +59,7 @@ When testing a module or file, the best way is to define a set of global mocks u
 
 ### JsMock.assertIfSatisfied()
 
-Calling this function will go through the list of all mocks that are currently monitored and will call `.verify()` on each of them. Should a mock fail the validation, an `ExpectationError` will be thrown.
+Calling this function will go through the list of all mocks that are currently monitored and will call `.verify()` on each of them. Should a mock fail the validation, an `ExpectationError` will be thrown. The functions returns `true` if all mocks were satisfied, which can be used to pass a simple assertion. 
 
     var mockFunction1, mockFunction2;
     JsMock.monitorMocks(function () {
@@ -69,6 +69,16 @@ Calling this function will go through the list of all mocks that are currently m
 
     // Verify all monitored mocks
     JsMock.assertIfSatisfied();
+
+If the test case requires an assertion, the following could be done:
+
+    var mockFunction1;
+    JsMock.monitorMocks(function () {
+      mockFunction1 = JsMock.mock("name1");
+    });
+
+    // Verify all monitored mocks
+    assert.ok(JsMock.assertIfSatisfied());
 
 
 ### mock.exactly(<number>)
@@ -193,6 +203,10 @@ Until this library reaches version 1.0, there is a chance that backwards compati
 This project was created using [Yeoman](http://yeoman.io/) and the [js-api generator](https://www.npmjs.com/package/generator-js-api).
 
 ## Changelog
+
+### 0.5.0
+
+- Modified assertIfSatisfied() to return a `true` if all mocks passed the verification.
 
 ### 0.4.0
 
