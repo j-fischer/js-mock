@@ -192,6 +192,11 @@ The following functions are helpers that will map their calls to the API functio
     
     mock.will(func) // instead of .callsAndReturns(func)
 
+
+## API Docs
+
+The full API documentation can be found [here](http://www.jsmock.org/docs/index.html).
+
 ## License
 
 BSD 3-clause, see [License.txt](https://github.com/j-fischer/js-mock/blob/master/LICENSE.txt)
