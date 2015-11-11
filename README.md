@@ -195,6 +195,7 @@ The following functions are helpers that will map their calls to the API functio
     mock.onThirdCall() // instead of .onCall(3)
     
     mock.will(func) // instead of .callsAndReturns(func)
+    mock.with(<anything>...) // instead of .withExactArgs(<anything>...)
 
 
 ## API Docs
