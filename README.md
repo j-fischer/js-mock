@@ -214,6 +214,10 @@ This project was created using [Yeoman](http://yeoman.io/) and the [js-api gener
 
 ## Changelog
 
+### 0.6.0
+
+- Added alias function with() for withExactArgs()
+
 ### 0.5.0
 
 - Modified assertIfSatisfied() to return a `true` if all mocks passed the verification.
