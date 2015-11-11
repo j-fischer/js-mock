@@ -460,6 +460,19 @@
     _thisMock.will = function (func) {
       return _thisMock.callsAndReturns(func);
     };
+    
+   /** 
+    * Alias for withExactArgs.
+    * 
+    * @see {@link Mock#withExactArgs}
+    *
+    * @returns {MockClass} This {@link MockClass} instance. 
+    *
+    * @function Mock#with
+    */
+    _thisMock.with = function (func) {
+      return _thisMock.withExactArgs.apply(_thisMock, Array.prototype.slice.call(arguments));
+    };
       
     reset();  
       

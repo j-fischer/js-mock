@@ -173,4 +173,40 @@ describe('JsMock', function(){
       _myFunc(true);
 		});
   });
+  
+  describe('with', function(){
+    
+    it("should throw if no calls have been expected", function () {
+      expect(function () {
+        _myFunc.with("foo");
+      }).toThrowError(Error, "You must call allowing, exactly, never, once, twice or thrice before setting any other expectations for this mock.");
+    }); 
+    
+    it("should match arguments if provided - no args", function () {
+      _myFunc.once().with();
+      
+      _myFunc();
+		});
+    
+    it("should fail if an argument was provided but none expected", function () {
+      _myFunc.once().with();
+      
+      expectUnexpectedInvocationError("foo");
+      
+      _myFunc();
+		});
+    
+    it("should throw unexpected invocation if too many arguments wer provided", function () {
+      _myFunc.once().with("foo");
+      
+      expectUnexpectedInvocationError("foo", "bar");
+      _myFunc("foo");
+		});
+    
+    it("should match multiple arguments provided", function () {
+      _myFunc.once().with("foo", "bar");
+      
+      _myFunc("foo", "bar");
+		});
+  });
 });
