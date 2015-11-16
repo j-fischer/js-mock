@@ -227,19 +227,23 @@ This project was created using [Yeoman](http://yeoman.io/) and the [js-api gener
 
 ## Changelog
 
+### 0.7.0
+
+- Modified verify() to return a `true` if all expectations are fulfilled
+
 ### 0.6.0
 
 - Added alias function with() for withExactArgs()
 
 ### 0.5.0
 
-- Modified assertIfSatisfied() to return a `true` if all mocks passed the verification.
+- Modified assertIfSatisfied() to return a `true` if all mocks passed the verification
 
 ### 0.4.0
 
 - Added support for JsHamcrest style matchers for withExactArgs()
-- Minor refactoring: Made will() a alias function for the now called callsAndReturns() function. 
-- Added validation that only one return function, callsAndReturns() or returns(), can be expected. 
+- Minor refactoring: Made will() a alias function for the now called callsAndReturns() function
+- Added validation that only one return function, callsAndReturns() or returns(), can be expected
 
 ### 0.3.0
 
