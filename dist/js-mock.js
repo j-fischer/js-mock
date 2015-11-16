@@ -328,14 +328,17 @@
      * Verifies of all set expectations of this mock are fulfilled. If not, an ExpectationError will be thrown. 
      * If the verification passes, the mock will be reset to its original state.
      * 
-     * @returns {MockClass} This {@link MockClass} instance. 
+     * @returns {boolean} Returns <code>true</code> if all expectations for this mock were satisfied. 
+     *                    This is useful for simple assertions in case a test framework requires one.
+     *
+     * @throws {ExpectationError} An ExpectationError if any expectation was not fulfilled.
      *
      * @function Mock#verify
      */  
     _thisMock.verify = function () {
       if (_scope === _STUB) {
         reset();
-        return;
+        return true;
       }
       
       var unfulfilledExpectations = [];
@@ -353,6 +356,7 @@
       }
       
       reset();
+      return true;
     };
 
    /* helpers, i.e. once, twice, onFirstCall, etc */
