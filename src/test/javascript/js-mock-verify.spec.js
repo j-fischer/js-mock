@@ -21,6 +21,14 @@ describe('JsMock', function(){
    * TESTS
    */
   describe('verify', function() {
+    it("should return 'true' if all expectations pass", function () {
+      
+      _myFunc.once();
+      
+      _myFunc();
+      
+      expect(_myFunc.verify()).toBe(true);
+		});
     
     it("should fail a single expectation", function () {
       _myFunc.once();

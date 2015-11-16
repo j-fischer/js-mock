@@ -181,6 +181,19 @@ not fullfiled, an ExpectationError will be thrown.
     // will throw an ExpectationError
     mock.verify();
 
+If the test case requires an assertion, the following could be done:
+
+    var mock = JsMock.mock("aMock");
+
+    // Expect the mock to be invoked once
+    mock.once();
+    
+    mock();
+    
+    // Verify all expectations of this mock
+    assert.ok(mock.verify());
+
+
 ### Aliases and Helpers
 
 The following functions are helpers that will map their calls to the API functions above. 
