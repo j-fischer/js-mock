@@ -24,7 +24,10 @@
     "beforeEach": false,
     "after": false,
     "afterEach": false,
+    "expect": false,
     "window": true,
-    "JsMock": true
+    "JsMock": true,
+    "$": true,
+    "jQuery": true
   }
 }
