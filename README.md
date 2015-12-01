@@ -232,7 +232,7 @@ This project was created using [Yeoman](http://yeoman.io/) and the [js-api gener
 
 ### 0.8.0
 
-- Modified mock() to support functions as the object to be mocked. If the functions contain more functions as properties, those will be mocked as well
+- Modified mock() to support a function as the object to be mocked. If the function contains more functions as properties, those will be mocked as well
 
 ### 0.7.0
 
