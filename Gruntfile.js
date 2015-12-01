@@ -8,17 +8,17 @@ module.exports = function (grunt) {
   require('time-grunt')(grunt);
   // load all grunt tasks
   require('load-grunt-tasks')(grunt);
-  
+
   // configurable paths
   var config = {
       app: 'src/main/javascript',
       test: 'src/test',
       dist: 'dist'
   };
-  
-  grunt.registerMultiTask('echo', 'Echo back input', function(){    
+
+  grunt.registerMultiTask('echo', 'Echo back input', function(){
     var data = this.data;
-    
+
     if (typeof (data) === 'string') {
       if (grunt.file.exists(data)) {
         grunt.log.writeln(grunt.file.read(data));
@@ -26,7 +26,7 @@ module.exports = function (grunt) {
         grunt.log.writeln(data);
       }
     }
-    
+
     if (typeof (data) === 'object') {
       var key;
       for (key in data) {
@@ -36,23 +36,23 @@ module.exports = function (grunt) {
       }
     }
   });
-  
+
   var pkg = grunt.file.readJSON('package.json');
   grunt.initConfig({
     pkg: pkg,
     config: config,
-    
+
     echo: {
-      help: 'README.md'        
+      help: 'README.md'
     },
-    
+
     clean: {
       options: {
         force: true
       },
       links: ["coverage/**"]
     },
-    
+
     todo: {
         options: {
           marks: [
@@ -72,10 +72,10 @@ module.exports = function (grunt) {
           'src/**/*.js'
         ],
       },
-    
+
     jsdoc : {
       dist : {
-        src: ['<%= config.app %>/*.js', '<%= config.app %>/**/*.js', 'README.md'], 
+        src: ['<%= config.app %>/*.js', '<%= config.app %>/**/*.js', 'README.md'],
         options: {
           destination: 'docs/jsdoc',
           configure: './conf/jsdoc.json',
@@ -83,14 +83,14 @@ module.exports = function (grunt) {
         }
       }
     },
-    
+
     copy: {
       dist: {
         src: '<%= config.app %>/<%= pkg.name %>.js',
         dest: '<%= config.dist %>/<%= pkg.name %>.js'
       }
     },
-    
+
     jshint: {
         options: {
             jshintrc: '.jshintrc',
@@ -101,7 +101,7 @@ module.exports = function (grunt) {
             '<%= config.app %>/{,*/}*.js'
         ]
     },
-    
+
     karma: {
       options: {
         configFile: '<%= config.test %>/karma.conf.js',
@@ -125,7 +125,7 @@ module.exports = function (grunt) {
         }
       }
     },
-    
+
     bump: {
         options: {
           files: ['bower.json'],
@@ -137,7 +137,7 @@ module.exports = function (grunt) {
           push: false
         }
       },
-    
+
     shell: {
       "create-site": {
         command: [
@@ -153,7 +153,7 @@ module.exports = function (grunt) {
           if (!versionRegex.test(newVersion)) {
             grunt.fail.fatal(newVersion + " is not a proper version.");
           }
-        
+
           return "npm version " + newVersion;
         }
       },
@@ -166,21 +166,31 @@ module.exports = function (grunt) {
           if (!versionRegex.test(newVersion)) {
             grunt.fail.fatal(newVersion + " is not a proper version.");
           }
-        
+
           return 'git commit -am "Updated artifacts for version ' + newVersion + '"';
         }
       }
     }
   });
-  
+
   // Print help
   grunt.registerTask('help', ['echo:help']);
 
   // Verify installation
   grunt.registerTask('verify', ['checkDependencies']);
-  
-  grunt.registerTask('test', ['karma:unit']);
-  
+
+  grunt.registerTask('test', "Runs the unit tests; available options: --watch or --debug", function() {
+    if (grunt.option("watch")) {
+      return grunt.task.run("karma:watch");
+    }
+
+    if (grunt.option("debug")) {
+      return grunt.task.run("karma:debug");
+    }
+
+    grunt.task.run("karma:unit");
+  });
+
   // Build
   grunt.registerTask('build', [
     'clean',
@@ -188,34 +198,34 @@ module.exports = function (grunt) {
     'todo',
     'karma:unit'
   ]);
-  
+
   grunt.registerTask('website', [
     "jsdoc",
     "shell:create-site"
   ]);
-  
-  grunt.registerTask('release', 'Build a new version and publish to NPM', function () {    
-    
+
+  grunt.registerTask('release', 'Build a new version and publish to NPM', function () {
+
     var newVersion = grunt.option("setversion");
     var versionRegex = /^\d+\.\d+\.\d+$/;
     if (!versionRegex.test(newVersion)) {
       grunt.fail.fatal(newVersion + " is not a proper version. Please set version using the 'setversion' option, i.e.: --setversion=0.5.0");
     }
-    
+
     var tasks = [
       'build',
       'copy:dist',
       'website'
     ];
-    
+
     tasks.push('shell:commit:' + newVersion);
     tasks.push('bump');
     tasks.push('shell:version:' + newVersion);
     tasks.push('shell:publish');
-    
+
     grunt.task.run(tasks);
   });
-  
+
   // Setup default task that runs when you just run 'grunt'
   grunt.registerTask('default', ['build']);
 };
