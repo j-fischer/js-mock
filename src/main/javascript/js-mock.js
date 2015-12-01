@@ -27,6 +27,44 @@
     return result;
   }
 
+  function __mock(name) {
+    var newMock = new MockClass({
+      name: name
+    });
+
+    if (_shouldMonitorMocks) {
+      _monitoredMocks.push(newMock);
+    }
+
+    return newMock;
+  }
+
+  function __mockProperties(objName, obj, objType) {
+    var result =
+      objType === "function" ?
+        __mock(objName) :
+        {};
+
+    var errors = [];
+    Object.keys(obj).forEach(function(propertyName) {
+      if (result[propertyName] !== undefined) {
+        errors.push(__format("{0} has already been assigned to the mock object.", propertyName));
+      }
+
+      if (typeof obj[propertyName] === "function") {
+        result[propertyName] = __mock(objName + "." + propertyName);
+      } else {
+        result[propertyName] = obj[propertyName];
+      }
+    });
+
+    if (errors.length > 0) {
+      throw new Error("Failed to create mock object for the following reasons: " + JSON.stringify(errors));
+    }
+
+    return result;
+  }
+
  /**
   * @class ExpectationError
   * @classdesc An ExpectationError will be thrown in any situation where a mock
@@ -484,44 +522,6 @@
   };
 
 
-  function mock(name) {
-    var newMock = new MockClass({
-      name: name
-    });
-
-    if (_shouldMonitorMocks) {
-      _monitoredMocks.push(newMock);
-    }
-
-    return newMock;
-  }
-
-  function mockProperties(objName, obj, objType) {
-    var result =
-      objType === "function" ?
-        mock(objName) :
-        {};
-
-    var errors = [];
-    Object.keys(obj).forEach(function(propertyName) {
-      if (result[propertyName] !== undefined) {
-        errors.push(__format("{0} has already been assigned to the mock object.", propertyName));
-      }
-
-      if (typeof obj[propertyName] === "function") {
-        result[propertyName] = mock(objName + "." + propertyName);
-      } else {
-        result[propertyName] = obj[propertyName];
-      }
-    });
-
-    if (errors.length > 0) {
-      throw new Error("Failed to create mock object for the following reasons: " + JSON.stringify(errors));
-    }
-
-    return result;
-  }
-
  /**
   * JavaScript mocking framework, which can be used with any test framework. JsMock is inspired by jMock and Sinon.js
   * with its interface being very similar to Sinon in order to make it easy to switch between those two frameworks.<br>
@@ -547,10 +547,10 @@
 
       var objType = typeof objectToBeMocked;
       if (objType === "function" || (objType === "object" && objectToBeMocked !== null)) {
-        return mockProperties(mockName, objectToBeMocked, objType);
+        return __mockProperties(mockName, objectToBeMocked, objType);
       }
 
-      return mock(mockName);
+      return __mock(mockName);
     },
 
     /**
