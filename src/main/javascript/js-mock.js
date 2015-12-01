@@ -1,4 +1,4 @@
-/**
+/*!
  * JsMock - A simple Javascript mocking framework.
  *
  * @author Johannes Fischer (johannes@jsmock.org)
