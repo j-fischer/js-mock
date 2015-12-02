@@ -26,6 +26,8 @@
     "afterEach": false,
     "expect": false,
     "window": true,
+    "module": true,
+    "global": true,
     "JsMock": true,
     "$": true,
     "jQuery": true
