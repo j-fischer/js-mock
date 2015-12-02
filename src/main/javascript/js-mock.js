@@ -609,11 +609,15 @@
 
   API.ExpectationError = ExpectationError;
 
-  if ( typeof define === "function") {
+  if (typeof define === "function") {
     define("js-mock", [], function() {
       return API;
     });
   }
 
-  window.JsMock = API;
+  if (typeof window !== "undefined") {
+    window.JsMock = API;
+  } else if (typeof module !== "undefined") {
+    module.exports = API;
+  }
 })();
