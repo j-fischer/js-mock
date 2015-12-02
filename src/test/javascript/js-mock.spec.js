@@ -1,7 +1,5 @@
 describe('JsMock', function(){
 
-  var _clock;
-
   /*
    * HELPER FUNCTIONS
    */
@@ -110,7 +108,7 @@ describe('JsMock', function(){
       mock.func2.verify();
     });
 
-    it("mock function with properties, such as jQuery", function () {
+    it("should mock function with properties, such as jQuery", function () {
       var targetObj = { a: 1};
       var srcObj = { foo: "bar"};
 
@@ -132,6 +130,12 @@ describe('JsMock', function(){
 
       JsMock.assertIfSatisfied();
     });
+
+    it("should throw if object is an array", function () {
+      expect(function () {
+        JsMock.mock("someArray", []);
+      }).toThrowError(TypeError, "Mocking of arrays is not supported");
+    });
   });
 
   describe('monitorMocks function', function(){
@@ -139,7 +143,7 @@ describe('JsMock', function(){
     afterEach(function() {
       JsMock.monitorMocks(function () {
         // clean monitor
-      })
+      });
     });
 
     it("should throw if argument is not a function", function () {
@@ -215,7 +219,7 @@ describe('JsMock', function(){
     it("should bubble exception", function () {
       expect(function () {
         JsMock.monitorMocks(function () {
-          throw new Error("Some error in monitorMocks!!!")
+          throw new Error("Some error in monitorMocks!!!");
         });
       }).toThrowError("Some error in monitorMocks!!!");
     });
@@ -239,6 +243,46 @@ describe('JsMock', function(){
       });
 
       expect(JsMock.assertIfSatisfied()).toBe(true);
+    });
+  });
+
+  describe('mockGlobal function', function(){
+    it("throws if globalObjectName is not of type string", function () {
+      expect(JsMock.mockGlobal).toThrowError(TypeError, "The first argument must be a string");
+      expect(function () {
+        JsMock.mockGlobal(123);
+      }).toThrowError(TypeError, "The first argument must be a string");
+      expect(function () {
+        JsMock.mockGlobal([]);
+      }).toThrowError(TypeError, "The first argument must be a string");
+    });
+
+    it("throws if the global object is undefined", function () {
+      expect(function () {
+        JsMock.mockGlobal("doesNotExist");
+      }).toThrowError(TypeError, "Global variable 'doesNotExist' must be an object or a function, but was 'undefined'");
+    });
+
+    it("throws if the global object is not null", function () {
+      window.cannotMock = null;
+      expect(function () {
+        JsMock.mockGlobal("cannotMock");
+      }).toThrowError(TypeError, "Global variable 'cannotMock' cannot be null");
+    });
+
+    it("throws if the global object is not supported", function () {
+      window.cannotMock = [];
+      expect(function () {
+        JsMock.mockGlobal("cannotMock");
+      }).toThrowError(TypeError, "Mocking of arrays is not supported");
+    });
+
+    it("should not activate the global mock by default", function () {
+      expect(jQuery).toBe($);
+
+      var jqueryMock = JsMock.mockGlobal("$");
+
+      expect(jQuery).toBe($);
     });
   });
 });

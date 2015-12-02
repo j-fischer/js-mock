@@ -14,7 +14,18 @@
 
   /* variables */
   var _shouldMonitorMocks = false;
-  var _monitoredMocks = [];
+  var _monitor = {
+    mocks: [],
+    globalMocks: []
+  };
+
+  /* internal functions */
+  function __resetMonitor() {
+    _monitor = {
+      mocks: [],
+      globalMocks: []
+    };
+  }
 
   function __format() {
     var result = arguments[0];
@@ -27,22 +38,26 @@
     return result;
   }
 
-  function __mock(name) {
+  function __createSimpleMock(name) {
     var newMock = new MockClass({
       name: name
     });
 
     if (_shouldMonitorMocks) {
-      _monitoredMocks.push(newMock);
+      _monitor.mocks.push(newMock);
     }
 
     return newMock;
   }
 
-  function __mockProperties(objName, obj, objType) {
+  function __createObjectOrFunctionMock(objName, obj, objType) {
+    if (obj.constructor === Array) {
+      throw new TypeError("Mocking of arrays is not supported");
+    }
+
     var result =
       objType === "function" ?
-        __mock(objName) :
+        __createSimpleMock(objName) :
         {};
 
     var errors = [];
@@ -52,7 +67,7 @@
       }
 
       if (typeof obj[propertyName] === "function") {
-        result[propertyName] = __mock(objName + "." + propertyName);
+        result[propertyName] = __createSimpleMock(objName + "." + propertyName);
       } else {
         result[propertyName] = obj[propertyName];
       }
@@ -63,6 +78,37 @@
     }
 
     return result;
+  }
+
+  function __mockGlobal(globalObjectName) {
+    var contextObject = typeof window === 'undefined' ?
+      global : //Node
+      window; //Browser
+
+    var original = contextObject[globalObjectName];
+    var orgType = typeof original;
+    if (orgType !== "function" && orgType !== "object") {
+      throw new TypeError(__format("Global variable '{0}' must be an object or a function, but was '{1}'", globalObjectName, orgType));
+    }
+
+    if (original === null) {
+      throw new TypeError(__format("Global variable '{0}' cannot be null", globalObjectName));
+    }
+
+    var mock = __createObjectOrFunctionMock(globalObjectName, original, orgType);
+
+    var globalMock = new GlobalMockClass({
+      globalObjectName: globalObjectName,
+      global: contextObject,
+      original: original,
+      mock: mock
+    });
+
+    if (_shouldMonitorMocks) {
+      _monitor.globalMocks.push(globalMock);
+    }
+
+    return globalMock;
   }
 
  /**
@@ -81,6 +127,70 @@
   }
   ExpectationError.prototype = Object.create(Error.prototype);
   ExpectationError.prototype.constructor = ExpectationError;
+
+  /**
+  * Internal - Instantiated by JsMock.
+  *
+  * @name GlobalMock
+  * @private
+  * @class
+  *
+  * @classdesc TBD
+  */
+  var GlobalMockClass = function (args) {
+    var _mock = args.mock;
+    var _global = args.global;
+    var _original = args.original;
+    var _globalObjectName = args.globalObjectName;
+
+    function verifyActive() {
+      if (_global[_globalObjectName] === _original)
+        throw new Error("Mock object has not been activated");
+    }
+
+    function verifyMocks() {
+      if (typeof(_mock) === "function") {
+        _mock.verify();
+      }
+
+      var verificationErrors = [];
+      Object.keys(_mock).forEach(function(propertyName) {
+        var property = _mock[propertyName];
+
+        if (typeof property !== "function") {
+          return;
+        }
+
+        property.verify();
+      });
+
+      if (verificationErrors.length > 0) {
+        throw new ExpectationError(__format("Missing invocations for {0}: {1}.", _globalObjectName, JSON.stringify(verificationErrors))); //TODO: improve message format
+      }
+    }
+
+    function restoreOriginal() {
+      _global[_globalObjectName] = _original;
+    }
+
+    return {
+      mock: function () {
+        verifyActive();
+
+        return _mock;
+      },
+      activate: function () {
+        _global[_globalObjectName] = _mock;
+      },
+      restore: restoreOriginal,
+      verify: verifyMocks,
+      verifyAndRestore: function () {
+        restoreOriginal();
+        verifyMocks();
+      }
+    };
+  };
+
 
  /**
   * Internal - Instantiated by JsMock.
@@ -539,6 +649,8 @@
      *
      * @param {string} mockName A named to be used to idenfify this mock object. The name will be include in any thrown {@link ExpectationError}.
      * @param {object|function} objectToBeMocked The object to be cloned with mock functions. Only functions will be mocked, any other property values will simply be copied over.
+     *
+     * @returns {MockClass} a mock object
      */
     mock: function (mockName, objectToBeMocked) {
       if (typeof mockName !== "string" || !mockName) {
@@ -547,10 +659,28 @@
 
       var objType = typeof objectToBeMocked;
       if (objType === "function" || (objType === "object" && objectToBeMocked !== null)) {
-        return __mockProperties(mockName, objectToBeMocked, objType);
+        return __createObjectOrFunctionMock(mockName, objectToBeMocked, objType);
       }
 
-      return __mock(mockName);
+      return __createSimpleMock(mockName);
+    },
+
+
+    /**
+     * Creates a mock object for a global variable.<br>
+     * <br>
+     * The global variable must be of a type 'object' or 'function' and cannot be <code>null</code>.
+     *
+     * @param {string} globalObjectName The name of the global variable as it is registered with either the <code>window</code> or <code>global</code> object.
+     *
+     * @returns {GlobalMockClass} mock object for the global variable
+     */
+    mockGlobal: function (globalObjectName) {
+      if (typeof globalObjectName !== "string" || !globalObjectName) {
+        throw new TypeError("The first argument must be a string");
+      }
+
+      return __mockGlobal(globalObjectName);
     },
 
     /**
@@ -576,7 +706,7 @@
       }
 
       // Clean up monitored mocks so that the same JsMock context can be used between test files
-      _monitoredMocks = [];
+      __resetMonitor();
 
       try {
         _shouldMonitorMocks = true;
@@ -592,15 +722,24 @@
      * All mock objects that where created in the factory function of <code>monitorMocks()</code>
      * will be verified and an {@link ExpectationError} will be thrown if any of those
      * mocks fails the verification.
+     * <br>
+     * Any global mocks that were created using <code>mockGlobal()</code> will also be restored.
      *
      * @throws {ExpectationError} An error if a mock object in the current test context failed the verification.
      * @returns {boolean} Returns <code>true</code> if all mocks were satisfied. This is useful for simple assertions
      *                    in case a test framework requires one.
      */
     assertIfSatisfied: function () {
-      var i, len = _monitoredMocks.length;
+      var i, len = _monitor.globalMocks.length;
+
+      // First restore to ensure the proper state for the next test
       for (i = 0; i < len; i++) {
-        _monitoredMocks[i].verify();
+        _monitor.globalMocks[i].restore();
+      }
+
+      len = _monitor.mocks.length;
+      for (i = 0; i < len; i++) {
+        _monitor.mocks[i].verify();
       }
 
       return true;
