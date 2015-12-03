@@ -173,8 +173,9 @@
       _global[_globalObjectName] = _original;
     }
 
+    //FIXME: jsDoc
     return {
-      mock: function () {
+      expect: function () {
         verifyActive();
 
         return _mock;
