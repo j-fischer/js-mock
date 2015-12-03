@@ -12,6 +12,10 @@
   var _STUB = "STUB"; // Makes a mock behave like a stub
   var _ALL_CALLS = "ALL_INVOCATIONS"; // The scope of the invocations, i.e. exactly(3).returns('foo'); means return 'foo' for all invocations
 
+  /* diagnostic variables */
+  var _logsEnabled = false;
+  var _idCounter = 0;
+
   /* variables */
   var _shouldMonitorMocks = false;
   var _monitor = {
@@ -20,7 +24,18 @@
   };
 
   /* internal functions */
+  function __generateId() {
+    return _idCounter++;
+  }
+
+  function __log() {
+    if (_logsEnabled && console) {
+      console.log(__format.apply(null, Array.prototype.slice.call(arguments)));
+    }
+  }
+
   function __resetMonitor() {
+    __log("Resetting monitor");
     _monitor = {
       mocks: [],
       globalMocks: []
@@ -44,6 +59,7 @@
     });
 
     if (_shouldMonitorMocks) {
+      __log("Adding '{0}' to monitor", newMock.__toString());
       _monitor.mocks.push(newMock);
     }
 
@@ -188,6 +204,9 @@
       verifyAndRestore: function () {
         restoreOriginal();
         verifyMocks();
+      },
+      __toString: function () {
+        return __format("Global({0})", _mock.__toString());
       }
     };
   };
@@ -207,11 +226,15 @@
   */
   var MockClass = function (args) {
 
+    var _id = __generateId();
     var _name = args.name;
+
+    __log("Instantiating mock '{0}:{1}'", _name, _id);
 
     var _scope, _callCount, _expectTotalCalls, _expectations;
 
     function reset() {
+      __log("Resetting mock '{0}:{1}'", _name, _id);
       _scope = null;
       _callCount = 0;
       _expectTotalCalls = 0;
@@ -284,6 +307,7 @@
           break;
         }
 
+        __log("Matched expectation '{0}' for mock '{1}:{2}'", index, _name, _id);
         return expectation;
       }
 
@@ -308,6 +332,7 @@
     function setInScope(propertyName, value) {
       verifyScope();
 
+      __log("Setting '{0}' for mock '{1}:{2}'", propertyName, _name, _id);
       if (_scope !== _ALL_CALLS) {
         setProperty(_expectations[_scope], propertyName, value);
         return;
@@ -485,6 +510,7 @@
      * @function Mock#verify
      */
     _thisMock.verify = function () {
+      __log("Verifying mock '{0}:{1}'", _name, _id);
       if (_scope === _STUB) {
         reset();
         return true;
@@ -623,8 +649,11 @@
     *
     * @function Mock#with
     */
-    _thisMock.with = function (func) {
-      return _thisMock.withExactArgs.apply(_thisMock, Array.prototype.slice.call(arguments));
+    _thisMock.with = _thisMock.withExactArgs;
+
+    /* For debugging purposes */
+    _thisMock.__toString = function () {
+      return _name + ":" + _id;
     };
 
     reset();
@@ -744,15 +773,24 @@
 
       // First restore to ensure the proper state for the next test
       for (i = 0; i < len; i++) {
-        _monitor.globalMocks[i].restore();
+        var globalMock = _monitor.globalMocks[i];
+        __log("Asserting global mock '{0}'", globalMock.__toString());
+        globalMock.restore();
       }
 
       len = _monitor.mocks.length;
       for (i = 0; i < len; i++) {
-        _monitor.mocks[i].verify();
+        var mock = _monitor.mocks[i];
+        __log("Asserting mock '{0}'", mock.__toString());
+        mock.verify();
       }
 
       return true;
+    },
+
+    /* For internal debugging purposes */
+    __enableLogs: function() {
+      _logsEnabled = true;
     }
   };
 
