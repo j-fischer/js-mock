@@ -114,7 +114,7 @@ module.exports = function (grunt) {
         browsers: ['PhantomJS']
       },
       debug: {
-        reporters: ['progress']
+        reporters: ['spec']
       }
     },
 
@@ -179,12 +179,12 @@ module.exports = function (grunt) {
   // Verify installation
   grunt.registerTask('verify', ['checkDependencies']);
 
-  grunt.registerTask('test', "Runs the unit tests; available options: --watch or --debug", function() {
+  grunt.registerTask('test', "Runs the unit tests; available options: --watch or --chrome", function() {
     if (grunt.option("watch")) {
       return grunt.task.run("karma:watch");
     }
 
-    if (grunt.option("debug")) {
+    if (grunt.option("chrome")) {
       return grunt.task.run("karma:debug");
     }
 
