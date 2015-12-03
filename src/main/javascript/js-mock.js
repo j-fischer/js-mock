@@ -701,7 +701,7 @@
      *
      * @param {function} factoryFunc A function that will create mock objects for the current test context.
      */
-    monitorMocks: function (factoryFunc) {
+    monitorMocks: function (factoryFunc) { //TODO: rename to watch and deprecate
       if (typeof factoryFunc !== "function") {
         throw new TypeError("The first argument must be a function");
       }
@@ -739,7 +739,7 @@
      * @returns {boolean} Returns <code>true</code> if all mocks were satisfied. This is useful for simple assertions
      *                    in case a test framework requires one.
      */
-    assertIfSatisfied: function () {
+    assertIfSatisfied: function () { //TODO: Rename to assertWatched and deprecate
       var i, len = _monitor.globalMocks.length;
 
       // First restore to ensure the proper state for the next test
