@@ -716,6 +716,15 @@
       }
     },
 
+    // FIXME: jsDoc
+    activateWatched: function () {
+      var i, len = _monitor.globalMocks.length;
+
+      for (i = 0; i < len; i++) {
+        _monitor.globalMocks[i].activate();
+      }
+    },
+
     /**
      * Verify all mocks registered in the current test context.<br>
      * <br>
