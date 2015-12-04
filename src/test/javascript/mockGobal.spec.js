@@ -41,12 +41,12 @@ describe('JsMock', function(){
       }).toThrowError(TypeError, "Mocking of arrays is not supported");
     });
 
-    it("should not activate the global mock by default", function () {
+    it("should activate the global mock by default", function () {
       expect(jQuery).toBe($);
 
       var jqueryMock = JsMock.mockGlobal("$");
 
-      expect(jQuery).toBe($);
+      expect(jQuery).not.toBe($);
     });
   });
 });

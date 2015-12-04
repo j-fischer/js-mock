@@ -23,14 +23,14 @@ describe('GlobalMock', function(){
   describe('expect', function(){
 
     it("should throw if not activated", function() {
+      _jQueryMock.restore();
+
       expect(function () {
         _jQueryMock.expect().once();
       }).toThrowError(Error, "Mock object has not been activated");
     });
 
     it("should allow to mock the function if the global object is one", function () {
-      _jQueryMock.activate();
-
       _jQueryMock.expect().once().with("div");
 
       expectExpectationError(function () {
@@ -43,8 +43,6 @@ describe('GlobalMock', function(){
      it("should allow to mock any property", function () {
       var target = {};
       var source = {};
-
-      _jQueryMock.activate();
 
       _jQueryMock.expect().extend.once().with(target, source).returns(target);
 

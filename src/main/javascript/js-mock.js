@@ -124,6 +124,8 @@
       _monitor.globalMocks.push(globalMock);
     }
 
+    globalMock.activate();
+
     return globalMock;
   }
 
