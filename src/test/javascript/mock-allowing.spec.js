@@ -2,8 +2,10 @@ describe('Mock', function(){
 
   var _myFunc;
 
-  JsMock.monitorMocks(function () {
-    _myFunc = JsMock.mock("Allowing.myFunc");
+  beforeEach(function () {
+    JsMock.monitorMocks(function () {
+      _myFunc = JsMock.mock("Allowing.myFunc");
+    });
   });
 
   afterEach(function () {

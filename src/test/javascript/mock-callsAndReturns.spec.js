@@ -2,8 +2,10 @@ describe('Mock', function(){
 
   var _myFunc;
 
-  JsMock.monitorMocks(function () {
-    _myFunc = JsMock.mock("WithExactArgs.myFunc");
+  beforeEach(function () {
+    JsMock.monitorMocks(function () {
+      _myFunc = JsMock.mock("CallsAndReturns.myFunc");
+    });
   });
 
   afterEach(function () {
@@ -36,12 +38,12 @@ describe('Mock', function(){
       }).toThrowError(Error, "You must call allowing, exactly, never, once, twice or thrice before setting any other expectations for this mock.");
     });
 
-    it("should throw AssertionError if function throws an exception", function () {
+    it("should throw ExpectationError if function throws an exception", function () {
       _myFunc.once().callsAndReturns(function () {
         throw "some error";
       });
 
-      expectExpectationError(_myFunc, "ExpectationError: Registered action for 'WithExactArgs.myFunc' threw an error: \"some error\".");
+      expectExpectationError(_myFunc, "ExpectationError: Registered action for 'CallsAndReturns.myFunc' threw an error: \"some error\".");
     });
 
     it("should pass the arguments to the function", function () {
@@ -62,6 +64,8 @@ describe('Mock', function(){
       });
 
       expect(_myFunc.returns).toThrowError(Error, "callsAndReturns() is already set for this expectation. You can only define one of those two functions for you mock");
+
+      _myFunc();
     });
   });
 

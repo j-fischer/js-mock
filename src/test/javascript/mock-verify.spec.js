@@ -2,8 +2,10 @@ describe('Mock', function(){
 
   var _myFunc;
 
-  JsMock.monitorMocks(function () {
-    _myFunc = JsMock.mock("Verify.myFunc");
+  beforeEach(function () {
+    JsMock.monitorMocks(function () {
+      _myFunc = JsMock.mock("Verify.myFunc");
+    });
   });
 
   afterEach(function () {
@@ -34,6 +36,8 @@ describe('Mock', function(){
       _myFunc.once();
 
       expectMissingInvocationError('ExpectationError: Missing invocations for Verify.myFunc: ["Expectation for call 1 with args undefined, will return undefined."].');
+
+      _myFunc();
     });
 
     it("should list all failing expectations", function () {
@@ -42,6 +46,9 @@ describe('Mock', function(){
       _myFunc.onSecondCall().withExactArgs(1).returns(2);
 
       expectMissingInvocationError('ExpectationError: Missing invocations for Verify.myFunc: ["Expectation for call 1 with args [\\"foo\\"], will return \\"bar\\".","Expectation for call 2 with args [1], will return 2."].');
+
+      _myFunc("foo");
+      _myFunc(1);
     });
   });
 });

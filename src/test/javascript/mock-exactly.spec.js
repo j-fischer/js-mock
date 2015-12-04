@@ -2,8 +2,10 @@ describe('Mock', function(){
 
   var _myFunc;
 
-  JsMock.monitorMocks(function () {
-    _myFunc = JsMock.mock("WithExactArgs.myFunc");
+  beforeEach(function () {
+    JsMock.monitorMocks(function () {
+      _myFunc = JsMock.mock("Exactly.myFunc");
+    });
   });
 
   afterEach(function () {
@@ -18,11 +20,11 @@ describe('Mock', function(){
   }
 
   function expectAlreadyInvokedError(numOfTimes) {
-    expectExpectationError(_myFunc, "ExpectationError: 'WithExactArgs.myFunc' already called " + numOfTimes + " time(s).");
+    expectExpectationError(_myFunc, "ExpectationError: 'Exactly.myFunc' already called " + numOfTimes + " time(s).");
   }
 
   function expectMissingInvocationError(numOfExpectedInvocations) {
-    expectExpectationError(_myFunc.verify, 'ExpectationError: Missing invocations for WithExactArgs.myFunc: ["Expectation for call ' + numOfExpectedInvocations + ' with args undefined, will return undefined."].');
+    expectExpectationError(_myFunc.verify, 'ExpectationError: Missing invocations for Exactly.myFunc: ["Expectation for call ' + numOfExpectedInvocations + ' with args undefined, will return undefined."].');
   }
 
 
@@ -44,6 +46,8 @@ describe('Mock', function(){
         _myFunc.once();
 
         expectMissingInvocationError(1);
+
+        _myFunc();
       });
 
       it("should pass if invoked once", function () {
@@ -70,6 +74,8 @@ describe('Mock', function(){
         _myFunc();
 
         expectMissingInvocationError(2);
+
+        _myFunc();
       });
 
       it("should pass if invoked twice", function () {
@@ -100,6 +106,8 @@ describe('Mock', function(){
         _myFunc();
 
         expectMissingInvocationError(3);
+
+        _myFunc();
       });
 
       it("should pass if invoked three times", function () {
@@ -140,6 +148,8 @@ describe('Mock', function(){
         _myFunc();
 
         expectMissingInvocationError(5);
+
+        _myFunc();
       });
 
       it("should pass if invoked 5 times", function () {

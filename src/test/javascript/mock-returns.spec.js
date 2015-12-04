@@ -2,8 +2,10 @@ describe('Mock', function(){
 
   var _myFunc;
 
-  JsMock.monitorMocks(function () {
-    _myFunc = JsMock.mock("Returns.myFunc");
+  beforeEach(function () {
+    JsMock.monitorMocks(function () {
+      _myFunc = JsMock.mock("Returns.myFunc");
+    });
   });
 
   afterEach(function () {
@@ -29,6 +31,8 @@ describe('Mock', function(){
       expect(function () {
         _myFunc.once().callsAndReturns(function () {}).returns("foo");
       }).toThrowError(Error, "callsAndReturns() is already set for this expectation. You can only define one of those two functions for you mock");
+
+      _myFunc();
     });
 
     it("should return undefined if nothing else was specified", function () {
