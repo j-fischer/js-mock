@@ -29,5 +29,21 @@ describe('JsMock', function(){
 
       expect(JsMock.assertIfSatisfied()).toBe(true);
     });
+
+    it("restores all global mocks, even if some are not fulfilled", function () {
+      var myFunc, $Mock, jQueryMock;
+      JsMock.monitorMocks(function () {
+        myFunc = JsMock.mock("myFunc");
+        $Mock = JsMock.mockGlobal("$");
+        jQueryMock = JsMock.mockGlobal("jQuery");
+      });
+
+      $Mock.expect().once().with("div");
+
+      expectExpectationError(JsMock.assertIfSatisfied, 'ExpectationError: Missing invocations for $: ["Expectation for call 1 with args [\\"div\\"], will return undefined."].');
+
+      expect($.verify).toBe(undefined);
+      expect($).toBe(jQuery);
+    });
   });
 });

@@ -167,11 +167,15 @@
     }
 
     function verifyMocks() {
+      var verificationErrors = [];
       if (typeof(_mock) === "function") {
-        _mock.verify();
+        try {
+          _mock.verify();
+        } catch (ex) {
+          verificationErrors.push(ex.message);
+        }
       }
 
-      var verificationErrors = [];
       Object.keys(_mock).forEach(function(propertyName) {
         var property = _mock[propertyName];
 
@@ -179,7 +183,12 @@
           return;
         }
 
-        property.verify();
+        try {
+          // If the main object is a function, it will contain mock's functions mixed with the original's function
+          property.verify && property.verify();
+        } catch (ex) {
+          verificationErrors.push(ex.message);
+        }
       });
 
       if (verificationErrors.length > 0) {
@@ -201,14 +210,14 @@
       activate: function () {
         _global[_globalObjectName] = _mock;
       },
-      restore: restoreOriginal,
       verify: verifyMocks,
-      verifyAndRestore: function () {
+      restore: function () {
         restoreOriginal();
         verifyMocks();
       },
+      restoreWithoutVerifying: restoreOriginal,
       __toString: function () {
-        return __format("Global({0})", _mock.__toString());
+        return __format("Global({0})", _globalObjectName);
       }
     };
   };
@@ -776,8 +785,8 @@
       // First restore to ensure the proper state for the next test
       for (i = 0; i < len; i++) {
         var globalMock = _monitor.globalMocks[i];
-        __log("Asserting global mock '{0}'", globalMock.__toString());
-        globalMock.restore();
+        __log("Restoring global mock '{0}'", globalMock.__toString());
+        globalMock.restoreWithoutVerifying();
       }
 
       len = _monitor.mocks.length;
