@@ -185,7 +185,9 @@
 
         try {
           // If the main object is a function, it will contain mock's functions mixed with the original's function
-          property.verify && property.verify();
+          if (property.verify) {
+            property.verify();
+          }
         } catch (ex) {
           verificationErrors.push(ex.message);
         }
