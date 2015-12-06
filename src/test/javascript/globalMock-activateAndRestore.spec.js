@@ -31,6 +31,12 @@ describe('GlobalMock', function(){
       expect($).toBe(jQuery);
     });
 
+    it("should return true", function() {
+      expect($).not.toBe(jQuery);
+
+      expect(_jQueryMock.restore()).toBe(true);
+    });
+
     it("should also verify mock", function() {
       _jQueryMock.expect().once().with("div");
 
@@ -51,7 +57,7 @@ describe('GlobalMock', function(){
       _jQueryMock.expect().once().with("div");
 
       _jQueryMock.restoreWithoutVerifying();
-     
+
       expect($).toBe(jQuery);
 
       _jQueryMock.activate();

@@ -196,6 +196,8 @@
       if (verificationErrors.length > 0) {
         throw new ExpectationError(__format("Missing invocations for {0}: {1}.", _globalObjectName, JSON.stringify(verificationErrors))); //TODO: improve message format
       }
+
+      return true;
     }
 
     function restoreOriginal() {
@@ -215,7 +217,7 @@
       verify: verifyMocks,
       restore: function () {
         restoreOriginal();
-        verifyMocks();
+        return verifyMocks();
       },
       restoreWithoutVerifying: restoreOriginal,
       __toString: function () {
