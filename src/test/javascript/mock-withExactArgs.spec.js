@@ -119,6 +119,14 @@ describe('Mock', function(){
       _myFunc(7);
     });
 
+    it("should throw JsHamcrest.Matchers if JsHamcrest Matcher fails", function () {
+      _myFunc.once().withExactArgs(JsHamcrest.Matchers.between(4).and(7));
+
+      expectUnexpectedInvocationError(1);
+
+      _myFunc(4);
+    });
+
     it("should support custom matchers", function () {
       _myFunc.thrice().withExactArgs({
         matches: function () {

@@ -136,5 +136,19 @@ describe('JsMock', function(){
         JsMock.mock("someArray", []);
       }).toThrowError(TypeError, "Mocking of arrays is not supported");
     });
+
+    it("should throw if object to be mocked contains conflicting functions", function () {
+      var objectWithConflictingApiFunctions = function () {
+        return "foo";
+      };
+
+      objectWithConflictingApiFunctions.with = function() {
+        return "bar";
+      };
+
+      expect(function () {
+        JsMock.mock("conflictingApiFunctions", objectWithConflictingApiFunctions);
+      }).toThrowError(Error, 'Failed to create mock object for the following reasons: ["\'with\' has already been assigned to the mock object."]');
+    });
   });
 });

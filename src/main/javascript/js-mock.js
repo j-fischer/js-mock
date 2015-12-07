@@ -79,7 +79,7 @@
     var errors = [];
     Object.keys(obj).forEach(function(propertyName) {
       if (result[propertyName] !== undefined) {
-        errors.push(__format("{0} has already been assigned to the mock object.", propertyName));
+        errors.push(__format("'{0}' has already been assigned to the mock object.", propertyName));
       }
 
       if (typeof obj[propertyName] === "function") {
