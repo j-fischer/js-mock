@@ -97,11 +97,19 @@
   }
 
   function __mockGlobal(globalObjectName) {
+    var objectSelectors = globalObjectName.split(".");
     var contextObject = typeof window === 'undefined' ?
       global : //Node
       window; //Browser
 
-    var original = contextObject[globalObjectName];
+    var original = contextObject[objectSelectors[0]];
+
+    var i, len = objectSelectors.length;
+    for (i = 1; i < len; i++) {
+      contextObject = original;
+      original = contextObject[objectSelectors[i]];
+    }
+
     var orgType = typeof original;
     if (orgType !== "function" && orgType !== "object") {
       throw new TypeError(__format("Global variable '{0}' must be an object or a function, but was '{1}'", globalObjectName, orgType));
@@ -114,8 +122,8 @@
     var mock = __createObjectOrFunctionMock(globalObjectName, original, orgType);
 
     var globalMock = new GlobalMockClass({
-      globalObjectName: globalObjectName,
-      global: contextObject,
+      propertyName: objectSelectors.pop(),
+      context: contextObject,
       original: original,
       mock: mock
     });
@@ -157,12 +165,12 @@
   */
   var GlobalMockClass = function (args) {
     var _mock = args.mock;
-    var _global = args.global;
+    var _context = args.context;
     var _original = args.original;
-    var _globalObjectName = args.globalObjectName;
+    var _propertyName = args.propertyName;
 
     function verifyActive() {
-      if (_global[_globalObjectName] === _original)
+      if (_context[_propertyName] === _original)
         throw new Error("Mock object has not been activated");
     }
 
@@ -194,14 +202,14 @@
       });
 
       if (verificationErrors.length > 0) {
-        throw new ExpectationError(__format("Missing invocations for {0}: {1}.", _globalObjectName, JSON.stringify(verificationErrors))); //TODO: improve message format
+        throw new ExpectationError(__format("Missing invocations for {0}: {1}.", _propertyName, JSON.stringify(verificationErrors))); //TODO: improve message format
       }
 
       return true;
     }
 
     function restoreOriginal() {
-      _global[_globalObjectName] = _original;
+      _context[_propertyName] = _original;
     }
 
     //FIXME: jsDoc
@@ -212,7 +220,7 @@
         return _mock;
       },
       activate: function () {
-        _global[_globalObjectName] = _mock;
+        _context[_propertyName] = _mock;
       },
       verify: verifyMocks,
       restore: function () {
@@ -221,7 +229,7 @@
       },
       restoreWithoutVerifying: restoreOriginal,
       __toString: function () {
-        return __format("Global({0})", _globalObjectName);
+        return __format("Global({0})", _propertyName);
       }
     };
   };
@@ -758,15 +766,6 @@
         factoryFunc();
       } finally {
         _shouldMonitorMocks = false;
-      }
-    },
-
-    // FIXME: jsDoc
-    activateWatched: function () {
-      var i, len = _monitor.globalMocks.length;
-
-      for (i = 0; i < len; i++) {
-        _monitor.globalMocks[i].activate();
       }
     },
 

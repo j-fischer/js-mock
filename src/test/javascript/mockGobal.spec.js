@@ -47,6 +47,23 @@ describe('JsMock', function(){
       var jqueryMock = JsMock.mockGlobal("$");
 
       expect(jQuery).not.toBe($);
+
+      jqueryMock.restore();
+    });
+
+    it("should mock partial objects if path is provided", function () {
+      expect(jQuery).toBe($);
+
+      var jqueryMock = JsMock.mockGlobal("$.ajax");
+
+      expect(jQuery).toBe($);
+
+      expect($.extend({1: 2}, {foo: "bar"})).toEqual({1:2, foo: "bar"});
+
+      expect($.ajax.verify).toBeTruthy();
+      expectExpectationError($.ajax, "ExpectationError: '$.ajax' already called 0 time(s).");
+
+      jqueryMock.restore();
     });
   });
 });
