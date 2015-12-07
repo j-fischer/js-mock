@@ -54,7 +54,7 @@
   }
 
   function __createSimpleMock(name) {
-    var newMock = new MockClass({
+    var newMock = __MockFactory({
       name: name
     });
 
@@ -121,7 +121,7 @@
 
     var mock = __createObjectOrFunctionMock(globalObjectName, original, orgType);
 
-    var globalMock = new GlobalMockClass({
+    var globalMock = __GlobalMockFactory({
       propertyName: objectSelectors.pop(),
       context: contextObject,
       original: original,
@@ -163,7 +163,7 @@
   *
   * @classdesc TBD
   */
-  var GlobalMockClass = function (args) {
+  var __GlobalMockFactory = function (args) {
     var _mock = args.mock;
     var _context = args.context;
     var _original = args.original;
@@ -247,7 +247,7 @@
   * invocations of the mocked function and will match every call of this function
   * against those expectations.
   */
-  var MockClass = function (args) {
+  var __MockFactory = function (args) {
 
     var _id = __generateId();
     var _name = args.name;
