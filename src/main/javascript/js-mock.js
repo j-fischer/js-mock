@@ -129,6 +129,7 @@
     });
 
     if (_shouldMonitorMocks) {
+      __log("Adding '{0}' to monitor", globalMock.__toString());
       _monitor.globalMocks.push(globalMock);
     }
 
@@ -172,6 +173,9 @@
     var _original = args.original;
     var _propertyName = args.propertyName;
 
+    var _id = __generateId();
+    __log("Instantiating global mock '{0}:{1}'", _propertyName, _id);
+
     function verifyActive() {
       if (_context[_propertyName] === _original)
         throw new Error("Mock object has not been activated");
@@ -212,6 +216,7 @@
     }
 
     function restoreOriginal() {
+      __log("Restoring global mock '{0}:{1}'", _propertyName, _id);
       _context[_propertyName] = _original;
     }
 
@@ -223,6 +228,7 @@
         return _mock;
       },
       activate: function () {
+        __log("Activating global mock '{0}:{1}'", _propertyName, _id);
         _context[_propertyName] = _mock;
       },
       verify: verifyMocks,
@@ -231,8 +237,10 @@
         return verifyMocks();
       },
       restoreWithoutVerifying: restoreOriginal,
+
+      /* For debugging purposes */
       __toString: function () {
-        return __format("Global({0})", _propertyName);
+        return __format("GlobalMock({0})", _propertyName);
       }
     };
   };
