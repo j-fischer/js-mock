@@ -161,7 +161,10 @@
   * @private
   * @class
   *
-  * @classdesc TBD
+  * @classdesc The object returned by <code>JsMock.mockGlobal</code> representing the mock
+  * for a global function or function property. The object to verify the mock and restore
+  * the original object and allows the definition of expectations without having to use
+  * the original in a test case at all.
   */
   var __GlobalMockFactory = function (args) {
     var _mock = args.mock;
