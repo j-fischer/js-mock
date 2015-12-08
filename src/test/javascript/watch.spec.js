@@ -46,15 +46,15 @@ describe('JsMock', function(){
       myFunc1.once();
       myFunc2.once();
 
-      expectExpectationError(JsMock.assertIfSatisfied, 'ExpectationError: Missing invocations for myFunc1: ["Expectation for call 1 with args undefined, will return undefined."].');
+      expectExpectationError(JsMock.assertWatched, 'ExpectationError: Missing invocations for myFunc1: ["Expectation for call 1 with args undefined, will return undefined."].');
 
       myFunc1();
 
-      expectExpectationError(JsMock.assertIfSatisfied, 'ExpectationError: Missing invocations for myFunc2: ["Expectation for call 1 with args undefined, will return undefined."].');
+      expectExpectationError(JsMock.assertWatched, 'ExpectationError: Missing invocations for myFunc2: ["Expectation for call 1 with args undefined, will return undefined."].');
 
       myFunc2();
 
-      JsMock.assertIfSatisfied();
+      JsMock.assertWatched();
     });
 
     it("should override all previously monitored mocks", function () {
@@ -68,7 +68,7 @@ describe('JsMock', function(){
       });
 
       // assert should fail for func1
-      expectExpectationError(JsMock.assertIfSatisfied, 'ExpectationError: Missing invocations for myFunc1: ["Expectation for call 1 with args undefined, will return undefined."].');
+      expectExpectationError(JsMock.assertWatched, 'ExpectationError: Missing invocations for myFunc1: ["Expectation for call 1 with args undefined, will return undefined."].');
 
       // Now, monitor func2 instead of func1
       JsMock.watch(function () {
@@ -78,11 +78,11 @@ describe('JsMock', function(){
       });
 
       // assert should fail for func2
-      expectExpectationError(JsMock.assertIfSatisfied, 'ExpectationError: Missing invocations for myFunc2: ["Expectation for call 1 with args undefined, will return undefined."].');
+      expectExpectationError(JsMock.assertWatched, 'ExpectationError: Missing invocations for myFunc2: ["Expectation for call 1 with args undefined, will return undefined."].');
 
       myFunc2();
 
-      JsMock.assertIfSatisfied();
+      JsMock.assertWatched();
 
       // verify for func1 should still fail
       expectExpectationError(myFunc1.verify, 'ExpectationError: Missing invocations for myFunc1: ["Expectation for call 1 with args undefined, will return undefined."].');

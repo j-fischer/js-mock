@@ -9,7 +9,7 @@ describe('Mock', function(){
   });
 
   afterEach(function () {
-    JsMock.assertIfSatisfied();
+    JsMock.assertWatched();
   });
 
   /*

@@ -128,7 +128,7 @@ describe('JsMock', function(){
       expect(jqueryMock("div")).toBe("foo");
       expect(jqueryMock.extend(targetObj, srcObj)).toBe(targetObj);
 
-      JsMock.assertIfSatisfied();
+      JsMock.assertWatched();
     });
 
     it("should throw if object is an array", function () {

@@ -8,7 +8,7 @@ describe('GlobalMock', function(){
     });
   });
 
-  afterEach(JsMock.assertIfSatisfied);
+  afterEach(JsMock.assertWatched);
 
   /*
    * HELPER FUNCTIONS

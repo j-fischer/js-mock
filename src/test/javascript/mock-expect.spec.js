@@ -8,7 +8,7 @@ describe('Mock', function(){
     });
   });
 
-  afterEach(JsMock.assertIfSatisfied);
+  afterEach(JsMock.assertWatched);
 
   /*
    * TESTS
