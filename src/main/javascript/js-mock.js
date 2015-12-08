@@ -138,6 +138,23 @@
     return globalMock;
   }
 
+  function __watch(factoryFunc) {
+    if (typeof factoryFunc !== "function") {
+      throw new TypeError("The first argument must be a function");
+    }
+
+    // Clean up monitored mocks so that the same JsMock context can be used between test files
+    __resetMonitor();
+
+    try {
+      _shouldMonitorMocks = true;
+      factoryFunc();
+    } finally {
+      _shouldMonitorMocks = false;
+    }
+  }
+
+
 
  /**
   * @class ExpectationError
@@ -824,21 +841,15 @@
      *
      * @throws {TypeError} A type error if the argument is not a {function}.
      */
-    monitorMocks: function (factoryFunc) { //TODO: rename to watch and deprecate
-      if (typeof factoryFunc !== "function") {
-        throw new TypeError("The first argument must be a function");
-      }
+    watch: __watch,
 
-      // Clean up monitored mocks so that the same JsMock context can be used between test files
-      __resetMonitor();
-
-      try {
-        _shouldMonitorMocks = true;
-        factoryFunc();
-      } finally {
-        _shouldMonitorMocks = false;
-      }
-    },
+   /**
+    * Alias for JsMock.watch().
+    *
+    * @see {@link js-mock#watch}
+    * @deprecated since version 0.9
+    */
+    monitorMocks: __watch,
 
     /**
      * Verify all mocks registered in the current test context.<br>

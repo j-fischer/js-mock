@@ -76,14 +76,14 @@ Like any other mock object, the global mock can be verfied at any time with a si
     // Restore jQuery to be the original API and not the mock anymore. This will also verify that all expectations have been fulfilled
     jqueryMock.restore();
 
-### JsMock.monitorMocks()
+### JsMock.watch()
 
-When testing a module or file, the best way is to define a set of global mocks using the `monitorMocks()` function,
+When testing a module or file, the best way is to define a set of global mocks using the `watch()` function,
 which can be shared between the test cases. All mocks created inside the factory function will be added to the current
 test context and can be verified with a single call to `JsMock.assertIfSatisfied()`.
 
     var mockFunction1, mockFunction2;
-    JsMock.monitorMocks(function () {
+    JsMock.watch(function () {
       mockFunction1 = JsMock.mock("name1");
       mockFunction2 = JsMock.mock("name2");
     });
@@ -96,7 +96,7 @@ Should a mock fail the validation, an `ExpectationError` will be thrown. The fun
 which can be used to pass a simple assertion. Any monitored global mock will also be restored when `.assertIfSatisfied()` is called.
 
     var mockFunction1, mockFunction2, jQueryMock;
-    JsMock.monitorMocks(function () {
+    JsMock.watch(function () {
       mockFunction1 = JsMock.mock("name1");
       mockFunction2 = JsMock.mock("name2");
 
@@ -109,7 +109,7 @@ which can be used to pass a simple assertion. Any monitored global mock will als
 If the test case requires an assertion, the following could be done:
 
     var mockFunction1;
-    JsMock.monitorMocks(function () {
+    JsMock.watch(function () {
       mockFunction1 = JsMock.mock("name1");
     });
 
@@ -246,7 +246,7 @@ The following functions are helpers that will map their calls to the API functio
 ## Frameworks and Best Practices
 
 While JsMock is test framework independent, there are best practices when using it with a framework. In general, it is important to understand how the test framework
-loads and executes its tests. Especially when `JsMock.monitorMocks()` is used, it is crucial to ensure that it governs the context of the current test file, otherwise
+loads and executes its tests. Especially when `JsMock.watch()` is used, it is crucial to ensure that it governs the context of the current test file, otherwise
 your tests may pass with unfulfilled expecations. Below are some examples on how to use JsMock with [Jasmine](http://jasmine.github.io/2.0/introduction.html) and [QUnit](https://qunitjs.com/).
 
 ### Jasmine
@@ -256,7 +256,7 @@ your tests may pass with unfulfilled expecations. Below are some examples on how
       var mockFunc, jQueryMock;
 
       beforeEach(function () {
-        JsMock.monitorMocks(function () {
+        JsMock.watch(function () {
           mockFunc = JsMock.mock("mockFunc");
           jQueryMock = JsMock.mockGlobal("$");
         }
@@ -279,7 +279,7 @@ your tests may pass with unfulfilled expecations. Below are some examples on how
 
     QUnit.module("A test", {
       beforeEach: function () {
-        JsMock.monitorMocks(function () {
+        JsMock.watch(function () {
           mockFunc = JsMock.mock("mockFunc");
           jQueryMock = JsMock.mockGlobal("$");
         }
@@ -318,6 +318,7 @@ This project was created using [Yeoman](http://yeoman.io/) and the [js-api gener
 
 - Added JsMock.mockGlobal() which allows for replacing global variables or a child property of a global variable
 - Added Mock.expect() in order to match the API of GlobalMock object. This allows to switch from a global mock to non-global version without having to change the expectations
+- Added JsMock.watch() as the better alternative for JsMock.monitorMocks(). JsMock.monitorMocks() is now an alias for JsMock.watch() and has been deprecated
 
 ### 0.8.0
 

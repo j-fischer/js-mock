@@ -10,35 +10,35 @@ describe('JsMock', function(){
   /*
    * TESTS
    */
-  describe('monitorMocks', function(){
+  describe('watch', function(){
 
     beforeEach(function() {
-      JsMock.monitorMocks(function () {
+      JsMock.watch(function () {
         // clean monitor
       });
     });
 
     it("should throw if argument is not a function", function () {
       expect(function () {
-        JsMock.monitorMocks();
+        JsMock.watch();
       }).toThrowError(TypeError, "The first argument must be a function");
 
       expect(function () {
-        JsMock.monitorMocks(null);
+        JsMock.watch(null);
       }).toThrowError(TypeError, "The first argument must be a function");
 
       expect(function () {
-        JsMock.monitorMocks({});
+        JsMock.watch({});
       }).toThrowError(TypeError, "The first argument must be a function");
 
       expect(function () {
-        JsMock.monitorMocks([]);
+        JsMock.watch([]);
       }).toThrowError(TypeError, "The first argument must be a function");
     });
 
     it("should succeed verification if no expectation is set", function () {
       var myFunc1, myFunc2;
-      JsMock.monitorMocks(function () {
+      JsMock.watch(function () {
         myFunc1 = JsMock.mock("myFunc1");
         myFunc2 = JsMock.mock("myFunc2");
       });
@@ -61,7 +61,7 @@ describe('JsMock', function(){
       var myFunc1, myFunc2;
 
       // Monitor func1
-      JsMock.monitorMocks(function () {
+      JsMock.watch(function () {
         myFunc1 = JsMock.mock("myFunc1");
 
         myFunc1.once();
@@ -71,7 +71,7 @@ describe('JsMock', function(){
       expectExpectationError(JsMock.assertIfSatisfied, 'ExpectationError: Missing invocations for myFunc1: ["Expectation for call 1 with args undefined, will return undefined."].');
 
       // Now, monitor func2 instead of func1
-      JsMock.monitorMocks(function () {
+      JsMock.watch(function () {
         myFunc2 = JsMock.mock("myFunc2");
 
         myFunc2.once();
@@ -90,10 +90,17 @@ describe('JsMock', function(){
 
     it("should bubble exception", function () {
       expect(function () {
-        JsMock.monitorMocks(function () {
-          throw new Error("Some error in monitorMocks!!!");
+        JsMock.watch(function () {
+          throw new Error("Some error in watch!!!");
         });
-      }).toThrowError("Some error in monitorMocks!!!");
+      }).toThrowError("Some error in watch!!!");
+    });
+  });
+
+  describe('monitorMocks', function(){
+
+    it ("should be exactly the same function as watch()", function () {
+      expect(JsMock.monitorMocks).toBe(JsMock.watch);
     });
   });
 });
