@@ -842,14 +842,14 @@
 
     /**
      * When testing a module or file, the best way is to define a set of global mocks,
-     * which can be shared between the test cases using the <code>JsMock.monitorMocks()</code> function.
+     * which can be shared between the test cases using the <code>JsMock.watch()</code> function.
      * All mocks created inside the factory function will be added to the current test
      * context and can be verified with a single call to <code>JsMock.assertWatched()</code>.<br>
      * <br>
      * For example:
      * <pre>
      *    var mockFunction1, mockFunction2;
-     *    JsMock.monitorMocks(function () {
+     *    JsMock.watch(function () {
      *      mockFunction1 = JsMock.mock("name1");
      *      mockFunction2 = JsMock.mock("name2");
      *    });
@@ -872,7 +872,7 @@
     /**
      * Verify all mocks registered in the current test context.<br>
      * <br>
-     * All mock objects that where created in the factory function of <code>monitorMocks()</code>
+     * All mock objects that where created in the factory function of <code>watch()</code>
      * will be verified and an {@link ExpectationError} will be thrown if any of those
      * mocks fails the verification.
      * <br>
