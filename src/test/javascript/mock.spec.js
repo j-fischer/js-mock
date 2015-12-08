@@ -113,7 +113,7 @@ describe('JsMock', function(){
       var srcObj = { foo: "bar"};
 
       var jqueryMock;
-      JsMock.monitorMocks(function () {
+      JsMock.watch(function () {
         jqueryMock = JsMock.mock("$", $);
       });
 

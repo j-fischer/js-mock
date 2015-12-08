@@ -3,7 +3,7 @@ describe('GlobalMock', function(){
   var _jQueryMock;
 
   beforeEach(function () {
-    JsMock.monitorMocks(function () {
+    JsMock.watch(function () {
       _jQueryMock = JsMock.mockGlobal("$");
     });
   });

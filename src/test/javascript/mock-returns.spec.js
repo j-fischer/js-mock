@@ -3,7 +3,7 @@ describe('Mock', function(){
   var _myFunc;
 
   beforeEach(function () {
-    JsMock.monitorMocks(function () {
+    JsMock.watch(function () {
       _myFunc = JsMock.mock("Returns.myFunc");
     });
   });

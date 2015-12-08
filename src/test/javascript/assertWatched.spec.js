@@ -24,7 +24,7 @@ describe('JsMock', function(){
 
     it("returns true if all mocks are satisfied", function () {
       var myFunc;
-      JsMock.monitorMocks(function () {
+      JsMock.watch(function () {
         myFunc = JsMock.mock("myFunc");
       });
 
@@ -33,7 +33,7 @@ describe('JsMock', function(){
 
     it("restores all global mocks, even if some are not fulfilled", function () {
       var myFunc, $Mock, jQueryMock;
-      JsMock.monitorMocks(function () {
+      JsMock.watch(function () {
         myFunc = JsMock.mock("myFunc");
         $Mock = JsMock.mockGlobal("$");
         jQueryMock = JsMock.mockGlobal("jQuery");
