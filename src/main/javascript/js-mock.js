@@ -858,6 +858,8 @@
      * @param {function} factoryFunc A function that will create mock objects for the current test context.
      *
      * @throws {TypeError} A type error if the argument is not a {function}.
+     *
+     * @function module:js-mock.watch
      */
     watch: __watch,
 
@@ -866,6 +868,8 @@
     *
     * @see {@link module:js-mock.watch}
     * @deprecated since version 0.9
+    *
+    * @function module:js-mock.monitorMocks
     */
     monitorMocks: __watch,
 
@@ -881,6 +885,8 @@
      * @throws {ExpectationError} An error if a mock object in the current test context failed the verification.
      * @returns {boolean} Returns <code>true</code> if all mocks were satisfied. This is useful for simple assertions
      *                    in case a test framework requires one.
+     *
+     * @function module:js-mock.assertWatched
      */
     assertWatched: __assertWatched,
 
@@ -889,6 +895,8 @@
     *
     * @see {@link module:js-mock.assertWatched}
     * @deprecated since version 0.9
+    *
+    * @function module:js-mock.assertIfSatisfied
     */
     assertIfSatisfied: __assertWatched,
 
