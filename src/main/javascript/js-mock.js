@@ -138,6 +138,7 @@
     return globalMock;
   }
 
+
  /**
   * @class ExpectationError
   * @classdesc An ExpectationError will be thrown in any situation where a mock
@@ -154,6 +155,7 @@
   }
   ExpectationError.prototype = Object.create(Error.prototype);
   ExpectationError.prototype.constructor = ExpectationError;
+
 
   /**
   * Internal - Instantiated by JsMock.
@@ -220,22 +222,61 @@
       _context[_propertyName] = _original;
     }
 
-    //FIXME: jsDoc
     return {
+     /**
+      * Returns the mock object of this GlobalMock in order to set some expectations.
+      *
+      * @returns {Mock} The {@link Mock} instance representing this global mock object.
+      * @throws {Error} An error if this GlobalMock is not active.
+      *
+      * @see {@link Mock}
+      *
+      * @function GlobalMock#expect
+      */
       expect: function () {
         verifyActive();
 
         return _mock;
       },
+
+     /**
+      * Activates this <code>GlobalMock</code> by replacing the global, original object with the {@link Mock} instance.
+      *
+      * @function GlobalMock#activate
+      */
       activate: function () {
         __log("Activating global mock '{0}:{1}'", _propertyName, _id);
         _context[_propertyName] = _mock;
       },
+
+     /**
+      * Verifies the entire mock object with all its properties and the main function, if available.
+      *
+      * @throws {ExpectationError} An expectation error if at least one expectation was not fulfilled.
+      *
+      * @function GlobalMock#verify
+      */
       verify: verifyMocks,
+
+     /**
+      * First restores the original object and then verifies if all expectations have been fulfilled.
+      *
+      * @throws {ExpectationError} An expectation error if at least one expectation was not fulfilled.
+      *
+      * @see {@link GlobalMock#verify}
+      *
+      * @function GlobalMock#restore
+      */
       restore: function () {
         restoreOriginal();
         return verifyMocks();
       },
+
+     /**
+      * Restores the original object of this <code>GlobalMock</code> instance.
+      *
+      * @function GlobalMock#restoreWithoutVerifying
+      */
       restoreWithoutVerifying: restoreOriginal,
 
       /* For debugging purposes */
@@ -403,13 +444,12 @@
       return expectation.returnValue;
     };
 
-
     /**
      * Set the expectation for the mock to be called 'x' number of times.
      *
      * @param {number} count The number of times how often this mock is expected to be called.
      *
-     * @returns {MockClass} This {@link MockClass} instance.
+     * @returns {Mock} This {@link Mock} instance.
      *
      * @function Mock#exactly
      */
@@ -428,7 +468,7 @@
      *
      * @param {number} count The number of times how often this mock is expected to be called.
      *
-     * @returns {MockClass} This {@link MockClass} instance.
+     * @returns {Mock} This {@link Mock} instance.
      *
      * @function Mock#exactly
      */
@@ -454,7 +494,7 @@
      *
      * @param {number} number The index of the call (starting with 1) where the expectations should be set.
      *
-     * @returns {MockClass} This {@link MockClass} instance.
+     * @returns {Mock} This {@link Mock} instance.
      *
      * @function Mock#onCall
      */
@@ -483,7 +523,7 @@
      *
      * @param {...?(number|boolean|string|array|object|function)} arguments The arguments to be expected when the function is invoked.
      *
-     * @returns {MockClass} This {@link MockClass} instance.
+     * @returns {Mock} This {@link Mock} instance.
      *
      * @function Mock#withExactArgs
      */
@@ -497,7 +537,7 @@
      *
      * @param {?(number|boolean|string|array|object|function)} returnValue The value to be returned when the function is invoked.
      *
-     * @returns {MockClass} This {@link MockClass} instance.
+     * @returns {Mock} This {@link Mock} instance.
      *
      * @throws {TypeError} An error if the given argument is not a function.
      * @throws {Error} An error if {@link Mock#callsAndReturns} has already been defined for this expectation.
@@ -516,7 +556,7 @@
      *
      * @param {!function} func The function to be executed when the expectation is fulfilled.
      *
-     * @returns {MockClass} This {@link MockClass} instance.
+     * @returns {Mock} This {@link Mock} instance.
      *
      * @throws {TypeError} An error if the given argument is not a function.
      * @throws {Error} An error if {@link Mock#returns} has already been defined for this expectation.
@@ -574,7 +614,7 @@
     *
     * @see {@link Mock#exactly}
     *
-    * @returns {MockClass} This {@link MockClass} instance.
+    * @returns {Mock} This {@link Mock} instance.
     *
     * @function Mock#never
     */
@@ -588,7 +628,7 @@
      *
      * @see {@link Mock#exactly}
      *
-     * @returns {MockClass} This {@link MockClass} instance.
+     * @returns {Mock} This {@link Mock} instance.
      *
      * @function Mock#once
      */
@@ -601,7 +641,7 @@
     *
     * @see {@link Mock#exactly}
     *
-    * @returns {MockClass} This {@link MockClass} instance.
+    * @returns {Mock} This {@link Mock} instance.
     *
     * @function Mock#twice
     */
@@ -614,7 +654,7 @@
     *
     * @see {@link Mock#exactly}
     *
-    * @returns {MockClass} This {@link MockClass} instance.
+    * @returns {Mock} This {@link Mock} instance.
     *
     * @function Mock#thrice
     */
@@ -627,7 +667,7 @@
     *
     * @see {@link Mock#onCall}
     *
-    * @returns {MockClass} This {@link MockClass} instance.
+    * @returns {Mock} This {@link Mock} instance.
     *
     * @function Mock#onFirstCall
     */
@@ -640,7 +680,7 @@
     *
     * @see {@link Mock#onCall}
     *
-    * @returns {MockClass} This {@link MockClass} instance.
+    * @returns {Mock} This {@link Mock} instance.
     *
     * @function Mock#onSecondCall
     */
@@ -653,7 +693,7 @@
     *
     * @see {@link Mock#onCall}
     *
-    * @returns {MockClass} This {@link MockClass} instance.
+    * @returns {Mock} This {@link Mock} instance.
     *
     * @function Mock#onThirdCall
     */
@@ -666,7 +706,7 @@
     *
     * @see {@link Mock#callsAndReturns}
     *
-    * @returns {MockClass} This {@link MockClass} instance.
+    * @returns {Mock} This {@link Mock} instance.
     *
     * @function Mock#will
     */
@@ -679,7 +719,7 @@
     *
     * @see {@link Mock#withExactArgs}
     *
-    * @returns {MockClass} This {@link MockClass} instance.
+    * @returns {Mock} This {@link Mock} instance.
     *
     * @function Mock#with
     */
@@ -714,7 +754,7 @@
      * @param {string} mockName A named to be used to idenfify this mock object. The name will be include in any thrown {@link ExpectationError}.
      * @param {object|function} objectToBeMocked The object to be cloned with mock functions. Only functions will be mocked, any other property values will simply be copied over.
      *
-     * @returns {MockClass} a mock object
+     * @returns {Mock} a mock object
      */
     mock: function (mockName, objectToBeMocked) {
       if (typeof mockName !== "string" || !mockName) {
@@ -731,13 +771,19 @@
 
 
     /**
-     * Creates a mock object for a global variable.<br>
+     * Creates a mock object for a global variable or a child property of it. For the replacement of a child property, the path to the property must be provided, separated by a '.'.<br>
+     * For example, <code>JsMock.mockGlobal("$")</code> will mock the entire jQuery library, while <code>JsMock.mockGlobal("$.ajax")</code> will only mock the ajax() function, but leave
+     * the remaining jQuery API intact.
      * <br>
      * The global variable must be of a type 'object' or 'function' and cannot be <code>null</code>.
      *
      * @param {string} globalObjectName The name of the global variable as it is registered with either the <code>window</code> or <code>global</code> object.
      *
-     * @returns {GlobalMockClass} mock object for the global variable
+     * @throws {TypeError} A type error if the argument is not a {string} or empty.
+     * @throws {TypeError} A type error if the global object cannot be mocked.
+     * @throws {TypeError} A type error if the global object is a function and contains properties conflicting with the {@link Mock} API.
+     *
+     * @returns {GlobalMock} mock object for the global variable
      */
     mockGlobal: function (globalObjectName) {
       if (typeof globalObjectName !== "string" || !globalObjectName) {
@@ -763,6 +809,8 @@
      * </pre>
      *
      * @param {function} factoryFunc A function that will create mock objects for the current test context.
+     *
+     * @throws {TypeError} A type error if the argument is not a {function}.
      */
     monitorMocks: function (factoryFunc) { //TODO: rename to watch and deprecate
       if (typeof factoryFunc !== "function") {
