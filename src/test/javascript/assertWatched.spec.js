@@ -10,7 +10,8 @@ describe('JsMock', function(){
   /*
    * TESTS
    */
-  describe('assertIfSatisfied', function(){
+  describe('assertWatched', function() {
+
     it("passes if no expectations are monitored", function () {
       var myFunc = JsMock.mock("myFunc");
 
@@ -18,7 +19,7 @@ describe('JsMock', function(){
 
       expectExpectationError(myFunc.verify, 'ExpectationError: Missing invocations for myFunc: ["Expectation for call 1 with args undefined, will return undefined."].');
 
-      expect(JsMock.assertIfSatisfied()).toBe(true);
+      expect(JsMock.assertWatched()).toBe(true);
     });
 
     it("returns true if all mocks are satisfied", function () {
@@ -27,7 +28,7 @@ describe('JsMock', function(){
         myFunc = JsMock.mock("myFunc");
       });
 
-      expect(JsMock.assertIfSatisfied()).toBe(true);
+      expect(JsMock.assertWatched()).toBe(true);
     });
 
     it("restores all global mocks, even if some are not fulfilled", function () {
@@ -40,10 +41,17 @@ describe('JsMock', function(){
 
       $Mock.expect().once().with("div");
 
-      expectExpectationError(JsMock.assertIfSatisfied, 'ExpectationError: Missing invocations for $: ["Expectation for call 1 with args [\\"div\\"], will return undefined."].');
+      expectExpectationError(JsMock.assertWatched, 'ExpectationError: Missing invocations for $: ["Expectation for call 1 with args [\\"div\\"], will return undefined."].');
 
       expect($.verify).toBe(undefined);
       expect($).toBe(jQuery);
+    });
+  });
+
+  describe('assertIfSatisfied', function() {
+
+    it("should exactly be the same function as assertWatched", function () {
+      expect(JsMock.assertIfSatisfied).toBe(JsMock.assertWatched);
     });
   });
 });

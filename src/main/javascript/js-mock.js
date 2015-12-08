@@ -154,7 +154,25 @@
     }
   }
 
+  function __assertWatched() {
+    var i, len = _monitor.globalMocks.length;
 
+    // First restore to ensure the proper state for the next test
+    for (i = 0; i < len; i++) {
+      var globalMock = _monitor.globalMocks[i];
+      __log("Restoring global mock '{0}'", globalMock.__toString());
+      globalMock.restoreWithoutVerifying();
+    }
+
+    len = _monitor.mocks.length;
+    for (i = 0; i < len; i++) {
+      var mock = _monitor.mocks[i];
+      __log("Asserting mock '{0}'", mock.__toString());
+      mock.verify();
+    }
+
+    return true;
+  }
 
  /**
   * @class ExpectationError
@@ -826,7 +844,7 @@
      * When testing a module or file, the best way is to define a set of global mocks,
      * which can be shared between the test cases using the <code>JsMock.monitorMocks()</code> function.
      * All mocks created inside the factory function will be added to the current test
-     * context and can be verified with a single call to <code>JsMock.assertIfSatisfied()</code>.<br>
+     * context and can be verified with a single call to <code>JsMock.assertWatched()</code>.<br>
      * <br>
      * For example:
      * <pre>
@@ -864,25 +882,15 @@
      * @returns {boolean} Returns <code>true</code> if all mocks were satisfied. This is useful for simple assertions
      *                    in case a test framework requires one.
      */
-    assertIfSatisfied: function () { //TODO: Rename to assertWatched and deprecate
-      var i, len = _monitor.globalMocks.length;
+    assertWatched: __assertWatched,
 
-      // First restore to ensure the proper state for the next test
-      for (i = 0; i < len; i++) {
-        var globalMock = _monitor.globalMocks[i];
-        __log("Restoring global mock '{0}'", globalMock.__toString());
-        globalMock.restoreWithoutVerifying();
-      }
-
-      len = _monitor.mocks.length;
-      for (i = 0; i < len; i++) {
-        var mock = _monitor.mocks[i];
-        __log("Asserting mock '{0}'", mock.__toString());
-        mock.verify();
-      }
-
-      return true;
-    },
+   /**
+    * Alias for JsMock.assertWatched().
+    *
+    * @see {@link js-mock#assertWatched}
+    * @deprecated since version 0.9
+    */
+    assertIfSatisfied: __assertWatched,
 
     /* For internal debugging purposes */
     __enableLogs: function() {

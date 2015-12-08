@@ -80,7 +80,7 @@ Like any other mock object, the global mock can be verfied at any time with a si
 
 When testing a module or file, the best way is to define a set of global mocks using the `watch()` function,
 which can be shared between the test cases. All mocks created inside the factory function will be added to the current
-test context and can be verified with a single call to `JsMock.assertIfSatisfied()`.
+test context and can be verified with a single call to `JsMock.assertWatched()`.
 
     var mockFunction1, mockFunction2;
     JsMock.watch(function () {
@@ -89,11 +89,11 @@ test context and can be verified with a single call to `JsMock.assertIfSatisfied
     });
 
 
-### JsMock.assertIfSatisfied()
+### JsMock.assertWatched()
 
 Calling this function will go through the list of all mocks that are currently monitored and will call `.verify()` on each of them.
 Should a mock fail the validation, an `ExpectationError` will be thrown. The functions returns `true` if all mocks were satisfied,
-which can be used to pass a simple assertion. Any monitored global mock will also be restored when `.assertIfSatisfied()` is called.
+which can be used to pass a simple assertion. Any monitored global mock will also be restored when `.assertWatched()` is called.
 
     var mockFunction1, mockFunction2, jQueryMock;
     JsMock.watch(function () {
@@ -104,7 +104,7 @@ which can be used to pass a simple assertion. Any monitored global mock will als
     });
 
     // Verify all monitored mocks and restore globals
-    JsMock.assertIfSatisfied();
+    JsMock.assertWatched();
 
 If the test case requires an assertion, the following could be done:
 
@@ -114,7 +114,7 @@ If the test case requires an assertion, the following could be done:
     });
 
     // Verify all monitored mocks
-    assert.ok(JsMock.assertIfSatisfied());
+    assert.ok(JsMock.assertWatched());
 
 
 ### mock.exactly(<number>)
@@ -262,7 +262,7 @@ your tests may pass with unfulfilled expecations. Below are some examples on how
         }
       });
 
-      afterEach(JsMock.assertIfSatisfied);
+      afterEach(JsMock.assertWatched);
 
       it ("test 1", function() {
         // set expectations and test
@@ -285,7 +285,7 @@ your tests may pass with unfulfilled expecations. Below are some examples on how
         }
       },
       afterEach: function (assert) {
-        assert.ok(JsMock.assertIfSatisfied());
+        assert.ok(JsMock.assertWatched());
       }
     });
 
@@ -319,6 +319,7 @@ This project was created using [Yeoman](http://yeoman.io/) and the [js-api gener
 - Added JsMock.mockGlobal() which allows for replacing global variables or a child property of a global variable
 - Added Mock.expect() in order to match the API of GlobalMock object. This allows to switch from a global mock to non-global version without having to change the expectations
 - Added JsMock.watch() as the better alternative for JsMock.monitorMocks(). JsMock.monitorMocks() is now an alias for JsMock.watch() and has been deprecated
+- Added JsMock.assertWatched() as the better alternative for JsMock.assertIfSatiesfied(). JsMock.assertIfSatisfied() is now an alias for JsMock.assertWatched() and has been deprecated
 
 ### 0.8.0
 
