@@ -317,6 +317,7 @@ This project was created using [Yeoman](http://yeoman.io/) and the [js-api gener
 ### 0.9.0
 
 - Added JsMock.mockGlobal() which allows for replacing global variables or a child property of a global variable
+- Added Mock.expect() in order to match the API of GlobalMock object. This allows to switch from a global mock to non-global version without having to change the expectations
 
 ### 0.8.0
 

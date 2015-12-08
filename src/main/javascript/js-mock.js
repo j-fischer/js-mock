@@ -445,6 +445,18 @@
     };
 
     /**
+     * Simply returns this {@link Mock} instance. The function was added to match the API for {@link GlobalMock} so that
+     * the expectations can be defined with the same syntax, which makes switching between those types easy.
+     *
+     * @returns {Mock} This {@link Mock} instance.
+     *
+     * @function Mock#expect
+     */
+    _thisMock.expect = function() {
+      return _thisMock;
+    };
+
+    /**
      * Set the expectation for the mock to be called 'x' number of times.
      *
      * @param {number} count The number of times how often this mock is expected to be called.
