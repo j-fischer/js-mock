@@ -70,7 +70,7 @@ Like any other mock object, the global mock can be verfied at any time with a si
 
     jqueryMock.expect().ajax.once();
 
-    //Fulfill the expectation
+    // Fulfill the expectation
     $.ajax();
 
     // Restore jQuery to be the original API and not the mock anymore. This will also verify that all expectations have been fulfilled
