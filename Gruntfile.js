@@ -6,8 +6,9 @@
 module.exports = function (grunt) {
   // show elapsed time at the end
   require('time-grunt')(grunt);
-  // load all grunt tasks
-  require('load-grunt-tasks')(grunt);
+
+  // load all grunt tasks needed for this run
+  require('jit-grunt')(grunt);
 
   // configurable paths
   var config = {
