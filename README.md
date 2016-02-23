@@ -314,6 +314,10 @@ This project was created using [Yeoman](http://yeoman.io/) and the [js-api gener
 
 ## Changelog
 
+### 0.10.0
+
+- Improved error messages for some expectation errors
+
 ### 0.9.0
 
 - Added JsMock.mockGlobal() which allows for replacing global variables or a child property of a global variable

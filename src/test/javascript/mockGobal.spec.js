@@ -61,7 +61,7 @@ describe('JsMock', function(){
       expect($.extend({1: 2}, {foo: "bar"})).toEqual({1:2, foo: "bar"});
 
       expect($.ajax.verify).toBeTruthy();
-      expectExpectationError($.ajax, "ExpectationError: '$.ajax' already called 0 time(s).");
+      expectExpectationError($.ajax, "ExpectationError: '$.ajax' was not expected to be called.");
 
       jqueryMock.restore();
     });
