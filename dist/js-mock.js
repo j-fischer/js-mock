@@ -455,7 +455,11 @@
 
     var _thisMock = function evalCall() {
       if (_callCount === _expectTotalCalls) {
-        throw new ExpectationError(__format("'{0}' already called {1} time(s).", _name, _expectTotalCalls));
+        var msg = _expectTotalCalls === 0 ?
+          "'{0}' was not expected to be called." :
+          "'{0}' was expected to be called {1} time(s). It was just invoked for the {2} time.";
+
+        throw new ExpectationError(__format(msg, _name, _expectTotalCalls, (_expectTotalCalls + 1)));
       }
 
       var actualArguments = Array.prototype.slice.call(arguments);
