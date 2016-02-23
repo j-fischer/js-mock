@@ -66,4 +66,57 @@ describe('JsMock', function(){
       jqueryMock.restore();
     });
   });
+
+  describe('mockGlobal - Date.now', function(){
+    it("should throw if invoked without expectation", function () {
+      var dateMock = JsMock.mockGlobal("Date.now");
+
+      expectExpectationError(Date.now, "ExpectationError: 'Date.now' was not expected to be called.");
+
+      dateMock.restore();
+    });
+
+    it("should keep all other Date functions intact", function () {
+      var dateMock = JsMock.mockGlobal("Date.now");
+
+      Date.now.once().with().returns(new Date(Date.UTC(2016, 1, 29, 8, 0, 0)));
+
+      var now = Date.now();
+
+      expect(now.getTime()).toBe(1456732800000);
+
+      now.setUTCFullYear(2020);
+      expect(now.toUTCString()).toEqual("Sat, 29 Feb 2020 08:00:00 GMT");
+
+      dateMock.restore();
+    });
+  });
+
+  describe('mockGlobal - setTimeout', function(){
+    it("should throw if invoked without expectation", function () {
+      var setTimeoutMock = JsMock.mockGlobal("setTimeout");
+
+      expectExpectationError(setTimeout, "ExpectationError: 'setTimeout' was not expected to be called.");
+
+      setTimeoutMock.restore();
+    });
+
+    it("should allow to mock setTimeout call using with() and will() functions", function () {
+      var setTimeoutMock = JsMock.mockGlobal("setTimeout");
+      var delayedFuncMock = JsMock.mock("delayedFunc");
+
+      var timeoutId = "timeout123";
+      setTimeout.once().with(JsHamcrest.Matchers.func(), 500).will(function (func, delay) {
+        delayedFuncMock.once().with();
+        delayedFuncMock();
+
+        return timeoutId;
+      });
+
+      var result = setTimeout(delayedFuncMock, 500);
+      expect(result).toEqual("timeout123");
+
+      setTimeoutMock.restore();
+    });
+  });
 });

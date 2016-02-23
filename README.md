@@ -317,6 +317,7 @@ This project was created using [Yeoman](http://yeoman.io/) and the [js-api gener
 ### 0.10.0
 
 - Improved error messages for some expectation errors
+- Added more unit tests as examples on how to mock common functions such as Date.now() or setTimeout()
 
 ### 0.9.0
 
