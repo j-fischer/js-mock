@@ -16,7 +16,6 @@
   "smarttabs": true,
   "globals": {
     "AsyncSpec": false,
-    "sinon": false,
     "define": false,
     "describe": false,
     "it": false,
@@ -29,6 +28,7 @@
     "module": true,
     "global": true,
     "JsMock": true,
+    "JsHamcrest": true,
     "$": true,
     "jQuery": true
   }

@@ -17,62 +17,37 @@ module.exports = function (grunt) {
       dist: 'dist'
   };
 
-  grunt.registerMultiTask('echo', 'Echo back input', function(){
-    var data = this.data;
-
-    if (typeof (data) === 'string') {
-      if (grunt.file.exists(data)) {
-        grunt.log.writeln(grunt.file.read(data));
-      } else {
-        grunt.log.writeln(data);
-      }
-    }
-
-    if (typeof (data) === 'object') {
-      var key;
-      for (key in data) {
-        if (data.hasOwnProperty(key)) {
-          grunt.log.writeln(data[key]);
-        }
-      }
-    }
-  });
-
   var pkg = grunt.file.readJSON('package.json');
   grunt.initConfig({
     pkg: pkg,
     config: config,
 
-    echo: {
-      help: 'README.md'
-    },
-
     clean: {
       options: {
         force: true
       },
-      links: ["coverage/**"]
+      coverage: ["coverage/**"]
     },
 
     todo: {
-        options: {
-          marks: [
-            {
-              name: "FIX",
-              pattern: /FIXME/,
-              color: "red"
-            },
-            {
-              name: "TODO",
-              pattern: /TODO/,
-              color: "yellow"
-            }
-          ]
-        },
-        src: [
-          'src/**/*.js'
-        ],
+      options: {
+        marks: [
+          {
+            name: "FIX",
+            pattern: /FIXME/,
+            color: "red"
+          },
+          {
+            name: "TODO",
+            pattern: /TODO/,
+            color: "yellow"
+          }
+        ]
       },
+      src: [
+        'src/**/*.js'
+      ],
+    },
 
     jsdoc : {
       dist : {
@@ -99,7 +74,8 @@ module.exports = function (grunt) {
         },
         all: [
             'Gruntfile.js',
-            '<%= config.app %>/{,*/}*.js'
+            '<%= config.app %>/{,*/}*.js',
+            '<%= config.test %>/javascript/{,*/}*.js'
         ]
     },
 

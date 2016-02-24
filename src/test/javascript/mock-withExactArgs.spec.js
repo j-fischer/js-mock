@@ -170,7 +170,7 @@ describe('Mock', function(){
       _myFunc.once().withExactArgs("foo");
 
       // NOTE: new String() creates and object which will not be identical with the expected string argument. This is some expected JS behaviour.
-      expectUnexpectedInvocationError(new String("foo"));
+      expectUnexpectedInvocationError(new String("foo")); // jshint ignore:line
 
       _myFunc("foo");
     });
