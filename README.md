@@ -191,7 +191,7 @@ Note: Verifying the stub will reset the object into mocking mode with 0 calls ex
 
     var mock = JsMock.mock("aMock");
 
-    // Expect the mock to be invoked once
+    // Allows the mock to be invoked as often as possible
     mock.allowing();
 
     mock("foo");
