@@ -425,15 +425,23 @@
     }
 
     function setProperty(obj, propertyName, value) {
-      if (propertyName === "returnValue") {
-        if ("calls" in obj) {
-          throw Error("callsAndReturns() is already set for this expectation. You can only define one of those two functions for you mock");
-        }
-      }
-      if (propertyName === "calls") {
-        if ("returnValue" in obj) {
-          throw Error("returns() is already set for this expectation. You can only define one of those two functions for you mock");
-        }
+      var atomicProperties = {
+        "returnValue": "returns",
+        "throws": "throws",
+        "calls": "callsAndReturns",
+        "callsAndThrows": "willThrow"
+      };
+
+      if (atomicProperties[propertyName]) {
+        var propNameFilter = function (val) {
+          return val !== propertyName;
+        };
+
+        Object.keys(atomicProperties).filter(propNameFilter).forEach(function (atomicPropName) {
+          if (atomicPropName in obj) {
+            throw Error(atomicProperties[atomicPropName] + "() is already set for this expectation. You can only define one of those two functions for you mock");
+          }
+        });
       }
 
       obj[propertyName] = value;
@@ -477,6 +485,23 @@
         } catch (ex) {
           throw new ExpectationError(__format("Registered action for '{0}' threw an error: {1}.", _name, JSON.stringify(ex)));
         }
+      }
+
+      if (expectation.callsAndThrows) {
+        var exception = null;
+        try {
+          expectation.callsAndThrows.apply(null, actualArguments);
+        } catch (ex) {
+          exception = ex;
+        }
+
+        throw exception ?
+          exception :
+          new ExpectationError(__format("Registered action for '{0}' was expected to throw an exception.", _name));
+      }
+
+      if (expectation.throws !== undefined) {
+        throw expectation.throws;
       }
 
       //return value
@@ -590,8 +615,7 @@
      *
      * @returns {Mock} This {@link Mock} instance.
      *
-     * @throws {TypeError} An error if the given argument is not a function.
-     * @throws {Error} An error if {@link Mock#callsAndReturns} has already been defined for this expectation.
+     * @throws {Error} An error if {@link Mock#returns} has already been defined for this expectation.
      *
      * @function Mock#returns
      */
@@ -610,7 +634,7 @@
      * @returns {Mock} This {@link Mock} instance.
      *
      * @throws {TypeError} An error if the given argument is not a function.
-     * @throws {Error} An error if {@link Mock#returns} has already been defined for this expectation.
+     * @throws {Error} An error if another outcome has already been defined for this expectation.
      *
      * @function Mock#callsAndReturns
      */
@@ -620,6 +644,54 @@
       }
 
       setInScope("calls", func);
+      return _thisMock;
+    };
+
+    /**
+     * Executes a function if the mock was successfully matched. All arguments passed in to the mock function
+     * will be passed on to the function defined in here. The function will be executed immediately and is
+     * expected to throw an exception. If it does not throw and expection, an {ExpectationError} will be thrown.
+     *
+     * @param {!function} func The function to be executed when the expectation is fulfilled.
+     *
+     * @returns {Mock} This {@link Mock} instance.
+     *
+     * @throws {TypeError} An error if the given argument is not a function.
+     * @throws {Error} An error if another outcome has already been defined for this expectation.
+     *
+     * @function Mock#willThrow
+     */
+    _thisMock.willThrow = function (func) {
+      if (typeof (func) !== "function") {
+        throw new TypeError("Argument must be a function");
+      }
+
+      setInScope("callsAndThrows", func);
+      return _thisMock;
+    };
+
+    /**
+     * Expects the function to be called to throw the given error.
+     *
+     * @param {(string|object)} error The error to be thrown.
+     *
+     * @returns {Mock} This {@link Mock} instance.
+     *
+     * @throws {TypeError} An error if the given argument is null or undefined.
+     * @throws {Error} An error if another outcome has already been defined for this expectation.
+     *
+     * @function Mock#throws
+     */
+    _thisMock.throws = function (error) {
+      if (typeof (error) !== 'string' && typeof (error) !== 'object') {
+        throw new TypeError("Argument must either be a string or an object");
+      }
+
+      if (error === null) {
+        throw new TypeError("Argument cannot be null");
+      }
+
+      setInScope("throws", error);
       return _thisMock;
     };
 
