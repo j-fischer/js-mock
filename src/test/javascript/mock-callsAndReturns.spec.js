@@ -67,6 +67,14 @@ describe('Mock', function(){
 
       _myFunc();
     });
+
+    it("should throw if throws is already defined", function () {
+      expect(function () {
+        _myFunc.once().throws(new Error("someError")).callsAndReturns(function () {});
+      }).toThrowError(Error, "throws() is already set for this expectation. You can only define one of those two functions for you mock");
+
+      expect(_myFunc).toThrowError("someError");
+    });
   });
 
   describe('will', function(){

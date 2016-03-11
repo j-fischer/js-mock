@@ -150,6 +150,17 @@ Set the expectation for the mock to return a given value.
 
     var x = "foo" === mock(); // true
 
+### mock.throws(<string or object>)
+
+Set the expectation for the mock to the given exception.
+
+    var mock = JsMock.mock("aMock");
+
+    // Expect the mock to be invoked once with no arguments, returning "foo"
+    mock.once().withExactArgs().throws(new Error("foo"))
+
+    mock(); // will throw an Error with the message "foo"
+
 ### mock.callsAndReturns(<function>)
 
 Will execute the given function once the mock was successfully called. The arguments passed to the mock function
@@ -313,6 +324,10 @@ Until this library reaches version 1.0, there is a chance that backwards compati
 This project was created using [Yeoman](http://yeoman.io/) and the [js-api generator](https://www.npmjs.com/package/generator-js-api).
 
 ## Changelog
+
+### 0.10.0
+
+- Added Mock.throws() to allow mock objects to throw an exception when invoked
 
 ### 0.10.0
 

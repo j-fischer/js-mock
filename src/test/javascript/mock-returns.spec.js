@@ -35,6 +35,14 @@ describe('Mock', function(){
       _myFunc();
     });
 
+    it("should throw if throws is already defined", function () {
+      expect(function () {
+        _myFunc.once().throws(new Error("someError")).returns("foo");
+      }).toThrowError(Error, "throws() is already set for this expectation. You can only define one of those two functions for you mock");
+
+      expect(_myFunc).toThrowError("someError");
+    });
+
     it("should return undefined if nothing else was specified", function () {
       _myFunc.once().returns();
 
