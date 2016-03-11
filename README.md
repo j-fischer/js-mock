@@ -156,7 +156,7 @@ Set the expectation for the mock to the given exception.
 
     var mock = JsMock.mock("aMock");
 
-    // Expect the mock to be invoked once with no arguments, returning "foo"
+    // Expect the mock to be invoked once with no arguments
     mock.once().withExactArgs().throws(new Error("foo"))
 
     mock(); // will throw an Error with the message "foo"
@@ -168,13 +168,13 @@ will be forwarded to the provided function and the value returned by the given f
 
     var mock = JsMock.mock("aMock");
 
-    // Expect the mock to be invoked once with no arguments, returning "foo"
+    // Expect the mock to be invoked once with any arguments
     mock.once().will(function (arg) {
       var x = arg; // x == "foo"
-      return "bar";
+      return x + "bar";
     });
 
-    var y = mock("foo"); // y == "bar"
+    var y = mock("foo"); // y == "foobar"
 
 ### mock.willThrow(<function>)
 
@@ -184,7 +184,6 @@ expected to throw an exception. If it does not throw and expection, an Expectati
 
     var mock = JsMock.mock("aMock");
 
-    // Expect the mock to be invoked once with no arguments, returning "foo"
     mock.once().willThrow(function (arg) {
       var x = arg; // x == "foo"
       return new Error("bar");
