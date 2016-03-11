@@ -161,7 +161,7 @@ Set the expectation for the mock to the given exception.
 
     mock(); // will throw an Error with the message "foo"
 
-### mock.callsAndReturns(<function>)
+### mock.will(<function>)
 
 Will execute the given function once the mock was successfully called. The arguments passed to the mock function
 will be forwarded to the provided function and the value returned by the given function will also be returned by the mock.
@@ -169,7 +169,7 @@ will be forwarded to the provided function and the value returned by the given f
     var mock = JsMock.mock("aMock");
 
     // Expect the mock to be invoked once with no arguments, returning "foo"
-    mock.once().callsAndReturns(function (arg) {
+    mock.once().will(function (arg) {
       var x = arg; // x == "foo"
       return "bar";
     });
@@ -264,7 +264,6 @@ The following functions are helpers that will map their calls to the API functio
     mock.onSecondCall() // instead of .onCall(2)
     mock.onThirdCall() // instead of .onCall(3)
 
-    mock.will(func) // instead of .callsAndReturns(func)
     mock.with(<anything>...) // instead of .withExactArgs(<anything>...)
 
 
