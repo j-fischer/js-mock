@@ -427,8 +427,9 @@
     function setProperty(obj, propertyName, value) {
       var atomicProperties = {
         "returnValue": "returns",
+        "throws": "throws",
         "calls": "callsAndReturns",
-        "throws": "throws"
+        "callsAndThrows": "willThrow"
       };
 
       if (atomicProperties[propertyName]) {
@@ -484,6 +485,19 @@
         } catch (ex) {
           throw new ExpectationError(__format("Registered action for '{0}' threw an error: {1}.", _name, JSON.stringify(ex)));
         }
+      }
+
+      if (expectation.callsAndThrows) {
+        var exception = null;
+        try {
+          expectation.callsAndThrows.apply(null, actualArguments);
+        } catch (ex) {
+          exception = ex;
+        }
+
+        throw exception ?
+          exception :
+          new ExpectationError(__format("Registered action for '{0}' was expected to throw an exception.", _name));
       }
 
       if (expectation.throws !== undefined) {
@@ -630,6 +644,29 @@
       }
 
       setInScope("calls", func);
+      return _thisMock;
+    };
+
+    /**
+     * Executes a function if the mock was successfully matched. All arguments passed in to the mock function
+     * will be passed on to the function defined in here. The function will be executed immediately and is
+     * expected to throw an exception. If it does not throw and expection, an {ExpectationError} will be thrown.
+     *
+     * @param {!function} func The function to be executed when the expectation is fulfilled.
+     *
+     * @returns {Mock} This {@link Mock} instance.
+     *
+     * @throws {TypeError} An error if the given argument is not a function.
+     * @throws {Error} An error if another outcome has already been defined for this expectation.
+     *
+     * @function Mock#willThrow
+     */
+    _thisMock.willThrow = function (func) {
+      if (typeof (func) !== "function") {
+        throw new TypeError("Argument must be a function");
+      }
+
+      setInScope("callsAndThrows", func);
       return _thisMock;
     };
 

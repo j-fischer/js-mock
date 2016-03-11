@@ -176,6 +176,21 @@ will be forwarded to the provided function and the value returned by the given f
 
     var y = mock("foo"); // y == "bar"
 
+### mock.willThrow(<function>)
+
+Executes a function if the mock was successfully matched. All arguments passed in to the mock function
+will be passed on to the function defined in here. The function will be executed immediately and is
+expected to throw an exception. If it does not throw and expection, an ExpectationError will be thrown.
+
+    var mock = JsMock.mock("aMock");
+
+    // Expect the mock to be invoked once with no arguments, returning "foo"
+    mock.once().willThrow(function (arg) {
+      var x = arg; // x == "foo"
+      return new Error("bar");
+    });
+
+    mock("foo"); // will throw an Error with the message "bar"
 
 ### mock.onCall(<number>)
 
@@ -191,7 +206,6 @@ Will set all following expectations for the given call.
 
     // On the second call, expect "bar" to be the argument and return 2
     mock.onCall(2).withExactArgs("bar").returns(2);
-
 
 ### mock.allowing()
 
@@ -327,6 +341,7 @@ This project was created using [Yeoman](http://yeoman.io/) and the [js-api gener
 
 ### 0.10.0
 
+- Added Mock.willThrow() that invokes a given function and expects this function to throw an error
 - Added Mock.throws() to allow mock objects to throw an exception when invoked
 
 ### 0.10.0
