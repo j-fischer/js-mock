@@ -31,7 +31,7 @@ module.exports = function (config) {
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-    reporters: ['spec', 'coverage'],
+    reporters: ['spec', 'junit', 'coverage'],
 
     coverageReporter: {
       reporters: [
@@ -42,6 +42,12 @@ module.exports = function (config) {
         },
         {type: 'text-summary'} /* Will output to console */
       ]
+    },
+
+    junitReporter: {
+      outputDir: 'docs/junit/', // results will be saved as $outputDir/$browserName.xml
+      outputFile: undefined, // if included, results will be saved as $outputDir/$browserName/$outputFile
+      useBrowserName: true // add browser name to report and classes names
     },
 
     // web server port
