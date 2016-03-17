@@ -717,7 +717,6 @@
       Object.keys(_expectations).forEach(function(index) {
         var expectation = _expectations[index];
 
-        // TODO: Verify if this code branch can ever be executed. I think missing expectations would always fail in line 249.
         if (!expectation.fulfilled) {
           unfulfilledExpectations.push(__format("Expectation for call {0} with args {1}, will return {2}.", index, JSON.stringify(expectation.args), JSON.stringify(expectation.returnValue)));
         }
