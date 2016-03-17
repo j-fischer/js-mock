@@ -34,11 +34,17 @@ module.exports = function (config) {
     reporters: ['spec', 'junit', 'coverage'],
 
     coverageReporter: {
+      dir: 'docs/coverage',
       reporters: [
         {
           type : 'html',
-          dir : 'docs/coverage',
+          subdir: 'html',
           file: 'coverage-report.html'
+        },
+        {
+          type: 'cobertura',
+          subdir: 'cobertura',
+          file: 'coverage-report.xml'
         },
         {
           type: 'text-summary' /* Will output to console */
