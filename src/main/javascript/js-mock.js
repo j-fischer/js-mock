@@ -246,7 +246,7 @@
       });
 
       if (verificationErrors.length > 0) {
-        throw new ExpectationError(__format("Missing invocations for {0}: {1}.", _propertyName, JSON.stringify(verificationErrors))); //TODO: improve message format
+        throw new ExpectationError(__format("Missing invocations detected for global mock {0}:\n{1}", _propertyName, verificationErrors.join("\n")));
       }
 
       return true;
@@ -718,12 +718,12 @@
         var expectation = _expectations[index];
 
         if (!expectation.fulfilled) {
-          unfulfilledExpectations.push(__format("Expectation for call {0} with args {1}, will return {2}.", index, JSON.stringify(expectation.args), JSON.stringify(expectation.returnValue)));
+          unfulfilledExpectations.push(__format("Expectation for call {0} with args {1}, will return {2}", index, (JSON.stringify(expectation.args) || "undefined").replace('\\"', '"'), JSON.stringify(expectation.returnValue)));
         }
       });
 
       if (unfulfilledExpectations.length > 0) {
-        throw new ExpectationError(__format("Missing invocations for {0}: {1}.", _name, JSON.stringify(unfulfilledExpectations))); //TODO: improve message format
+        throw new ExpectationError(__format("Missing invocations for {0}():\n>>> {1}", _name, unfulfilledExpectations.join("\n>>> ")));
       }
 
       reset();

@@ -34,11 +34,11 @@ describe('GlobalMock', function(){
       _jQueryMock.expect().once().with("div");
       _jQueryMock.expect().noConflict.once().with();
 
-      expectExpectationError(_jQueryMock.verify, 'ExpectationError: Missing invocations for $: ["ExpectationError: Missing invocations for $: [\\"Expectation for call 1 with args [\\\\\\"div\\\\\\"], will return undefined.\\"].","ExpectationError: Missing invocations for $.noConflict: [\\"Expectation for call 1 with args [], will return undefined.\\"]."].');
+      expectExpectationError(_jQueryMock.verify, 'ExpectationError: Missing invocations detected for global mock $:\nExpectationError: Missing invocations for $():\n>>> Expectation for call 1 with args ["div"], will return undefined\nExpectationError: Missing invocations for $.noConflict():\n>>> Expectation for call 1 with args [], will return undefined');
 
       $("div");
 
-      expectExpectationError(_jQueryMock.verify, 'ExpectationError: Missing invocations for $: ["ExpectationError: Missing invocations for $.noConflict: [\\"Expectation for call 1 with args [], will return undefined.\\"]."].');
+      expectExpectationError(_jQueryMock.verify, 'ExpectationError: Missing invocations detected for global mock $:\nExpectationError: Missing invocations for $.noConflict():\n>>> Expectation for call 1 with args [], will return undefined');
 
       $.noConflict();
 

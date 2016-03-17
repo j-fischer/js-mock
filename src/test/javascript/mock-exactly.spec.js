@@ -24,7 +24,7 @@ describe('Mock', function(){
   }
 
   function expectMissingInvocationError(numOfExpectedInvocations) {
-    expectExpectationError(_myFunc.verify, 'ExpectationError: Missing invocations for Exactly.myFunc: ["Expectation for call ' + numOfExpectedInvocations + ' with args undefined, will return undefined."].');
+    expectExpectationError(_myFunc.verify, 'ExpectationError: Missing invocations for Exactly.myFunc():\n>>> Expectation for call ' + numOfExpectedInvocations + ' with args undefined, will return undefined');
   }
 
 

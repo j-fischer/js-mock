@@ -46,11 +46,11 @@ describe('JsMock', function(){
       myFunc1.once();
       myFunc2.once();
 
-      expectExpectationError(JsMock.assertWatched, 'ExpectationError: Missing invocations for myFunc1: ["Expectation for call 1 with args undefined, will return undefined."].');
+      expectExpectationError(JsMock.assertWatched, 'ExpectationError: Missing invocations for myFunc1():\n>>> Expectation for call 1 with args undefined, will return undefined');
 
       myFunc1();
 
-      expectExpectationError(JsMock.assertWatched, 'ExpectationError: Missing invocations for myFunc2: ["Expectation for call 1 with args undefined, will return undefined."].');
+      expectExpectationError(JsMock.assertWatched, 'ExpectationError: Missing invocations for myFunc2():\n>>> Expectation for call 1 with args undefined, will return undefined');
 
       myFunc2();
 
@@ -68,7 +68,7 @@ describe('JsMock', function(){
       });
 
       // assert should fail for func1
-      expectExpectationError(JsMock.assertWatched, 'ExpectationError: Missing invocations for myFunc1: ["Expectation for call 1 with args undefined, will return undefined."].');
+      expectExpectationError(JsMock.assertWatched, 'ExpectationError: Missing invocations for myFunc1():\n>>> Expectation for call 1 with args undefined, will return undefined');
 
       // Now, monitor func2 instead of func1
       JsMock.watch(function () {
@@ -78,14 +78,14 @@ describe('JsMock', function(){
       });
 
       // assert should fail for func2
-      expectExpectationError(JsMock.assertWatched, 'ExpectationError: Missing invocations for myFunc2: ["Expectation for call 1 with args undefined, will return undefined."].');
+      expectExpectationError(JsMock.assertWatched, 'ExpectationError: Missing invocations for myFunc2():\n>>> Expectation for call 1 with args undefined, will return undefined');
 
       myFunc2();
 
       JsMock.assertWatched();
 
       // verify for func1 should still fail
-      expectExpectationError(myFunc1.verify, 'ExpectationError: Missing invocations for myFunc1: ["Expectation for call 1 with args undefined, will return undefined."].');
+      expectExpectationError(myFunc1.verify, 'ExpectationError: Missing invocations for myFunc1():\n>>> Expectation for call 1 with args undefined, will return undefined');
     });
 
     it("should bubble exception", function () {

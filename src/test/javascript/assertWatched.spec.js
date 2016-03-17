@@ -17,7 +17,7 @@ describe('JsMock', function(){
 
       myFunc.once();
 
-      expectExpectationError(myFunc.verify, 'ExpectationError: Missing invocations for myFunc: ["Expectation for call 1 with args undefined, will return undefined."].');
+      expectExpectationError(myFunc.verify, 'ExpectationError: Missing invocations for myFunc():\n>>> Expectation for call 1 with args undefined, will return undefined');
 
       expect(JsMock.assertWatched()).toBe(true);
     });
@@ -41,7 +41,7 @@ describe('JsMock', function(){
 
       $Mock.expect().once().with("div");
 
-      expectExpectationError(JsMock.assertWatched, 'ExpectationError: Missing invocations for $: ["Expectation for call 1 with args [\\"div\\"], will return undefined."].');
+      expectExpectationError(JsMock.assertWatched, 'ExpectationError: Missing invocations for $():\n>>> Expectation for call 1 with args ["div"], will return undefined');
 
       expect($.verify).toBe(undefined);
       expect($).toBe(jQuery);

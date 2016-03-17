@@ -42,7 +42,7 @@ describe('GlobalMock', function(){
 
       expectExpectationError(function () {
         _jQueryMock.restore();
-      }, 'ExpectationError: Missing invocations for $: ["ExpectationError: Missing invocations for $: [\\"Expectation for call 1 with args [\\\\\\"div\\\\\\"], will return undefined.\\"]."].');
+      }, 'ExpectationError: Missing invocations detected for global mock $:\nExpectationError: Missing invocations for $():\n>>> Expectation for call 1 with args ["div"], will return undefined');
 
       expect($).toBe(jQuery);
 
