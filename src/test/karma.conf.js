@@ -37,17 +37,19 @@ module.exports = function (config) {
       reporters: [
         {
           type : 'html',
-          dir : 'docs/coverage/',
+          dir : 'docs/coverage',
           file: 'coverage-report.html'
         },
-        {type: 'text-summary'} /* Will output to console */
+        {
+          type: 'text-summary' /* Will output to console */
+        }
       ]
     },
 
     junitReporter: {
-      outputDir: 'docs/junit/', // results will be saved as $outputDir/$browserName.xml
-      outputFile: undefined, // if included, results will be saved as $outputDir/$browserName/$outputFile
-      useBrowserName: true // add browser name to report and classes names
+      outputDir: 'docs/junit', // results will be saved as $outputDir/$browserName.xml
+      outputFile: 'test-results.xml',
+      useBrowserName: false
     },
 
     // web server port
@@ -78,7 +80,7 @@ module.exports = function (config) {
     // - Safari (only Mac; has to be installed with `npm install karma-safari-launcher`)
     // - PhantomJS
     // - IE (only Windows; has to be installed with `npm install karma-ie-launcher`)
-    browsers: ['Chrome'],
+    browsers: ['PhantomJS'],
 
 
     // If browser does not capture in given timeout [ms], kill it
@@ -94,7 +96,8 @@ module.exports = function (config) {
       'karma-coverage',
       'karma-phantomjs-launcher',
       'karma-chrome-launcher',
-      'karma-spec-reporter'
+      'karma-spec-reporter',
+      'karma-junit-reporter'
     ]
   });
 };

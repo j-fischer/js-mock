@@ -26,7 +26,8 @@ module.exports = function (grunt) {
       options: {
         force: true
       },
-      coverage: ["coverage/**"]
+      coverage: ["docs/coverage/**"],
+      junit: ["docs/junit/**"]
     },
 
     todo: {
@@ -84,14 +85,13 @@ module.exports = function (grunt) {
         configFile: '<%= config.test %>/karma.conf.js',
       },
       unit: {
-        singleRun: true,
-        browsers: ['PhantomJS']
+        singleRun: true
       },
       watch: {
-        browsers: ['PhantomJS'],
         reporters: ['spec']
       },
       debug: {
+        browsers: ['Chrome'],
         reporters: ['spec']
       }
     },
