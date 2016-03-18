@@ -14,7 +14,8 @@
     "test",
     "testing",
     "mock",
-    "mocking"
+    "mocking",
+    "javascript"
   ],
   "license": "BSD-3-Clause",
   "homepage": "http://js-mock.org",
