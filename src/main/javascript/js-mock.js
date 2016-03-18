@@ -978,6 +978,10 @@
     /* For internal debugging purposes */
     __enableLogs: function() {
       _logsEnabled = true;
+    },
+
+    __disableLogs: function() {
+      _logsEnabled = false;
     }
   };
 
