@@ -337,7 +337,11 @@ This project was created using [Yeoman](http://yeoman.io/) and the [js-api gener
 
 ## Changelog
 
-### 0.10.0
+### 0.12.0
+
+- Improved error messages of ExpectationErrors
+
+### 0.11.0
 
 - Added Mock.willThrow() that invokes a given function and expects this function to throw an error
 - Added Mock.throws() to allow mock objects to throw an exception when invoked
