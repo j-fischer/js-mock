@@ -127,7 +127,7 @@ Set the expectation for the mock to be called N number of times.
     mock.exactly(4);
 
 
-### mock.withExactArgs(<anything>...)
+### mock.with(<anything>...)
 
 Set the expectation to be called with the exact arguments provided. Any of the given arguments can be
 a JsHamcrest style matcher. If a matcher is provided as an argument, the actual argument will
@@ -136,7 +136,7 @@ be passed on to the `matches()` function of the matcher object.
     var mock = JsMock.mock("aMock");
 
     // Expect to be called like this: mock("foo", "bar");
-    mock.once().withExactArgs("foo", "bar");
+    mock.once().with("foo", "bar");
 
 
 ### mock.returns(<anything>)
@@ -146,7 +146,7 @@ Set the expectation for the mock to return a given value.
     var mock = JsMock.mock("aMock");
 
     // Expect the mock to be invoked once with no arguments, returning "foo"
-    mock.once().withExactArgs().returns("foo")
+    mock.once().with().returns("foo")
 
     var x = "foo" === mock(); // true
 
@@ -157,7 +157,7 @@ Set the expectation for the mock to the given exception.
     var mock = JsMock.mock("aMock");
 
     // Expect the mock to be invoked once with no arguments
-    mock.once().withExactArgs().throws(new Error("foo"))
+    mock.once().with().throws(new Error("foo"))
 
     mock(); // will throw an Error with the message "foo"
 
@@ -201,10 +201,10 @@ Will set all following expectations for the given call.
     mock.exactly(2);
 
     // On the first call, expect "foo" to be the argument and return 1
-    mock.onCall(1).withExactArgs("foo").returns(1);
+    mock.onCall(1).with("foo").returns(1);
 
     // On the second call, expect "bar" to be the argument and return 2
-    mock.onCall(2).withExactArgs("bar").returns(2);
+    mock.onCall(2).with("bar").returns(2);
 
 ### mock.allowing()
 
@@ -263,7 +263,7 @@ The following functions are helpers that will map their calls to the API functio
     mock.onSecondCall() // instead of .onCall(2)
     mock.onThirdCall() // instead of .onCall(3)
 
-    mock.with(<anything>...) // instead of .withExactArgs(<anything>...)
+    mock.withExactArgs(<anything>...) // instead of .with(<anything>...)
 
 
 ## Frameworks and Best Practices
@@ -320,6 +320,27 @@ your tests may pass with unfulfilled expecations. Below are some examples on how
       // set expectations and test
     });
 
+### JsHamcrest
+
+While JsMock does not have any dependencies, it does support [JsHamcrest](http://danielmartins.ninja/jshamcrest/index.html) for the
+matching of arguments when using `with()` or `withExactArgs()`. JsHamcrest has a vast number of existing matchers that can be used to validate
+an argument. And should there not be the right matcher available, one can easily write his on by simply inheriting to the JsHamcrest.SimpleMatcher
+interface.
+
+    var mock = JsMock.mock("aMock");
+
+    mock.once().with(JsHamcrest.Matchers.equivalentArray(["foo", "bar"]));
+
+    mock(["foo", "bar"]);
+    mock.verify();
+
+    mock.thrice().with(JsHamcrest.Matchers.between(4).and(7));
+
+    mock(4);
+    mock(6);
+    mock(7);
+
+    mock.verify();
 
 ## API Docs
 
