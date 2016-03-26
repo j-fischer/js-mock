@@ -196,9 +196,6 @@ module.exports = function (grunt) {
     }
   });
 
-  // Print help
-  grunt.registerTask('help', ['echo:help']);
-
   // Verify installation
   grunt.registerTask('verify', ['checkDependencies']);
 
