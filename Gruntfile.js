@@ -14,7 +14,14 @@ module.exports = function (grunt) {
   var config = {
       app: 'src/main/javascript',
       test: 'src/test',
-      dist: 'dist'
+      dist: 'dist',
+
+      artifacts: {
+        coverage: 'artifacts/docs/coverage',
+        junit: 'artifacts/docs/junit',
+        jsdoc: 'artifacts/docs/jsdoc',
+        site: 'artifacts/site'
+      }
   };
 
   var pkg = grunt.file.readJSON('package.json');
@@ -26,8 +33,8 @@ module.exports = function (grunt) {
       options: {
         force: true
       },
-      coverage: ["docs/coverage/**"],
-      junit: ["docs/junit/**"]
+      coverage: ["<%= config.artifacts.coverage %>/**"],
+      junit: ["<%= config.artifacts.junit %>/**"]
     },
 
     todo: {
@@ -54,7 +61,7 @@ module.exports = function (grunt) {
       dist : {
         src: ['<%= config.app %>/*.js', '<%= config.app %>/**/*.js', 'README.md'],
         options: {
-          destination: 'docs/jsdoc',
+          destination: '<%= config.artifacts.jsdoc %>',
           configure: './conf/jsdoc.json',
           template: './node_modules/jsdoc-oblivion/template'
         }
@@ -83,6 +90,44 @@ module.exports = function (grunt) {
     karma: {
       options: {
         configFile: '<%= config.test %>/karma.conf.js',
+
+        // list of files / patterns to load in the browser
+        files: [
+          'node_modules/jshamcrest/jshamcrest.js',
+          'node_modules/jquery/dist/jquery.js',
+          {pattern: '<%= config.app %>/*.js'},
+          {pattern: '<%= config.test %>/**/*.spec.js'}
+        ],
+
+        // For code coverage reporting
+        preprocessors: {
+          '<%= config.app %>/**/*.js': 'coverage'
+        },
+
+        coverageReporter: {
+          dir: '<%= config.artifacts.coverage %>',
+          reporters: [
+            {
+              type : 'html',
+              subdir: 'html',
+              file: 'coverage-report.html'
+            },
+            {
+              type: 'cobertura',
+              subdir: 'cobertura',
+              file: 'coverage-report.xml'
+            },
+            {
+              type: 'text-summary' /* Will output to console */
+            }
+          ]
+        },
+
+        junitReporter: {
+          outputDir: '<%= config.artifacts.junit %>', // results will be saved as $outputDir/$browserName.xml
+          outputFile: 'test-results.xml',
+          useBrowserName: false
+        }
       },
       unit: {
         singleRun: true
@@ -119,10 +164,10 @@ module.exports = function (grunt) {
     shell: {
       "create-site": {
         command: [
-          "rm -rf site",
-          "generate-md --layout mixu-gray --input ./README.md --output ./site",
-          "mv site/README.html site/index.html",
-          "cp -r docs/jsdoc site/docs"
+          "rm -rf <%= config.artifacts.site %>",
+          "generate-md --layout mixu-gray --input ./README.md --output ./<%= config.artifacts.site %>",
+          "mv <%= config.artifacts.site %>/README.html <%= config.artifacts.site %>/index.html",
+          "cp -r <%= config.artifacts.jsdoc %> <%= config.artifacts.site %>/docs"
         ].join("&&")
       },
       "version": {
