@@ -23,23 +23,9 @@
     globalMocks: []
   };
 
-  /* internal functions */
+  /* global helper functions */
   function __generateId() {
     return _idCounter++;
-  }
-
-  function __log() {
-    if (_logsEnabled && console) {
-      console.log(__format.apply(null, Array.prototype.slice.call(arguments)));
-    }
-  }
-
-  function __resetMonitor() {
-    __log("Resetting monitor");
-    _monitor = {
-      mocks: [],
-      globalMocks: []
-    };
   }
 
   function __format() {
@@ -53,128 +39,14 @@
     return result;
   }
 
-  function __createSimpleMock(name) {
-    var newMock = __MockFactory({
-      name: name
-    });
-
-    if (_shouldMonitorMocks) {
-      __log("Adding '{0}' to monitor", newMock.__toString());
-      _monitor.mocks.push(newMock);
-    }
-
-    return newMock;
-  }
-
-  function __createObjectOrFunctionMock(objName, obj, objType) {
-    if (obj.constructor === Array) {
-      throw new TypeError("Mocking of arrays is not supported");
-    }
-
-    var result =
-      objType === "function" ?
-        __createSimpleMock(objName) :
-        {};
-
-    var errors = [];
-    Object.keys(obj).forEach(function(propertyName) {
-      if (result[propertyName] !== undefined) {
-        errors.push(__format("'{0}' has already been assigned to the mock object.", propertyName));
-      }
-
-      if (typeof obj[propertyName] === "function") {
-        result[propertyName] = __createSimpleMock(objName + "." + propertyName);
-      } else {
-        result[propertyName] = obj[propertyName];
-      }
-    });
-
-    if (errors.length > 0) {
-      throw new Error("Failed to create mock object for the following reasons: " + JSON.stringify(errors));
-    }
-
-    return result;
-  }
-
-  function __mockGlobal(globalObjectName) {
-    var objectSelectors = globalObjectName.split(".");
-    var contextObject = typeof window === 'undefined' ?
-      global : //Node
-      window; //Browser
-
-    var original = contextObject[objectSelectors[0]];
-
-    var i, len = objectSelectors.length;
-    for (i = 1; i < len; i++) {
-      contextObject = original;
-      original = contextObject[objectSelectors[i]];
-    }
-
-    var orgType = typeof original;
-    if (orgType !== "function" && orgType !== "object") {
-      throw new TypeError(__format("Global variable '{0}' must be an object or a function, but was '{1}'", globalObjectName, orgType));
-    }
-
-    if (original === null) {
-      throw new TypeError(__format("Global variable '{0}' cannot be null", globalObjectName));
-    }
-
-    var mock = __createObjectOrFunctionMock(globalObjectName, original, orgType);
-
-    var globalMock = __GlobalMockFactory({
-      propertyName: objectSelectors.pop(),
-      context: contextObject,
-      original: original,
-      mock: mock
-    });
-
-    if (_shouldMonitorMocks) {
-      __log("Adding '{0}' to monitor", globalMock.__toString());
-      _monitor.globalMocks.push(globalMock);
-    }
-
-    globalMock.activate();
-
-    return globalMock;
-  }
-
-  function __watch(factoryFunc) {
-    if (typeof factoryFunc !== "function") {
-      throw new TypeError("The first argument must be a function");
-    }
-
-    // Clean up monitored mocks so that the same JsMock context can be used between test files
-    __resetMonitor();
-
-    try {
-      _shouldMonitorMocks = true;
-      factoryFunc();
-    } finally {
-      _shouldMonitorMocks = false;
+  function __log() {
+    if (_logsEnabled && console) {
+      console.log(__format.apply(null, Array.prototype.slice.call(arguments)));
     }
   }
 
-  function __assertWatched() {
-    var i, len = _monitor.globalMocks.length;
 
-    // First restore to ensure the proper state for the next test
-    for (i = 0; i < len; i++) {
-      var globalMock = _monitor.globalMocks[i];
-      __log("Restoring global mock '{0}'", globalMock.__toString());
-      globalMock.restoreWithoutVerifying();
-    }
-
-    len = _monitor.mocks.length;
-    for (i = 0; i < len; i++) {
-      var mock = _monitor.mocks[i];
-      __log("Asserting mock '{0}'", mock.__toString());
-      mock.verify();
-    }
-
-    return true;
-  }
-
- /**
+  /**
   * @class ExpectationError
   * @classdesc An ExpectationError will be thrown in any situation where a mock
   * expectation has not been met.
@@ -857,6 +729,136 @@
     return _thisMock;
   };
 
+
+  /* internal functions */
+  function __resetMonitor() {
+    __log("Resetting monitor");
+    _monitor = {
+      mocks: [],
+      globalMocks: []
+    };
+  }
+
+  function __createSimpleMock(name) {
+    var newMock = __MockFactory({
+      name: name
+    });
+
+    if (_shouldMonitorMocks) {
+      __log("Adding '{0}' to monitor", newMock.__toString());
+      _monitor.mocks.push(newMock);
+    }
+
+    return newMock;
+  }
+
+  function __createObjectOrFunctionMock(objName, obj, objType) {
+    if (obj.constructor === Array) {
+      throw new TypeError("Mocking of arrays is not supported");
+    }
+
+    var result =
+      objType === "function" ?
+        __createSimpleMock(objName) :
+        {};
+
+    var errors = [];
+    Object.keys(obj).forEach(function(propertyName) {
+      if (result[propertyName] !== undefined) {
+        errors.push(__format("'{0}' has already been assigned to the mock object.", propertyName));
+      }
+
+      if (typeof obj[propertyName] === "function") {
+        result[propertyName] = __createSimpleMock(objName + "." + propertyName);
+      } else {
+        result[propertyName] = obj[propertyName];
+      }
+    });
+
+    if (errors.length > 0) {
+      throw new Error("Failed to create mock object for the following reasons: " + JSON.stringify(errors));
+    }
+
+    return result;
+  }
+
+  function __mockGlobal(globalObjectName) {
+    var objectSelectors = globalObjectName.split(".");
+    var contextObject = typeof window === 'undefined' ?
+      global : //Node
+      window; //Browser
+
+    var original = contextObject[objectSelectors[0]];
+
+    var i, len = objectSelectors.length;
+    for (i = 1; i < len; i++) {
+      contextObject = original;
+      original = contextObject[objectSelectors[i]];
+    }
+
+    var orgType = typeof original;
+    if (orgType !== "function" && orgType !== "object") {
+      throw new TypeError(__format("Global variable '{0}' must be an object or a function, but was '{1}'", globalObjectName, orgType));
+    }
+
+    if (original === null) {
+      throw new TypeError(__format("Global variable '{0}' cannot be null", globalObjectName));
+    }
+
+    var mock = __createObjectOrFunctionMock(globalObjectName, original, orgType);
+
+    var globalMock = __GlobalMockFactory({
+      propertyName: objectSelectors.pop(),
+      context: contextObject,
+      original: original,
+      mock: mock
+    });
+
+    if (_shouldMonitorMocks) {
+      __log("Adding '{0}' to monitor", globalMock.__toString());
+      _monitor.globalMocks.push(globalMock);
+    }
+
+    globalMock.activate();
+
+    return globalMock;
+  }
+
+  function __watch(factoryFunc) {
+    if (typeof factoryFunc !== "function") {
+      throw new TypeError("The first argument must be a function");
+    }
+
+    // Clean up monitored mocks so that the same JsMock context can be used between test files
+    __resetMonitor();
+
+    try {
+      _shouldMonitorMocks = true;
+      factoryFunc();
+    } finally {
+      _shouldMonitorMocks = false;
+    }
+  }
+
+  function __assertWatched() {
+    var i, len = _monitor.globalMocks.length;
+
+    // First restore to ensure the proper state for the next test
+    for (i = 0; i < len; i++) {
+      var globalMock = _monitor.globalMocks[i];
+      __log("Restoring global mock '{0}'", globalMock.__toString());
+      globalMock.restoreWithoutVerifying();
+    }
+
+    len = _monitor.mocks.length;
+    for (i = 0; i < len; i++) {
+      var mock = _monitor.mocks[i];
+      __log("Asserting mock '{0}'", mock.__toString());
+      mock.verify();
+    }
+
+    return true;
+  }
 
  /**
   * JavaScript mocking framework, which can be used with any test framework. JsMock is inspired by jMock and Sinon.js
