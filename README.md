@@ -323,9 +323,9 @@ your tests may pass with unfulfilled expecations. Below are some examples on how
 ### JsHamcrest
 
 While JsMock does not have any dependencies, it does support [JsHamcrest](http://danielmartins.ninja/jshamcrest/index.html) for the
-matching of arguments when using `with()` or `withExactArgs()`. JsHamcrest has a vast number of existing matchers that can be used to validate
-an argument. And should there not be the right matcher available, one can easily write his on by simply inheriting to the JsHamcrest.SimpleMatcher
-interface.
+matching of arguments when using `with()` or `withExactArgs()`. JsHamcrest has a vast number of existing matchers that can be used to
+validate an argument. And should there not be the right matcher available, you can easily write your own by simply inheriting to the
+[JsHamcrest.SimpleMatcher](https://github.com/danielfm/jshamcrest/blob/master/src/jshamcrest.js) interface.
 
     var mock = JsMock.mock("aMock");
 
