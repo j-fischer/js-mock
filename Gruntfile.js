@@ -18,9 +18,9 @@ module.exports = function (grunt) {
 
       artifacts: {
         build: 'artifacts/build',
-        coverage: 'artifacts/docs/coverage',
-        junit: 'artifacts/docs/junit',
-        jsdoc: 'artifacts/docs/jsdoc',
+        coverage: 'artifacts/reports/coverage',
+        junit: 'artifacts/reports/junit',
+        jsdoc: 'artifacts/docs',
         root: 'artifacts',
         site: 'artifacts/site'
       }
