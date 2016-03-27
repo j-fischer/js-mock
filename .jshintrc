@@ -24,12 +24,18 @@
     "after": false,
     "afterEach": false,
     "expect": false,
-    "window": true,
-    "module": true,
-    "global": true,
-    "JsMock": true,
-    "JsHamcrest": true,
-    "$": true,
-    "jQuery": true
+    "window": false,
+    "module": false,
+    "global": false,
+    "JsMock": false,
+    "JsHamcrest": false,
+    "$": false,
+    "jQuery": false,
+    "ExpectationError": false,
+    "__MockFactory": true,
+    "__GlobalMockFactory": true,
+    "__generateId": false,
+    "__format": false,
+    "__log": false
   }
 }

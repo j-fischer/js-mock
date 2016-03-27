@@ -17,9 +17,11 @@ module.exports = function (grunt) {
       dist: 'dist',
 
       artifacts: {
+        build: 'artifacts/build',
         coverage: 'artifacts/docs/coverage',
         junit: 'artifacts/docs/junit',
         jsdoc: 'artifacts/docs/jsdoc',
+        root: 'artifacts',
         site: 'artifacts/site'
       }
   };
@@ -33,8 +35,7 @@ module.exports = function (grunt) {
       options: {
         force: true
       },
-      coverage: ["<%= config.artifacts.coverage %>/**"],
-      junit: ["<%= config.artifacts.junit %>/**"]
+      artifacts: '<%= config.artifacts.root %>'
     },
 
     todo: {
@@ -68,23 +69,48 @@ module.exports = function (grunt) {
       }
     },
 
+    insert: {
+      expectationError: {
+        src: '<%= config.app %>/classes/expectationError.js',
+        dest: '<%= config.artifacts.build %>/<%= pkg.name %>.js',
+        match: '/*INSERT ExpectationError */'
+      },
+      globalMock: {
+        src: '<%= config.app %>/classes/globalMock.js',
+        dest: '<%= config.artifacts.build %>/<%= pkg.name %>.js',
+        match: '/*INSERT GlobalMock */'
+      },
+      mock: {
+        src: '<%= config.app %>/classes/mock.js',
+        dest: '<%= config.artifacts.build %>/<%= pkg.name %>.js',
+        match: '/*INSERT Mock */'
+      }
+    },
+
     copy: {
-      dist: {
+      build: {
         src: '<%= config.app %>/<%= pkg.name %>.js',
+        dest: '<%= config.artifacts.build %>/<%= pkg.name %>.js'
+      },
+      dist: {
+        src: '<%= config.artifacts.build %>/<%= pkg.name %>.js',
         dest: '<%= config.dist %>/<%= pkg.name %>.js'
       }
     },
 
     jshint: {
-        options: {
-            jshintrc: '.jshintrc',
-            reporter: require('jshint-stylish')
-        },
-        all: [
-            'Gruntfile.js',
-            '<%= config.app %>/{,*/}*.js',
-            '<%= config.test %>/javascript/{,*/}*.js'
-        ]
+      options: {
+        jshintrc: '.jshintrc',
+        reporter: require('jshint-stylish')
+      },
+      src: [
+        'Gruntfile.js',
+        '<%= config.app %>/{,*/}*.js',
+        '<%= config.test %>/javascript/{,*/}*.js'
+      ],
+      dist: [
+        '<%= config.artifacts.build %>/<%= pkg.name %>.js'
+      ]
     },
 
     karma: {
@@ -95,13 +121,13 @@ module.exports = function (grunt) {
         files: [
           'node_modules/jshamcrest/jshamcrest.js',
           'node_modules/jquery/dist/jquery.js',
-          {pattern: '<%= config.app %>/*.js'},
+          {pattern: '<%= config.artifacts.build %>/*.js'},
           {pattern: '<%= config.test %>/**/*.spec.js'}
         ],
 
         // For code coverage reporting
         preprocessors: {
-          '<%= config.app %>/**/*.js': 'coverage'
+          '<%= config.artifacts.build %>/**/*.js': 'coverage'
         },
 
         coverageReporter: {
@@ -214,8 +240,10 @@ module.exports = function (grunt) {
   // Build
   grunt.registerTask('build', [
     'clean',
-    'jshint',
+    'jshint:src',
     'todo',
+    'copy:build',
+    'insert',
     'karma:unit'
   ]);
 
@@ -234,6 +262,7 @@ module.exports = function (grunt) {
 
     var tasks = [
       'build',
+      'jshint:dist',
       'copy:dist',
       'website'
     ];
