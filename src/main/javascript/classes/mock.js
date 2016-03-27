@@ -201,13 +201,12 @@
     };
 
     /**
-     * Set the expectation for the mock to be called 'x' number of times.
-     *
-     * @param {number} count The number of times how often this mock is expected to be called.
+     * Allows the mock to be called any number if times, assuming that the invocation still fulfills
+     * the expectations defined with the {@link Mock#with} function.
      *
      * @returns {Mock} This {@link Mock} instance.
      *
-     * @function Mock#exactly
+     * @function Mock#allowing
      */
     _thisMock.allowing = function() {
       reset();
