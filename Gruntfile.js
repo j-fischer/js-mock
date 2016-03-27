@@ -261,6 +261,7 @@ module.exports = function (grunt) {
     }
 
     var tasks = [
+      'verify',
       'build',
       'jshint:dist',
       'copy:dist',
