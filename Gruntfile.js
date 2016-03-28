@@ -7,6 +7,9 @@ module.exports = function (grunt) {
   // show elapsed time at the end
   require('time-grunt')(grunt);
 
+  // Needs to be loaded specifcally, because the name and the configuration property name aren't matching.
+  grunt.loadNpmTasks('grunt-karma-coveralls');
+
   // load all grunt tasks needed for this run
   require('jit-grunt')(grunt);
 
@@ -177,7 +180,7 @@ module.exports = function (grunt) {
         coverageDir: '<%= config.artifacts.coverage %>/coveralls',
         dryRun: false,
         force: true,
-        recursive: true
+        recursive: false
       }
     },
 
