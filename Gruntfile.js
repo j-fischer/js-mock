@@ -144,6 +144,10 @@ module.exports = function (grunt) {
               file: 'coverage-report.xml'
             },
             {
+              type: "lcov",
+              subdir: "coveralls"
+            },
+            {
               type: 'text-summary' /* Will output to console */
             }
           ]
@@ -164,6 +168,16 @@ module.exports = function (grunt) {
       debug: {
         browsers: ['Chrome'],
         reporters: ['spec']
+      }
+    },
+
+    coveralls: {
+      options: {
+        debug: false,
+        coverageDir: '<%= config.artifacts.coverage %>/coveralls',
+        dryRun: false,
+        force: true,
+        recursive: true
       }
     },
 
