@@ -73,8 +73,11 @@ Like any other mock object, the global mock can be verfied at any time with a si
     // Fulfill the expectation
     $.ajax();
 
-    // Restore jQuery to be the original API and not the mock anymore. This will also verify that all expectations have been fulfilled
+    // Restore jQuery to be the original API and not the mock anymore.
+    // This will also verify that all expectations have been fulfilled
     jqueryMock.restore();
+
+More examples on how to use `JsMock.mockGlobal()` can be found in its [test file](https://github.com/j-fischer/js-mock/blob/master/src/test/javascript/mockGobal.spec.js).
 
 ### JsMock.watch()
 
