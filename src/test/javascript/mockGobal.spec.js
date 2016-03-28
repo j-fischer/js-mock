@@ -79,7 +79,7 @@ describe('JsMock', function(){
     it("should keep all other Date functions intact", function () {
       var dateMock = JsMock.mockGlobal("Date.now");
 
-      Date.now.once().with().returns(new Date(Date.UTC(2016, 1, 29, 8, 0, 0)));
+      dateMock.expect().once().with().returns(new Date(Date.UTC(2016, 1, 29, 8, 0, 0)));
 
       var now = Date.now();
 
@@ -104,17 +104,18 @@ describe('JsMock', function(){
     it("should allow to mock setTimeout call using with() and will() functions", function () {
       var setTimeoutMock = JsMock.mockGlobal("setTimeout");
       var delayedFuncMock = JsMock.mock("delayedFunc");
-
       var timeoutId = "timeout123";
-      setTimeout.once().with(JsHamcrest.Matchers.func(), 500).will(function (func, delay) {
-        delayedFuncMock.once().with();
-        delayedFuncMock();
+
+      setTimeoutMock.expect().once().with(JsHamcrest.Matchers.func(), 500).will(function (func, delay) {
+        func();
 
         return timeoutId;
       });
 
+      delayedFuncMock.once().with();
+
       var result = setTimeout(delayedFuncMock, 500);
-      expect(result).toEqual("timeout123");
+      expect(result).toBe(timeoutId);
 
       setTimeoutMock.restore();
     });
