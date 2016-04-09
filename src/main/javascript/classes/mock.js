@@ -527,7 +527,8 @@
     * @function Mock#withEquivalentObject
     */
     _thisMock.withEquivalentObject = function (arg) {
-      if (typeof(JsHamcrest) === "undefined") {
+      var jsHamcrest = __getJsHamcrest();
+      if (typeof(jsHamcrest) === "undefined") {
         throw new Error("withEquivalentObject() requires JsHamcrest to be available in order to be used.");
       }
 
@@ -535,7 +536,7 @@
         throw new Error("'arg' must be of type object.");
       }
 
-      return _thisMock.withExactArgs(JsHamcrest.Matchers.equivalentMap(arg));
+      return _thisMock.withExactArgs(jsHamcrest.Matchers.equivalentMap(arg));
     };
 
    /**
@@ -550,7 +551,8 @@
     * @function Mock#withEquivalentArray
     */
     _thisMock.withEquivalentArray = function (arg) {
-      if (typeof(JsHamcrest) === "undefined") {
+      var jsHamcrest = __getJsHamcrest();
+      if (typeof(jsHamcrest) === "undefined") {
         throw new Error("withEquivalentArray() requires JsHamcrest to be available in order to be used.");
       }
 
@@ -558,7 +560,7 @@
         throw new Error("'arg' must be of type array.");
       }
 
-      return _thisMock.withExactArgs(JsHamcrest.Matchers.equivalentArray(arg));
+      return _thisMock.withExactArgs(jsHamcrest.Matchers.equivalentArray(arg));
     };
 
    /**

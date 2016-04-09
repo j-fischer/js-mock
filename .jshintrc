@@ -36,6 +36,7 @@
     "__GlobalMockFactory": true,
     "__generateId": false,
     "__format": false,
-    "__log": false
+    "__log": false,
+    "__getJsHamcrest": false
   }
 }

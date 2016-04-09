@@ -13,6 +13,7 @@
   var _idCounter = 0;
 
   /* variables */
+  var _jshamcrest = null;
   var _shouldMonitorMocks = false;
   var _monitor = {
     mocks: [],
@@ -39,6 +40,10 @@
     if (_logsEnabled && console) {
       console.log(__format.apply(null, Array.prototype.slice.call(arguments)));
     }
+  }
+
+  function __getJsHamcrest() {
+    return _jshamcrest || JsHamcrest;
   }
 
 /*INSERT ExpectationError */
@@ -307,7 +312,8 @@
   API.ExpectationError = ExpectationError;
 
   if (typeof define === "function") {
-    define("js-mock", [], function() {
+    define("js-mock", ['jshamcrest'], function(JsHamcrest) {
+      _jshamcrest = JsHamcrest;
       return API;
     });
   }
