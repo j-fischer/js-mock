@@ -234,6 +234,44 @@ describe('Mock', function(){
       window.JsHamcrest = backup;
     });
 
+    it("should throw if argument is not an array", function () {
+      var expectedErrorMessage = "'arg' must be of type array and cannot be null or undefined.";
+      _myFunc.once();
+
+      expect(function () {
+        _myFunc.withEquivalentArray({});
+      }).toThrowError(TypeError, expectedErrorMessage);
+
+      expect(function () {
+        _myFunc.withEquivalentArray(1);
+      }).toThrowError(TypeError, expectedErrorMessage);
+
+      expect(function () {
+        _myFunc.withEquivalentArray(true);
+      }).toThrowError(TypeError, expectedErrorMessage);
+
+      expect(function () {
+        _myFunc.withEquivalentArray("someString");
+      }).toThrowError(TypeError, expectedErrorMessage);
+
+      _myFunc.never();
+    });
+
+    it("should not allow array to be null or undefined", function () {
+      var expectedErrorMessage = "'arg' must be of type array and cannot be null or undefined.";
+      _myFunc.once();
+
+      expect(function () {
+        _myFunc.withEquivalentArray(null);
+      }).toThrowError(TypeError, expectedErrorMessage);
+
+      expect(function () {
+        _myFunc.withEquivalentArray(undefined);
+      }).toThrowError(TypeError, expectedErrorMessage);
+
+      _myFunc.never();
+    });
+
     it("should set proper expectation", function () {
       _myFunc.once().withEquivalentArray(["foo", "bar"]);
 
@@ -253,6 +291,44 @@ describe('Mock', function(){
 
       _myFunc.never();
       window.JsHamcrest = backup;
+    });
+
+    it("should throw if argument is not an object", function () {
+      var expectedErrorMessage = "'arg' must be of type object and cannot be null or undefined.";
+      _myFunc.once();
+
+      expect(function () {
+        _myFunc.withEquivalentObject([]);
+      }).toThrowError(TypeError, expectedErrorMessage);
+
+      expect(function () {
+        _myFunc.withEquivalentObject(1);
+      }).toThrowError(TypeError, expectedErrorMessage);
+
+      expect(function () {
+        _myFunc.withEquivalentObject(true);
+      }).toThrowError(TypeError, expectedErrorMessage);
+
+      expect(function () {
+        _myFunc.withEquivalentObject("someString");
+      }).toThrowError(TypeError, expectedErrorMessage);
+
+      _myFunc.never();
+    });
+
+    it("should not allow array to be null or undefined", function () {
+      var expectedErrorMessage = "'arg' must be of type object and cannot be null or undefined.";
+      _myFunc.once();
+
+      expect(function () {
+        _myFunc.withEquivalentObject(null);
+      }).toThrowError(TypeError, expectedErrorMessage);
+
+      expect(function () {
+        _myFunc.withEquivalentObject(undefined);
+      }).toThrowError(TypeError, expectedErrorMessage);
+
+      _myFunc.never();
     });
 
     it("should set proper expectation", function () {

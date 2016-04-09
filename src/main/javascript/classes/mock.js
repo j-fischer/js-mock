@@ -532,8 +532,8 @@
         throw new Error("withEquivalentObject() requires JsHamcrest to be available in order to be used.");
       }
 
-      if (typeof(arg) !== "object") {
-        throw new Error("'arg' must be of type object.");
+      if (arg === null || typeof(arg) !== "object" || Array.isArray(arg)) {
+        throw new TypeError("'arg' must be of type object and cannot be null or undefined.");
       }
 
       return _thisMock.withExactArgs(jsHamcrest.Matchers.equivalentMap(arg));
@@ -557,7 +557,7 @@
       }
 
       if (!Array.isArray(arg)) {
-        throw new Error("'arg' must be of type array.");
+        throw new TypeError("'arg' must be of type array and cannot be null or undefined.");
       }
 
       return _thisMock.withExactArgs(jsHamcrest.Matchers.equivalentArray(arg));
