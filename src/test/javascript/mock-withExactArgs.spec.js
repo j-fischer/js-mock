@@ -219,4 +219,46 @@ describe('Mock', function(){
       _myFunc("foo", "bar");
     });
   });
+
+  describe('withEquivalentArray', function() {
+
+    it("should throw if JsHamcrest is not available", function () {
+      var backup = window.JsHamcrest;
+
+      window.JsHamcrest = undefined;
+      expect(function () {
+        _myFunc.once().withEquivalentArray(["foo", "bar"]);
+      }).toThrowError(Error, "withEquivalentArray() requires JsHamcrest to be available in order to be used.");
+
+      _myFunc.never();
+      window.JsHamcrest = backup;
+    });
+
+    it("should set proper expectation", function () {
+      _myFunc.once().withEquivalentArray(["foo", "bar"]);
+
+      _myFunc(["foo", "bar"]);
+    });
+  });
+
+  describe('withEquivalentObject', function() {
+
+    it("should throw if JsHamcrest is not available", function () {
+      var backup = window.JsHamcrest;
+
+      window.JsHamcrest = undefined;
+      expect(function () {
+        _myFunc.once().withEquivalentObject({"foo": "bar"});
+      }).toThrowError(Error, "withEquivalentObject() requires JsHamcrest to be available in order to be used.");
+
+      _myFunc.never();
+      window.JsHamcrest = backup;
+    });
+
+    it("should set proper expectation", function () {
+      _myFunc.once().withEquivalentObject({"foo": "bar"});
+
+      _myFunc({"foo": "bar"});
+    });
+  });
 });

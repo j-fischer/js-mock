@@ -516,6 +516,52 @@
     };
 
    /**
+    * Alias for withExactArgs(JsHamcrest.Matchers.equivalentMap(arg).
+    *
+    * @see {@link Mock#withExactArgs}
+    *
+    * @param {object} arg The object to be evaluated for equivalancy.
+    *
+    * @returns {Mock} This {@link Mock} instance.
+    *
+    * @function Mock#withEquivalentObject
+    */
+    _thisMock.withEquivalentObject = function (arg) {
+      if (typeof(JsHamcrest) === "undefined") {
+        throw new Error("withEquivalentObject() requires JsHamcrest to be available in order to be used.");
+      }
+
+      if (typeof(arg) !== "object") {
+        throw new Error("'arg' must be of type object.");
+      }
+
+      return _thisMock.withExactArgs(JsHamcrest.Matchers.equivalentMap(arg));
+    };
+
+   /**
+    * Alias for withExactArgs(JsHamcrest.Matchers.equivalentArray(arg).
+    *
+    * @see {@link Mock#withExactArgs}
+    *
+    * @param {array} arg The array to be evaluated for equivalancy.
+    *
+    * @returns {Mock} This {@link Mock} instance.
+    *
+    * @function Mock#withEquivalentArray
+    */
+    _thisMock.withEquivalentArray = function (arg) {
+      if (typeof(JsHamcrest) === "undefined") {
+        throw new Error("withEquivalentArray() requires JsHamcrest to be available in order to be used.");
+      }
+
+      if (!Array.isArray(arg)) {
+        throw new Error("'arg' must be of type array.");
+      }
+
+      return _thisMock.withExactArgs(JsHamcrest.Matchers.equivalentArray(arg));
+    };
+
+   /**
     * Alias for withExactArgs.
     *
     * @see {@link Mock#withExactArgs}

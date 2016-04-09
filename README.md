@@ -361,6 +361,11 @@ This project was created using [Yeoman](http://yeoman.io/) and the [js-api gener
 
 ## Changelog
 
+### 0.13.0
+
+- Added Mock.withEquivalentArray() as a wrapper for the common JsHamcrest based verification Mock.with(JsHamcrest.Matchers.equivalentArray(anArray))
+- Added Mock.withEquivalentObject() as a wrapper for the common JsHamcrest based verification Mock.with(JsHamcrest.Matchers.equivalentMap(anObject))
+
 ### 0.12.0
 
 - Improved error messages of ExpectationErrors
