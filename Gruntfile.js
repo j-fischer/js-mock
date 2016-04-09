@@ -166,11 +166,28 @@ module.exports = function (grunt) {
         singleRun: true
       },
       watch: {
+        autoWatch: false,
+        background:true,
         reporters: ['spec']
       },
       debug: {
+        autoWatch: false,
+        background:true,
         browsers: ['Chrome'],
         reporters: ['spec']
+      }
+    },
+
+    watch: {
+      //run unit tests with karma (server needs to be already running)
+      "karma-watch": {
+        files: ['<%= config.app %>/**/*.js', '<%= config.test %>/**/*.spec.js'],
+        tasks: ['copy:build', 'insert', 'karma:watch:run'] //NOTE the :run flag
+      },
+
+      "karma-debug": {
+        files: ['<%= config.app %>/**/*.js', '<%= config.test %>/**/*.spec.js'],
+        tasks: ['copy:build', 'insert', 'karma:debug:run'] //NOTE the :run flag
       }
     },
 
@@ -244,11 +261,11 @@ module.exports = function (grunt) {
 
   grunt.registerTask('test', "Runs the unit tests; available options: --watch or --chrome", function() {
     if (grunt.option("watch")) {
-      return grunt.task.run("karma:watch");
+      return grunt.task.run(["karma:watch:start", "watch:karma-watch"]);
     }
 
     if (grunt.option("chrome")) {
-      return grunt.task.run("karma:debug");
+      return grunt.task.run(["karma:debug:start", "watch:karma-debug"]);
     }
 
     grunt.task.run("karma:unit");
