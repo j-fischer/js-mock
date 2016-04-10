@@ -345,6 +345,9 @@ validate an argument. And should there not be the right matcher available, you c
 
     mock.verify();
 
+**Note**: There have been two helper methods added to the core `Mock` interface, which should simplify the usage of the two most common
+JsHamcrest matchers. Take a look at the API documentation for `Mock.withEquivalentArray()` and `Mock.withEquivalentObject()`.
+
 ## API Docs
 
 The full API documentation can be found [here](http://www.jsmock.org/docs/index.html).
