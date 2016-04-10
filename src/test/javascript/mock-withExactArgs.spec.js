@@ -235,7 +235,7 @@ describe('Mock', function(){
     });
 
     it("should throw if argument is not an array", function () {
-      var expectedErrorMessage = "'arg' must be of type array and cannot be null or undefined.";
+      var expectedErrorMessage = "'arg' must be of type array, and cannot be null or undefined.";
       _myFunc.once();
 
       expect(function () {
@@ -258,7 +258,7 @@ describe('Mock', function(){
     });
 
     it("should not allow array to be null or undefined", function () {
-      var expectedErrorMessage = "'arg' must be of type array and cannot be null or undefined.";
+      var expectedErrorMessage = "'arg' must be of type array, and cannot be null or undefined.";
       _myFunc.once();
 
       expect(function () {
@@ -294,7 +294,7 @@ describe('Mock', function(){
     });
 
     it("should throw if argument is not an object", function () {
-      var expectedErrorMessage = "'arg' must be of type object and cannot be null or undefined.";
+      var expectedErrorMessage = "'arg' must be of type object, and cannot be null or undefined.";
       _myFunc.once();
 
       expect(function () {
@@ -316,8 +316,8 @@ describe('Mock', function(){
       _myFunc.never();
     });
 
-    it("should not allow array to be null or undefined", function () {
-      var expectedErrorMessage = "'arg' must be of type object and cannot be null or undefined.";
+    it("should not allow object to be null or undefined", function () {
+      var expectedErrorMessage = "'arg' must be of type object, and cannot be null or undefined.";
       _myFunc.once();
 
       expect(function () {

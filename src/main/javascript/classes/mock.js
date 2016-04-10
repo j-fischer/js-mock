@@ -534,7 +534,7 @@
       }
 
       if (arg === null || typeof(arg) !== "object" || Array.isArray(arg)) {
-        throw new TypeError("'arg' must be of type object and cannot be null or undefined.");
+        throw new TypeError("'arg' must be of type object, and cannot be null or undefined.");
       }
 
       return _thisMock.withExactArgs(jsHamcrest.Matchers.equivalentMap(arg));
@@ -559,7 +559,7 @@
       }
 
       if (!Array.isArray(arg)) {
-        throw new TypeError("'arg' must be of type array and cannot be null or undefined.");
+        throw new TypeError("'arg' must be of type array, and cannot be null or undefined.");
       }
 
       return _thisMock.withExactArgs(jsHamcrest.Matchers.equivalentArray(arg));
