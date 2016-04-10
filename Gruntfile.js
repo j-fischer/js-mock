@@ -123,9 +123,7 @@ module.exports = function (grunt) {
         // list of files / patterns to load in the browser
         files: [
           'node_modules/jshamcrest/jshamcrest.js',
-          'node_modules/jquery/dist/jquery.js',
-          {pattern: '<%= config.artifacts.build %>/*.js'},
-          {pattern: '<%= config.test %>/**/*.spec.js'}
+          'node_modules/jquery/dist/jquery.js'
         ],
 
         // For code coverage reporting
@@ -163,18 +161,42 @@ module.exports = function (grunt) {
         }
       },
       unit: {
-        singleRun: true
+        singleRun: true,
+
+        files: [
+          {pattern: '<%= config.artifacts.build %>/*.js'},
+          {pattern: '<%= config.test %>/**/*.spec.js'}
+        ]
       },
       watch: {
         autoWatch: false,
         background:true,
-        reporters: ['spec']
+        reporters: ['spec'],
+
+        files: [
+          {pattern: '<%= config.artifacts.build %>/*.js'},
+          {pattern: '<%= config.test %>/**/*.spec.js'}
+        ]
       },
       debug: {
         autoWatch: false,
         background:true,
         browsers: ['Chrome'],
-        reporters: ['spec']
+        reporters: ['spec'],
+
+        files: [
+          {pattern: '<%= config.artifacts.build %>/*.js'},
+          {pattern: '<%= config.test %>/**/*.spec.js'}
+        ]
+      },
+      dist: {
+        singleRun: true,
+        reporters: ['spec'],
+
+        files: [
+          {pattern: '<%= config.dist %>/*.js'},
+          {pattern: '<%= config.test %>/**/*.spec.js'}
+        ]
       }
     },
 
@@ -268,7 +290,11 @@ module.exports = function (grunt) {
       return grunt.task.run(["karma:debug:start", "watch:karma-debug"]);
     }
 
-    grunt.task.run("karma:unit");
+    grunt.task.run([
+      'copy:build',
+      'insert',
+      "karma:unit"
+    ]);
   });
 
   // Build
@@ -299,6 +325,7 @@ module.exports = function (grunt) {
       'build',
       'jshint:dist',
       'copy:dist',
+      'karma:dist',
       'website'
     ];
 
