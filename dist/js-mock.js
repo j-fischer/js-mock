@@ -8,38 +8,21 @@
  */
 (function () {
 
-  /* constants */
-  var _STUB = "STUB"; // Makes a mock behave like a stub
-  var _ALL_CALLS = "ALL_INVOCATIONS"; // The scope of the invocations, i.e. exactly(3).returns('foo'); means return 'foo' for all invocations
-
   /* diagnostic variables */
   var _logsEnabled = false;
   var _idCounter = 0;
 
   /* variables */
+  var _jshamcrest = null;
   var _shouldMonitorMocks = false;
   var _monitor = {
     mocks: [],
     globalMocks: []
   };
 
-  /* internal functions */
+  /* global helper functions */
   function __generateId() {
     return _idCounter++;
-  }
-
-  function __log() {
-    if (_logsEnabled && console) {
-      console.log(__format.apply(null, Array.prototype.slice.call(arguments)));
-    }
-  }
-
-  function __resetMonitor() {
-    __log("Resetting monitor");
-    _monitor = {
-      mocks: [],
-      globalMocks: []
-    };
   }
 
   function __format() {
@@ -53,136 +36,25 @@
     return result;
   }
 
-  function __createSimpleMock(name) {
-    var newMock = __MockFactory({
-      name: name
-    });
-
-    if (_shouldMonitorMocks) {
-      __log("Adding '{0}' to monitor", newMock.__toString());
-      _monitor.mocks.push(newMock);
-    }
-
-    return newMock;
-  }
-
-  function __createObjectOrFunctionMock(objName, obj, objType) {
-    if (obj.constructor === Array) {
-      throw new TypeError("Mocking of arrays is not supported");
-    }
-
-    var result =
-      objType === "function" ?
-        __createSimpleMock(objName) :
-        {};
-
-    var errors = [];
-    Object.keys(obj).forEach(function(propertyName) {
-      if (result[propertyName] !== undefined) {
-        errors.push(__format("'{0}' has already been assigned to the mock object.", propertyName));
-      }
-
-      if (typeof obj[propertyName] === "function") {
-        result[propertyName] = __createSimpleMock(objName + "." + propertyName);
-      } else {
-        result[propertyName] = obj[propertyName];
-      }
-    });
-
-    if (errors.length > 0) {
-      throw new Error("Failed to create mock object for the following reasons: " + JSON.stringify(errors));
-    }
-
-    return result;
-  }
-
-  function __mockGlobal(globalObjectName) {
-    var objectSelectors = globalObjectName.split(".");
-    var contextObject = typeof window === 'undefined' ?
-      global : //Node
-      window; //Browser
-
-    var original = contextObject[objectSelectors[0]];
-
-    var i, len = objectSelectors.length;
-    for (i = 1; i < len; i++) {
-      contextObject = original;
-      original = contextObject[objectSelectors[i]];
-    }
-
-    var orgType = typeof original;
-    if (orgType !== "function" && orgType !== "object") {
-      throw new TypeError(__format("Global variable '{0}' must be an object or a function, but was '{1}'", globalObjectName, orgType));
-    }
-
-    if (original === null) {
-      throw new TypeError(__format("Global variable '{0}' cannot be null", globalObjectName));
-    }
-
-    var mock = __createObjectOrFunctionMock(globalObjectName, original, orgType);
-
-    var globalMock = __GlobalMockFactory({
-      propertyName: objectSelectors.pop(),
-      context: contextObject,
-      original: original,
-      mock: mock
-    });
-
-    if (_shouldMonitorMocks) {
-      __log("Adding '{0}' to monitor", globalMock.__toString());
-      _monitor.globalMocks.push(globalMock);
-    }
-
-    globalMock.activate();
-
-    return globalMock;
-  }
-
-  function __watch(factoryFunc) {
-    if (typeof factoryFunc !== "function") {
-      throw new TypeError("The first argument must be a function");
-    }
-
-    // Clean up monitored mocks so that the same JsMock context can be used between test files
-    __resetMonitor();
-
-    try {
-      _shouldMonitorMocks = true;
-      factoryFunc();
-    } finally {
-      _shouldMonitorMocks = false;
+  function __log() {
+    if (_logsEnabled && console) {
+      console.log(__format.apply(null, Array.prototype.slice.call(arguments)));
     }
   }
 
-  function __assertWatched() {
-    var i, len = _monitor.globalMocks.length;
-
-    // First restore to ensure the proper state for the next test
-    for (i = 0; i < len; i++) {
-      var globalMock = _monitor.globalMocks[i];
-      __log("Restoring global mock '{0}'", globalMock.__toString());
-      globalMock.restoreWithoutVerifying();
-    }
-
-    len = _monitor.mocks.length;
-    for (i = 0; i < len; i++) {
-      var mock = _monitor.mocks[i];
-      __log("Asserting mock '{0}'", mock.__toString());
-      mock.verify();
-    }
-
-    return true;
+  function __getJsHamcrest() {
+    return _jshamcrest || JsHamcrest;
   }
 
- /**
-  * @class ExpectationError
-  * @classdesc An ExpectationError will be thrown in any situation where a mock
-  * expectation has not been met.
-  *
-  * @property {string} name The name of the error, will always return 'ExpectationError'.
-  * @property {string} message The error message for this error instance.
-  * @property {string} stack A string containing the stack trace for this error instance.
-  */
+  /**
+   * @class ExpectationError
+   * @classdesc An ExpectationError will be thrown in any situation where a mock
+   * expectation has not been met.
+   *
+   * @property {string} name The name of the error, will always return 'ExpectationError'.
+   * @property {string} message The error message for this error instance.
+   * @property {string} stack A string containing the stack trace for this error instance.
+   */
   function ExpectationError(message) {
     this.name = 'ExpectationError';
     this.message = 'ExpectationError: ' + (message || 'Unknown expectation failed.');
@@ -191,19 +63,18 @@
   ExpectationError.prototype = Object.create(Error.prototype);
   ExpectationError.prototype.constructor = ExpectationError;
 
-
   /**
-  * Internal - Instantiated by JsMock.
-  *
-  * @name GlobalMock
-  * @private
-  * @class
-  *
-  * @classdesc The object returned by <code>JsMock.mockGlobal</code> representing the mock
-  * for a global function or function property. The object to verify the mock and restore
-  * the original object and allows the definition of expectations without having to use
-  * the original in a test case at all.
-  */
+   * Internal - Instantiated by JsMock.
+   *
+   * @name GlobalMock
+   * @private
+   * @class
+   *
+   * @classdesc The object returned by <code>JsMock.mockGlobal</code> representing the mock
+   * for a global function or function property. The object to verify the mock and restore
+   * the original object and allows the definition of expectations without having to use
+   * the original in a test case at all.
+   */
   var __GlobalMockFactory = function (args) {
     var _mock = args.mock;
     var _context = args.context;
@@ -258,60 +129,60 @@
     }
 
     return {
-     /**
-      * Returns the mock object of this GlobalMock in order to set some expectations.
-      *
-      * @returns {Mock} The {@link Mock} instance representing this global mock object.
-      * @throws {Error} An error if this GlobalMock is not active.
-      *
-      * @see {@link Mock}
-      *
-      * @function GlobalMock#expect
-      */
+      /**
+       * Returns the mock object of this GlobalMock in order to set some expectations.
+       *
+       * @returns {Mock} The {@link Mock} instance representing this global mock object.
+       * @throws {Error} An error if this GlobalMock is not active.
+       *
+       * @see {@link Mock}
+       *
+       * @function GlobalMock#expect
+       */
       expect: function () {
         verifyActive();
 
         return _mock;
       },
 
-     /**
-      * Activates this <code>GlobalMock</code> by replacing the global, original object with the {@link Mock} instance.
-      *
-      * @function GlobalMock#activate
-      */
+      /**
+       * Activates this <code>GlobalMock</code> by replacing the global, original object with the {@link Mock} instance.
+       *
+       * @function GlobalMock#activate
+       */
       activate: function () {
         __log("Activating global mock '{0}:{1}'", _propertyName, _id);
         _context[_propertyName] = _mock;
       },
 
-     /**
-      * Verifies the entire mock object with all its properties and the main function, if available.
-      *
-      * @throws {ExpectationError} An expectation error if at least one expectation was not fulfilled.
-      *
-      * @function GlobalMock#verify
-      */
+      /**
+       * Verifies the entire mock object with all its properties and the main function, if available.
+       *
+       * @throws {ExpectationError} An expectation error if at least one expectation was not fulfilled.
+       *
+       * @function GlobalMock#verify
+       */
       verify: verifyMocks,
 
-     /**
-      * First restores the original object and then verifies if all expectations have been fulfilled.
-      *
-      * @throws {ExpectationError} An expectation error if at least one expectation was not fulfilled.
-      *
-      * @see {@link GlobalMock#verify}
-      *
-      * @function GlobalMock#restore
-      */
+      /**
+       * First restores the original object and then verifies if all expectations have been fulfilled.
+       *
+       * @throws {ExpectationError} An expectation error if at least one expectation was not fulfilled.
+       *
+       * @see {@link GlobalMock#verify}
+       *
+       * @function GlobalMock#restore
+       */
       restore: function () {
         restoreOriginal();
         return verifyMocks();
       },
 
-     /**
-      * Restores the original object of this <code>GlobalMock</code> instance.
-      *
-      * @function GlobalMock#restoreWithoutVerifying
-      */
+      /**
+       * Restores the original object of this <code>GlobalMock</code> instance.
+       *
+       * @function GlobalMock#restoreWithoutVerifying
+       */
       restoreWithoutVerifying: restoreOriginal,
 
       /* For debugging purposes */
@@ -321,6 +192,9 @@
     };
   };
 
+  /* Mock constants */
+  var _STUB = "STUB"; // Makes a mock behave like a stub
+  var _ALL_CALLS = "ALL_INVOCATIONS"; // The scope of the invocations, i.e. exactly(3).returns('foo'); means return 'foo' for all invocations
 
  /**
   * Internal - Instantiated by JsMock.
@@ -521,13 +395,12 @@
     };
 
     /**
-     * Set the expectation for the mock to be called 'x' number of times.
-     *
-     * @param {number} count The number of times how often this mock is expected to be called.
+     * Allows the mock to be called any number if times, assuming that the invocation still fulfills
+     * the expectations defined with the {@link Mock#with} function.
      *
      * @returns {Mock} This {@link Mock} instance.
      *
-     * @function Mock#exactly
+     * @function Mock#allowing
      */
     _thisMock.allowing = function() {
       reset();
@@ -837,6 +710,56 @@
     };
 
    /**
+    * Alias for <code>withExactArgs(JsHamcrest.Matchers.equivalentMap(arg))</code>. Only use with an actual
+    * object, <code>null</code> and <code>undefined</code> values are not supported.
+    *
+    * @see {@link Mock#withExactArgs}
+    *
+    * @param {object} arg The object to be evaluated for equivalancy.
+    *
+    * @returns {Mock} This {@link Mock} instance.
+    *
+    * @function Mock#withEquivalentObject
+    */
+    _thisMock.withEquivalentObject = function (arg) {
+      var jsHamcrest = __getJsHamcrest();
+      if (typeof(jsHamcrest) === "undefined") {
+        throw new Error("withEquivalentObject() requires JsHamcrest to be available in order to be used.");
+      }
+
+      if (arg === null || typeof(arg) !== "object" || Array.isArray(arg)) {
+        throw new TypeError("'arg' must be of type object, and cannot be null or undefined.");
+      }
+
+      return _thisMock.withExactArgs(jsHamcrest.Matchers.equivalentMap(arg));
+    };
+
+   /**
+    * Alias for <code>withExactArgs(JsHamcrest.Matchers.equivalentArray(arg))</code>. Only use with an actual array,
+    * <code>null</code> and <code>undefined</code> values are not supported.
+    *
+    * @see {@link Mock#withExactArgs}
+    *
+    * @param {array} arg The array to be evaluated for equivalancy.
+    *
+    * @returns {Mock} This {@link Mock} instance.
+    *
+    * @function Mock#withEquivalentArray
+    */
+    _thisMock.withEquivalentArray = function (arg) {
+      var jsHamcrest = __getJsHamcrest();
+      if (typeof(jsHamcrest) === "undefined") {
+        throw new Error("withEquivalentArray() requires JsHamcrest to be available in order to be used.");
+      }
+
+      if (!Array.isArray(arg)) {
+        throw new TypeError("'arg' must be of type array, and cannot be null or undefined.");
+      }
+
+      return _thisMock.withExactArgs(jsHamcrest.Matchers.equivalentArray(arg));
+    };
+
+   /**
     * Alias for withExactArgs.
     *
     * @see {@link Mock#withExactArgs}
@@ -857,6 +780,135 @@
     return _thisMock;
   };
 
+  /* internal functions */
+  function __resetMonitor() {
+    __log("Resetting monitor");
+    _monitor = {
+      mocks: [],
+      globalMocks: []
+    };
+  }
+
+  function __createSimpleMock(name) {
+    var newMock = __MockFactory({
+      name: name
+    });
+
+    if (_shouldMonitorMocks) {
+      __log("Adding '{0}' to monitor", newMock.__toString());
+      _monitor.mocks.push(newMock);
+    }
+
+    return newMock;
+  }
+
+  function __createObjectOrFunctionMock(objName, obj, objType) {
+    if (obj.constructor === Array) {
+      throw new TypeError("Mocking of arrays is not supported");
+    }
+
+    var result =
+      objType === "function" ?
+        __createSimpleMock(objName) :
+        {};
+
+    var errors = [];
+    Object.keys(obj).forEach(function(propertyName) {
+      if (result[propertyName] !== undefined) {
+        errors.push(__format("'{0}' has already been assigned to the mock object.", propertyName));
+      }
+
+      if (typeof obj[propertyName] === "function") {
+        result[propertyName] = __createSimpleMock(objName + "." + propertyName);
+      } else {
+        result[propertyName] = obj[propertyName];
+      }
+    });
+
+    if (errors.length > 0) {
+      throw new Error("Failed to create mock object for the following reasons: " + JSON.stringify(errors));
+    }
+
+    return result;
+  }
+
+  function __mockGlobal(globalObjectName) {
+    var objectSelectors = globalObjectName.split(".");
+    var contextObject = typeof window === 'undefined' ?
+      global : //Node
+      window; //Browser
+
+    var original = contextObject[objectSelectors[0]];
+
+    var i, len = objectSelectors.length;
+    for (i = 1; i < len; i++) {
+      contextObject = original;
+      original = contextObject[objectSelectors[i]];
+    }
+
+    var orgType = typeof original;
+    if (orgType !== "function" && orgType !== "object") {
+      throw new TypeError(__format("Global variable '{0}' must be an object or a function, but was '{1}'", globalObjectName, orgType));
+    }
+
+    if (original === null) {
+      throw new TypeError(__format("Global variable '{0}' cannot be null", globalObjectName));
+    }
+
+    var mock = __createObjectOrFunctionMock(globalObjectName, original, orgType);
+
+    var globalMock = __GlobalMockFactory({
+      propertyName: objectSelectors.pop(),
+      context: contextObject,
+      original: original,
+      mock: mock
+    });
+
+    if (_shouldMonitorMocks) {
+      __log("Adding '{0}' to monitor", globalMock.__toString());
+      _monitor.globalMocks.push(globalMock);
+    }
+
+    globalMock.activate();
+
+    return globalMock;
+  }
+
+  function __watch(factoryFunc) {
+    if (typeof factoryFunc !== "function") {
+      throw new TypeError("The first argument must be a function");
+    }
+
+    // Clean up monitored mocks so that the same JsMock context can be used between test files
+    __resetMonitor();
+
+    try {
+      _shouldMonitorMocks = true;
+      factoryFunc();
+    } finally {
+      _shouldMonitorMocks = false;
+    }
+  }
+
+  function __assertWatched() {
+    var i, len = _monitor.globalMocks.length;
+
+    // First restore to ensure the proper state for the next test
+    for (i = 0; i < len; i++) {
+      var globalMock = _monitor.globalMocks[i];
+      __log("Restoring global mock '{0}'", globalMock.__toString());
+      globalMock.restoreWithoutVerifying();
+    }
+
+    len = _monitor.mocks.length;
+    for (i = 0; i < len; i++) {
+      var mock = _monitor.mocks[i];
+      __log("Asserting mock '{0}'", mock.__toString());
+      mock.verify();
+    }
+
+    return true;
+  }
 
  /**
   * JavaScript mocking framework, which can be used with any test framework. JsMock is inspired by jMock and Sinon.js
@@ -988,7 +1040,8 @@
   API.ExpectationError = ExpectationError;
 
   if (typeof define === "function") {
-    define("js-mock", [], function() {
+    define("js-mock", ['jshamcrest'], function(JsHamcrest) {
+      _jshamcrest = JsHamcrest;
       return API;
     });
   }
