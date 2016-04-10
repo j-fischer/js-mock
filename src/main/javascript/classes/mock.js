@@ -516,7 +516,8 @@
     };
 
    /**
-    * Alias for withExactArgs(JsHamcrest.Matchers.equivalentMap(arg).
+    * Alias for <code>withExactArgs(JsHamcrest.Matchers.equivalentMap(arg))</code>. Only use with an actual
+    * object, <code>null</code> and <code>undefined</code> values are not supported.
     *
     * @see {@link Mock#withExactArgs}
     *
@@ -540,7 +541,8 @@
     };
 
    /**
-    * Alias for withExactArgs(JsHamcrest.Matchers.equivalentArray(arg).
+    * Alias for <code>withExactArgs(JsHamcrest.Matchers.equivalentArray(arg))</code>. Only use with an actual array,
+    * <code>null</code> and <code>undefined</code> values are not supported.
     *
     * @see {@link Mock#withExactArgs}
     *
