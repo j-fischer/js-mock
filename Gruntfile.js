@@ -25,7 +25,14 @@ module.exports = function (grunt) {
         junit: 'artifacts/reports/junit',
         jsdoc: 'artifacts/docs',
         root: 'artifacts',
-        site: 'artifacts/site'
+        site: 'artifacts/site',
+        npm: 'artifacts/npm',
+        bower: 'artifacts/bower' // see .bowerrc
+      },
+
+      package: {
+        npm: "artifacts/npm/node_modules/js-mock/dist",
+        bower: "artifacts/bower/js-mock/dist"
       }
   };
 
@@ -197,6 +204,24 @@ module.exports = function (grunt) {
           {pattern: '<%= config.dist %>/*.js'},
           {pattern: '<%= config.test %>/**/*.spec.js'}
         ]
+      },
+      npm: {
+        singleRun: true,
+        reporters: ['spec'],
+
+        files: [
+          {pattern: '<%= config.package.npm %>/*.js'},
+          {pattern: '<%= config.test %>/**/*.spec.js'}
+        ]
+      },
+      bower: {
+        singleRun: true,
+        reporters: ['spec'],
+
+        files: [
+          {pattern: '<%= config.package.bower %>/*.js'},
+          {pattern: '<%= config.test %>/**/*.spec.js'}
+        ]
       }
     },
 
@@ -274,6 +299,17 @@ module.exports = function (grunt) {
 
           return 'git commit -am "Updated artifacts for version ' + newVersion + '"';
         }
+      },
+      "installNpm": {
+        command: [
+          "mkdir -p <%= config.artifacts.npm %>",
+          "cd <%= config.artifacts.npm %>",
+          "npm init -f",
+          "npm install js-mock"
+        ].join('&&')
+      },
+      "installBower": {
+        command: "bower install js-mock"
       }
     }
   });
@@ -335,6 +371,15 @@ module.exports = function (grunt) {
     tasks.push('shell:publish');
 
     grunt.task.run(tasks);
+  });
+
+  grunt.registerTask('validate-packages', 'Download JsMock through NPM and bower and run tests', function () {
+    grunt.task.run([
+      'shell:installNpm',
+      'shell:installBower',
+      'karma:npm',
+      'karma:bower',
+    ]);
   });
 
   // Setup default task that runs when you just run 'grunt'
