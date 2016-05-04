@@ -47,11 +47,4 @@ describe('JsMock', function(){
       expect($).toBe(jQuery);
     });
   });
-
-  describe('assertIfSatisfied', function() {
-
-    it("should exactly be the same function as assertWatched", function () {
-      expect(JsMock.assertIfSatisfied).toBe(JsMock.assertWatched);
-    });
-  });
 });

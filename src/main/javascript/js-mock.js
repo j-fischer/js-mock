@@ -262,16 +262,6 @@
      */
     watch: __watch,
 
-   /**
-    * Alias for JsMock.watch().
-    *
-    * @see {@link module:js-mock.watch}
-    * @deprecated since version 0.9
-    *
-    * @function module:js-mock.monitorMocks
-    */
-    monitorMocks: __watch,
-
     /**
      * Verify all mocks registered in the current test context.<br>
      * <br>
@@ -288,16 +278,6 @@
      * @function module:js-mock.assertWatched
      */
     assertWatched: __assertWatched,
-
-   /**
-    * Alias for JsMock.assertWatched().
-    *
-    * @see {@link module:js-mock.assertWatched}
-    * @deprecated since version 0.9
-    *
-    * @function module:js-mock.assertIfSatisfied
-    */
-    assertIfSatisfied: __assertWatched,
 
     /* For internal debugging purposes */
     __enableLogs: function() {

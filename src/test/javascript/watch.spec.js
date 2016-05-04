@@ -96,11 +96,4 @@ describe('JsMock', function(){
       }).toThrowError("Some error in watch!!!");
     });
   });
-
-  describe('monitorMocks', function(){
-
-    it ("should be exactly the same function as watch()", function () {
-      expect(JsMock.monitorMocks).toBe(JsMock.watch);
-    });
-  });
 });
