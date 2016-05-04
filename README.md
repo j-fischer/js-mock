@@ -364,6 +364,10 @@ Until this library reaches version 1.0, there is a chance that backwards compati
 
 ## Changelog
 
+### 1.0.0
+
+- Removed deprecated functions
+
 ### 0.13.0
 
 - Added Mock.withEquivalentArray() as a wrapper for the common JsHamcrest based verification Mock.with(JsHamcrest.Matchers.equivalentArray(anArray))
