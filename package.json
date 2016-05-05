@@ -1,7 +1,7 @@
 {
   "name": "js-mock",
   "description": "Simple mocking framework for Javascript unit tests",
-  "version": "0.13.0",
+  "version": "1.0.0",
   "license": "BSD-3-Clause",
   "author": {
     "name": "Johannes Fischer",
