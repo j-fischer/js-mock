@@ -356,10 +356,6 @@ The full API documentation can be found [here](http://www.jsmock.org/docs/index.
 
 BSD 3-clause, see [License.txt](https://github.com/j-fischer/js-mock/blob/master/LICENSE.txt)
 
-## Note
-
-Until this library reaches version 1.0, there is a chance that backwards compatibility may get broken between minor versions. Please check the release notes for conflicting changes before upgrading.
-
 [![js-api generator](http://img.shields.io/badge/Powered%20by-%20JS%20API%20Generator-green.svg?style=flat-square)](https://www.npmjs.com/package/generator-js-api)
 
 ## Changelog
