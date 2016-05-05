@@ -60,7 +60,8 @@
   "files": [
     "dist",
     "LICENSE.txt",
-    "README.md"
+    "README.md",
+    "CHANGELOG.md"
   ],
   "main": "./dist/js-mock.js",
   "scripts": {
