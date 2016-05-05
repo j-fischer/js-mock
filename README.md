@@ -394,28 +394,4 @@ Until this library reaches version 1.0, there is a chance that backwards compati
 - Added JsMock.watch() as the better alternative for JsMock.monitorMocks(). JsMock.monitorMocks() is now an alias for JsMock.watch() and has been deprecated
 - Added JsMock.assertWatched() as the better alternative for JsMock.assertIfSatiesfied(). JsMock.assertIfSatisfied() is now an alias for JsMock.assertWatched() and has been deprecated
 
-### 0.8.0
-
-- Modified mock() to support a function as the object to be mocked. If the function contains more functions as properties, those will be mocked as well
-
-### 0.7.0
-
-- Modified verify() to return a `true` if all expectations are fulfilled
-
-### 0.6.0
-
-- Added alias function with() for withExactArgs()
-
-### 0.5.0
-
-- Modified assertIfSatisfied() to return a `true` if all mocks passed the verification
-
-### 0.4.0
-
-- Added support for JsHamcrest style matchers for withExactArgs()
-- Minor refactoring: Made will() a alias function for the now called callsAndReturns() function
-- Added validation that only one return function, callsAndReturns() or returns(), can be expected
-
-### 0.3.0
-
-- Initial release
+For older versions, please read the CHANGELOG.md file.
