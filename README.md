@@ -33,8 +33,11 @@ Or install it using [Bower](http://bower.io/)
 and include bower_components/js-mock/dist/js-mock.js in your project.
 
 If you are building an Ember CLI application, just use the [Ember JsMock](https://github.com/j-fischer/ember-js-mock) addon to add JsMock to your Ember CLI application tests.
+And to get the most out of JsMock, I recommend to also install the [Ember JsHamcrest](https://github.com/j-fischer/ember-jshamcrest) addon to allow for an easier
+and more powerfull validation of your expectations.
 
     $ ember install ember-js-mock
+    $ ember install ember-jshamcrest
 
 ## Getting Started
 
