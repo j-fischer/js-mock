@@ -393,4 +393,4 @@ BSD 3-clause, see [License.txt](https://github.com/j-fischer/js-mock/blob/master
 - Added JsMock.watch() as the better alternative for JsMock.monitorMocks(). JsMock.monitorMocks() is now an alias for JsMock.watch() and has been deprecated
 - Added JsMock.assertWatched() as the better alternative for JsMock.assertIfSatiesfied(). JsMock.assertIfSatisfied() is now an alias for JsMock.assertWatched() and has been deprecated
 
-For older versions, please read the CHANGELOG.md file.
+For older versions, please read the [CHANGELOG.md](https://github.com/j-fischer/js-mock/blob/master/CHANGELOG.md) file.
