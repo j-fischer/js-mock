@@ -363,6 +363,10 @@ BSD 3-clause, see [License.txt](https://github.com/j-fischer/js-mock/blob/master
 
 ## Changelog
 
+### 1.0.1
+
+- Updated project dependencies and added version in file header
+
 ### 1.0.0
 
 - Removed deprecated functions
