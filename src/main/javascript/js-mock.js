@@ -1,5 +1,6 @@
 /*!
  * JsMock - A simple Javascript mocking framework.
+ * @version @@DEV
  *
  * @author Johannes Fischer (johannes@jsmock.org)
  * @license BSD-3-Clause

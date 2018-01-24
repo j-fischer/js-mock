@@ -97,11 +97,25 @@ module.exports = function (grunt) {
       }
     },
 
-    copy: {
+    replace: {
       build: {
-        src: '<%= config.app %>/<%= pkg.name %>.js',
-        dest: '<%= config.artifacts.build %>/<%= pkg.name %>.js'
-      },
+        options: {
+          patterns: [
+            {
+              match: 'DEV',
+              replacement: function() {
+                return grunt.option("setversion") || 'DEV';
+              }
+            }
+          ]
+        },
+        files: [
+          {expand: true, flatten: true, src: ['<%= config.app %>/<%= pkg.name %>.js'], dest: '<%= config.artifacts.build %>'}
+        ]
+      }
+    },
+
+    copy: {
       dist: {
         src: '<%= config.artifacts.build %>/<%= pkg.name %>.js',
         dest: '<%= config.dist %>/<%= pkg.name %>.js'
@@ -229,12 +243,12 @@ module.exports = function (grunt) {
       //run unit tests with karma (server needs to be already running)
       "karma-watch": {
         files: ['<%= config.app %>/**/*.js', '<%= config.test %>/**/*.spec.js'],
-        tasks: ['copy:build', 'insert', 'karma:watch:run'] //NOTE the :run flag
+        tasks: ['replace:build', 'insert', 'karma:watch:run'] //NOTE the :run flag
       },
 
       "karma-debug": {
         files: ['<%= config.app %>/**/*.js', '<%= config.test %>/**/*.spec.js'],
-        tasks: ['copy:build', 'insert', 'karma:debug:run'] //NOTE the :run flag
+        tasks: ['replace:build', 'insert', 'karma:debug:run'] //NOTE the :run flag
       }
     },
 
@@ -327,7 +341,7 @@ module.exports = function (grunt) {
     }
 
     grunt.task.run([
-      'copy:build',
+      'replace:build',
       'insert',
       "karma:unit"
     ]);
@@ -338,7 +352,7 @@ module.exports = function (grunt) {
     'clean',
     'jshint:src',
     'todo',
-    'copy:build',
+    'replace:build',
     'insert',
     'karma:unit'
   ]);
