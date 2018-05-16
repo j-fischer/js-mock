@@ -36,15 +36,16 @@ describe('JsMock', function(){
       JsMock.watch(function () {
         myFunc = JsMock.mock("myFunc");
         $Mock = JsMock.mockGlobal("$");
-        jQueryMock = JsMock.mockGlobal("jQuery");
       });
+
+      expect($).not.toBe(jQuery, '$ and jQuery should not be the same.');
 
       $Mock.expect().once().with("div");
 
       expectExpectationError(JsMock.assertWatched, 'ExpectationError: Missing invocations for $():\n>>> Expectation for call 1 with args ["div"], will return undefined');
 
       expect($.verify).toBe(undefined);
-      expect($).toBe(jQuery);
+      expect($).toBe(jQuery, '$ and jQuery should be the same.');
     });
   });
 });
