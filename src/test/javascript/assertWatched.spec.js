@@ -46,6 +46,11 @@ describe('JsMock', function(){
 
       expect($.verify).toBe(undefined);
       expect($).toBe(jQuery, '$ and jQuery should be the same.');
+
+      // Fullfil expectation to avoid ExpactationErrors in other test cases.
+      $Mock.activate();
+      $("div");
+      JsMock.assertWatched();
     });
   });
 });
