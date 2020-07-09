@@ -143,7 +143,7 @@ module.exports = function (grunt) {
 
         // list of files / patterns to load in the browser
         files: [
-          'node_modules/jshamcrest/jshamcrest.js',
+          'node_modules/hamjest/dist/hamjest.js',
           'node_modules/jquery/dist/jquery.js'
         ],
 

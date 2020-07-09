@@ -106,7 +106,7 @@ describe('JsMock', function(){
       var delayedFuncMock = JsMock.mock("delayedFunc");
       var timeoutId = "timeout123";
 
-      setTimeoutMock.expect().once().with(JsHamcrest.Matchers.func(), 500).will(function (func, delay) {
+      setTimeoutMock.expect().once().with(hamjest.func(), 500).will(function (func, delay) {
         func();
 
         return timeoutId;

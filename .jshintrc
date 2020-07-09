@@ -28,7 +28,7 @@
     "module": false,
     "global": false,
     "JsMock": false,
-    "JsHamcrest": false,
+    "hamjest": false,
     "$": false,
     "jQuery": false,
     "ExpectationError": false,
@@ -36,7 +36,6 @@
     "__GlobalMockFactory": true,
     "__generateId": false,
     "__format": false,
-    "__log": false,
-    "__getJsHamcrest": false
+    "__log": false
   }
 }
