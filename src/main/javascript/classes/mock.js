@@ -142,15 +142,16 @@
     }
 
     var _thisMock = function evalCall() {
+      var actualArguments = Array.prototype.slice.call(arguments);
+      
       if (_callCount === _expectTotalCalls) {
         var msg = _expectTotalCalls === 0 ?
-          "'{0}' was not expected to be called." :
-          "'{0}' was expected to be called {1} time(s). It was just invoked for the {2} time.";
+          "'{0}' was not expected to be called. The invocation used the following arguments: {1}" :
+          "'{0}' was expected to be called {2} time(s). It was just invoked for the {3} time. The invocation used the following arguments: {1}";
 
-        throw new ExpectationError(__format(msg, _name, _expectTotalCalls, (_expectTotalCalls + 1)));
+        throw new ExpectationError(__format(msg, _name, JSON.stringify(actualArguments), _expectTotalCalls, (_expectTotalCalls + 1)));
       }
-
-      var actualArguments = Array.prototype.slice.call(arguments);
+      
       var expectation = findMatchingExpectation(actualArguments);
 
       //set fulfilled

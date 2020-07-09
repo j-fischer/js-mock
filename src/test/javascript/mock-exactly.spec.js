@@ -20,7 +20,7 @@ describe('Mock', function(){
   }
 
   function expectAlreadyInvokedError(numOfTimes) {
-    expectExpectationError(_myFunc, "ExpectationError: 'Exactly.myFunc' was expected to be called " + numOfTimes + " time(s). It was just invoked for the " + (numOfTimes + 1) + " time.");
+    expectExpectationError(_myFunc, "ExpectationError: 'Exactly.myFunc' was expected to be called " + numOfTimes + " time(s). It was just invoked for the " + (numOfTimes + 1) + " time. The invocation used the following arguments: []");
   }
 
   function expectMissingInvocationError(numOfExpectedInvocations) {
@@ -45,7 +45,7 @@ describe('Mock', function(){
 
         _myFunc.never();
 
-        expectExpectationError(_myFunc, "ExpectationError: 'Exactly.myFunc' was not expected to be called.");
+        expectExpectationError(_myFunc, "ExpectationError: 'Exactly.myFunc' was not expected to be called. The invocation used the following arguments: []");
       });
     });
 
