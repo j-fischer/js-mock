@@ -32,18 +32,21 @@ Or install it using [Bower](http://bower.io/)
 
 and include bower_components/js-mock/dist/js-mock.js in your project.
 
-If you are building an Ember CLI application, just use the [Ember JsMock](https://github.com/j-fischer/ember-js-mock) addon to add JsMock to your Ember CLI application tests.
-And to get the most out of JsMock, I recommend to also install the [Ember JsHamcrest](https://github.com/j-fischer/ember-jshamcrest) addon to allow for an easier
-and more powerfull validation of your expectations.
-
-    $ ember install ember-js-mock
-    $ ember install ember-jshamcrest
-
 ## Getting Started
 
 The following list highlights some simple use cases of JsMock and includes some best practices.
 For a full reference, please check out the [API docs](http://www.jsmock.org/docs/index.html) or
 take a look at the [unit tests](https://github.com/j-fischer/js-mock/src/test/javascript).
+
+### Include JsMock in Your Tests
+
+```
+//ES6 module import
+import JsMock from 'js-mock';
+
+//ES5 module import
+var JsMock = require('js-mock').default;
+```
 
 ### JsMock.mock()
 
@@ -136,7 +139,7 @@ Set the expectation for the mock to be called N number of times.
 ### mock.with(<anything>...)
 
 Set the expectation to be called with the exact arguments provided. Any of the given arguments can be
-a JsHamcrest style matcher. If a matcher is provided as an argument, the actual argument will
+a Hamjest style matcher. If a matcher is provided as an argument, the actual argument will
 be passed on to the `matches()` function of the matcher object.
 
     var mock = JsMock.mock("aMock");
@@ -326,30 +329,26 @@ your tests may pass with unfulfilled expecations. Below are some examples on how
       // set expectations and test
     });
 
-### JsHamcrest
+### Hamjest
 
-While JsMock does not have any dependencies, it does support [JsHamcrest](http://danielmartins.ninja/jshamcrest/index.html) for the
-matching of arguments when using `with()` or `withExactArgs()`. JsHamcrest has a vast number of existing matchers that can be used to
-validate an argument. And should there not be the right matcher available, you can easily write your own by simply inheriting to the
-[JsHamcrest.SimpleMatcher](https://github.com/danielfm/jshamcrest/blob/master/src/jshamcrest.js) interface.
+While JsMock does not have any dependencies, it does support [Hamjest](https://github.com/rluba/hamjest) for the
+matching of arguments when using `with()` or `withExactArgs()`. Hamjest has a vast number of existing matchers that can be used to
+validate an argument. And should there not be the right matcher available, you can [easily write your own implementation](https://github.com/rluba/hamjest/wiki/Custom-matchers).
 
     var mock = JsMock.mock("aMock");
 
-    mock.once().with(JsHamcrest.Matchers.equivalentArray(["foo", "bar"]));
+    mock.once().with(hamjest.contains("foo", "bar"));
 
     mock(["foo", "bar"]);
     mock.verify();
 
-    mock.thrice().with(JsHamcrest.Matchers.between(4).and(7));
+    mock.thrice().with(hamjest.greaterThan(3));
 
     mock(4);
     mock(6);
     mock(7);
 
     mock.verify();
-
-**Note**: There have been two helper methods added to the core `Mock` interface, which should simplify the usage of the two most common
-JsHamcrest matchers. Take a look at the API documentation for `Mock.withEquivalentArray()` and `Mock.withEquivalentObject()`.
 
 ## API Docs
 
@@ -363,42 +362,12 @@ BSD 3-clause, see [License.txt](https://github.com/j-fischer/js-mock/blob/master
 
 ## Changelog
 
-### 1.0.2
+### 2.0.0
 
-- Updated project dependencies
-
-### 1.0.1
-
-- Updated project dependencies and added version in file header
-
-### 1.0.0
-
-- Removed deprecated functions
-
-### 0.13.0
-
-- Added Mock.withEquivalentArray() as a wrapper for the common JsHamcrest based verification Mock.with(JsHamcrest.Matchers.equivalentArray(anArray))
-- Added Mock.withEquivalentObject() as a wrapper for the common JsHamcrest based verification Mock.with(JsHamcrest.Matchers.equivalentMap(anObject))
-
-### 0.12.0
-
-- Improved error messages of ExpectationErrors
-
-### 0.11.0
-
-- Added Mock.willThrow() that invokes a given function and expects this function to throw an error
-- Added Mock.throws() to allow mock objects to throw an exception when invoked
-
-### 0.10.0
-
-- Improved error messages for some expectation errors
-- Added more unit tests as examples on how to mock common functions such as Date.now() or setTimeout()
-
-### 0.9.0
-
-- Added JsMock.mockGlobal() which allows for replacing global variables or a child property of a global variable
-- Added Mock.expect() in order to match the API of GlobalMock object. This allows to switch from a global mock to non-global version without having to change the expectations
-- Added JsMock.watch() as the better alternative for JsMock.monitorMocks(). JsMock.monitorMocks() is now an alias for JsMock.watch() and has been deprecated
-- Added JsMock.assertWatched() as the better alternative for JsMock.assertIfSatiesfied(). JsMock.assertIfSatisfied() is now an alias for JsMock.assertWatched() and has been deprecated
+- Removed built-in dependency on JsHamcrest, it can still be used to pass a Matcher as an argument
+- Removed Mock.withEquivalentArray()  
+- Removed Mock.withEquivalentObject()
+- HamJest matchers are now supported
+- Improved error messages for unexpected invocations of a Mock
 
 For older versions, please read the [CHANGELOG.md](https://github.com/j-fischer/js-mock/blob/master/CHANGELOG.md) file.

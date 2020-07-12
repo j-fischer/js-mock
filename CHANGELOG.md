@@ -1,3 +1,11 @@
+### 2.0.0
+
+- Removed built-in dependency on JsHamcrest, it can still be used to pass a Matcher as an argument
+- Removed Mock.withEquivalentArray()  
+- Removed Mock.withEquivalentObject()
+- HamJest matchers are now supported
+- Improved error messages for unexpected invocations of a Mock
+
 ### 1.0.0
 
 - Removed deprecated functions
