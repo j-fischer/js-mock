@@ -321,6 +321,7 @@ module.exports = function (grunt) {
     var tasks = [
       'verify',
       'build',
+      'copy:dist',
       'jshint:dist',
       'shell:test-dist',
       'website'
