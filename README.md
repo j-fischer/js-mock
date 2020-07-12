@@ -26,12 +26,6 @@ Install JsMock via [npm](https://www.npmjs.com)
 
 and include node_modules/js-mock/dist/js-mock.js in your project.
 
-Or install it using [Bower](http://bower.io/)
-
-    $ bower install js-mock --save-dev
-
-and include bower_components/js-mock/dist/js-mock.js in your project.
-
 ## Getting Started
 
 The following list highlights some simple use cases of JsMock and includes some best practices.

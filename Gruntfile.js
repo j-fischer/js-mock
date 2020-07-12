@@ -22,13 +22,11 @@ module.exports = function (grunt) {
         coverage: 'artifacts/reports/coverage',
         jsdoc: 'artifacts/docs',
         site: 'artifacts/site',
-        npm: 'artifacts/npm',
-        bower: 'artifacts/bower' // see .bowerrc
+        npm: 'artifacts/npm'
       },
 
       package: {
-        npm: 'artifacts/npm/node_modules/js-mock/dist',
-        bower: 'artifacts/bower/js-mock/dist'
+        npm: 'artifacts/npm/node_modules/js-mock/dist'
       }
   };
 
@@ -43,7 +41,6 @@ module.exports = function (grunt) {
       },
       artifacts: '<%= config.artifacts.root %>',
       npm: '<%= config.artifacts.npm %>',
-      bower: '<%= config.artifacts.bower %>',
       site: '<%= config.artifacts.site %>'
     },
 
@@ -197,18 +194,6 @@ module.exports = function (grunt) {
       }
     },
 
-    bump: {
-        options: {
-          files: ['bower.json'],
-          updateConfigs: [],
-          commit: true,
-          commitMessage: 'Updated bower.json to version v%VERSION%',
-          commitFiles: ['bower.json'],
-          createTag: false,
-          push: false
-        }
-      },
-
     shell: {
       "create-site": {
         command: [
@@ -247,11 +232,7 @@ module.exports = function (grunt) {
           execOptions: {
               cwd: '<%= config.artifacts.npm %>'
           }
-      }
-        
-      },
-      "install-bower": {
-        command: "bower install js-mock"
+        }
       },
       "test": {
         command: "jest --color"
@@ -261,9 +242,6 @@ module.exports = function (grunt) {
       },
       "test-npm": {
         command: "jest --config=jest.config.npm.js --color"
-      },
-      "test-bower": {
-        command: "jest --config=jest.config.bower.js --color"
       }
     }
   });
@@ -331,15 +309,12 @@ module.exports = function (grunt) {
     grunt.task.run(tasks);
   });
 
-  grunt.registerTask('validate-packages', 'Download JsMock through NPM and bower and run tests', function () {
+  grunt.registerTask('validate-packages', 'Download JsMock through NPM and run tests', function () {
     grunt.task.run([
       'clean:npm',
       'copy:npm',
       'shell:install-npm',
-      'clean:bower',
-      'shell:install-bower',
       'shell:test-npm',
-      'shell:test-bower',
     ]);
   });
 
