@@ -369,5 +369,6 @@ BSD 3-clause, see [License.txt](https://github.com/j-fischer/js-mock/blob/master
 - Removed Mock.withEquivalentObject()
 - HamJest matchers are now supported
 - Improved error messages for unexpected invocations of a Mock
+- Added ES6 support through Babel compiler
 
 For older versions, please read the [CHANGELOG.md](https://github.com/j-fischer/js-mock/blob/master/CHANGELOG.md) file.

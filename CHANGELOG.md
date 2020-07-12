@@ -5,6 +5,7 @@
 - Removed Mock.withEquivalentObject()
 - HamJest matchers are now supported
 - Improved error messages for unexpected invocations of a Mock
+- Added ES6 support through Babel compiler
 
 ### 1.0.0
 
