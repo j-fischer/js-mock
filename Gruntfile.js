@@ -7,9 +7,6 @@ module.exports = function (grunt) {
   // show elapsed time at the end
   require('time-grunt')(grunt);
 
-  // Needs to be loaded specifcally, because the name and the configuration property name aren't matching.
-  grunt.loadNpmTasks('grunt-karma-coveralls');
-
   // load all grunt tasks needed for this run
   require('jit-grunt')(grunt);
 
@@ -20,19 +17,18 @@ module.exports = function (grunt) {
       dist: 'dist',
 
       artifacts: {
+        root: 'artifacts',
         build: 'artifacts/build',
         coverage: 'artifacts/reports/coverage',
-        junit: 'artifacts/reports/junit',
         jsdoc: 'artifacts/docs',
-        root: 'artifacts',
         site: 'artifacts/site',
         npm: 'artifacts/npm',
         bower: 'artifacts/bower' // see .bowerrc
       },
 
       package: {
-        npm: "artifacts/npm/node_modules/js-mock/dist",
-        bower: "artifacts/bower/js-mock/dist"
+        npm: 'artifacts/npm/node_modules/js-mock/dist',
+        bower: 'artifacts/bower/js-mock/dist'
       }
   };
 
@@ -45,7 +41,10 @@ module.exports = function (grunt) {
       options: {
         force: true
       },
-      artifacts: '<%= config.artifacts.root %>'
+      artifacts: '<%= config.artifacts.root %>',
+      npm: '<%= config.artifacts.npm %>',
+      bower: '<%= config.artifacts.bower %>',
+      site: '<%= config.artifacts.site %>'
     },
 
     todo: {
@@ -106,6 +105,12 @@ module.exports = function (grunt) {
               replacement: function() {
                 return grunt.option("setversion") || 'DEV';
               }
+            },
+            {
+              match: 'YEAR',
+              replacement: function() {
+                return new Date().getFullYear();
+              }
             }
           ]
         },
@@ -117,8 +122,45 @@ module.exports = function (grunt) {
 
     copy: {
       dist: {
-        src: '<%= config.artifacts.build %>/<%= pkg.name %>.js',
-        dest: '<%= config.dist %>/<%= pkg.name %>.js'
+        expand: true,
+        cwd: '<%= config.artifacts.build %>',
+        src: '*',
+        dest: '<%= config.dist %>/'
+      },
+      docsToSite: {
+        expand: true,
+        cwd: '<%= config.artifacts.jsdoc %>',
+        src: '**',
+        dest: '<%= config.artifacts.site %>/docs'    
+      },
+      npm: {
+        expand: true,
+        src: 'LICENSE.txt',
+        dest: '<%= config.artifacts.npm %>/'
+      },
+    },
+
+    move: {
+      site: {
+        src: '<%= config.artifacts.site %>/README.html',
+        dest: '<%= config.artifacts.site %>/index.html'
+      }
+    },
+
+    babel: {
+      options: {
+        sourceMap: true,
+        presets: ['@babel/preset-env']
+      },
+      build: {
+        files: {
+          '<%= config.artifacts.build %>/<%= pkg.name %>.js': '<%= config.artifacts.build %>/<%= pkg.name %>.js'
+        }
+      },
+      dist: {
+        files: {
+          '<%= config.dist %>/<%= pkg.name %>.js': '<%= config.artifacts.build %>/<%= pkg.name %>.js'
+        }
       }
     },
 
@@ -137,128 +179,16 @@ module.exports = function (grunt) {
       ]
     },
 
-    karma: {
-      options: {
-        configFile: '<%= config.test %>/karma.conf.js',
-
-        // list of files / patterns to load in the browser
-        files: [
-          'node_modules/hamjest/dist/hamjest.js',
-          'node_modules/jquery/dist/jquery.js'
-        ],
-
-        // For code coverage reporting
-        preprocessors: {
-          '<%= config.artifacts.build %>/**/*.js': 'coverage'
-        },
-
-        coverageReporter: {
-          dir: '<%= config.artifacts.coverage %>',
-          reporters: [
-            {
-              type : 'html',
-              subdir: 'html',
-              file: 'coverage-report.html'
-            },
-            {
-              type: 'cobertura',
-              subdir: 'cobertura',
-              file: 'coverage-report.xml'
-            },
-            {
-              type: "lcov",
-              subdir: "coveralls"
-            },
-            {
-              type: 'text-summary' /* Will output to console */
-            }
-          ]
-        },
-
-        junitReporter: {
-          outputDir: '<%= config.artifacts.junit %>', // results will be saved as $outputDir/$browserName.xml
-          outputFile: 'test-results.xml',
-          useBrowserName: false
-        }
-      },
-      unit: {
-        singleRun: true,
-
-        files: [
-          {pattern: '<%= config.artifacts.build %>/*.js'},
-          {pattern: '<%= config.test %>/**/*.spec.js'}
-        ]
-      },
-      watch: {
-        autoWatch: false,
-        background:true,
-        reporters: ['spec'],
-
-        files: [
-          {pattern: '<%= config.artifacts.build %>/*.js'},
-          {pattern: '<%= config.test %>/**/*.spec.js'}
-        ]
-      },
-      debug: {
-        autoWatch: false,
-        background:true,
-        browsers: ['Chrome'],
-        reporters: ['spec'],
-
-        files: [
-          {pattern: '<%= config.artifacts.build %>/*.js'},
-          {pattern: '<%= config.test %>/**/*.spec.js'}
-        ]
-      },
-      dist: {
-        singleRun: true,
-        reporters: ['spec'],
-
-        files: [
-          {pattern: '<%= config.dist %>/*.js'},
-          {pattern: '<%= config.test %>/**/*.spec.js'}
-        ]
-      },
-      npm: {
-        singleRun: true,
-        reporters: ['spec'],
-
-        files: [
-          {pattern: '<%= config.package.npm %>/*.js'},
-          {pattern: '<%= config.test %>/**/*.spec.js'}
-        ]
-      },
-      bower: {
-        singleRun: true,
-        reporters: ['spec'],
-
-        files: [
-          {pattern: '<%= config.package.bower %>/*.js'},
-          {pattern: '<%= config.test %>/**/*.spec.js'}
-        ]
-      }
-    },
-
-    watch: {
-      //run unit tests with karma (server needs to be already running)
-      "karma-watch": {
-        files: ['<%= config.app %>/**/*.js', '<%= config.test %>/**/*.spec.js'],
-        tasks: ['replace:build', 'insert', 'karma:watch:run'] //NOTE the :run flag
-      },
-
-      "karma-debug": {
-        files: ['<%= config.app %>/**/*.js', '<%= config.test %>/**/*.spec.js'],
-        tasks: ['replace:build', 'insert', 'karma:debug:run'] //NOTE the :run flag
-      }
-    },
-
     coveralls: {
       options: {
         debug: false,
-        coverageDir: '<%= config.artifacts.coverage %>/coveralls',
         dryRun: false,
         force: true,
         recursive: false
+      },
+      
+      build: {
+        src: '<%= config.artifacts.coverage %>/coveralls/*.info',
       }
     },
 
@@ -285,10 +215,7 @@ module.exports = function (grunt) {
     shell: {
       "create-site": {
         command: [
-          "rm -rf <%= config.artifacts.site %>",
-          "generate-md --layout mixu-gray --input ./README.md --output ./<%= config.artifacts.site %>",
-          "mv <%= config.artifacts.site %>/README.html <%= config.artifacts.site %>/index.html",
-          "cp -r <%= config.artifacts.jsdoc %> <%= config.artifacts.site %>/docs"
+          "generate-md --layout mixu-gray --input README.md --output <%= config.artifacts.site %>"
         ].join("&&")
       },
       "version": {
@@ -314,16 +241,32 @@ module.exports = function (grunt) {
           return 'git commit -am "Updated artifacts for version ' + newVersion + '"';
         }
       },
-      "installNpm": {
+      "install-npm": {
         command: [
-          "mkdir -p <%= config.artifacts.npm %>",
-          "cd <%= config.artifacts.npm %>",
           "npm init -f",
           "npm install js-mock"
-        ].join('&&')
+        ].join('&&'),
+        options: {
+          execOptions: {
+              cwd: '<%= config.artifacts.npm %>'
+          }
+      }
+        
       },
-      "installBower": {
+      "install-bower": {
         command: "bower install js-mock"
+      },
+      "test": {
+        command: "jest --color"
+      },
+      "test-dist": {
+        command: "jest --config=jest.config.dist.js --color"
+      },
+      "test-npm": {
+        command: "jest --config=jest.config.npm.js --color"
+      },
+      "test-bower": {
+        command: "jest --config=jest.config.bower.js --color"
       }
     }
   });
@@ -343,23 +286,28 @@ module.exports = function (grunt) {
     grunt.task.run([
       'replace:build',
       'insert',
-      "karma:unit"
+      'babel:build',
+      'shell:test'
     ]);
   });
 
   // Build
   grunt.registerTask('build', [
-    'clean',
+    'clean:artifacts',
     'jshint:src',
     'todo',
     'replace:build',
     'insert',
-    'karma:unit'
+    'babel:build',
+    'shell:test'
   ]);
 
   grunt.registerTask('website', [
-    "jsdoc",
-    "shell:create-site"
+    'jsdoc',
+    'clean:site',
+    'shell:create-site',
+    'move:site',
+    'copy:docsToSite'
   ]);
 
   grunt.registerTask('release', 'Build a new version and publish to NPM', function () {
@@ -374,8 +322,7 @@ module.exports = function (grunt) {
       'verify',
       'build',
       'jshint:dist',
-      'copy:dist',
-      'karma:dist',
+      'shell:test-dist',
       'website'
     ];
 
@@ -389,10 +336,13 @@ module.exports = function (grunt) {
 
   grunt.registerTask('validate-packages', 'Download JsMock through NPM and bower and run tests', function () {
     grunt.task.run([
-      'shell:installNpm',
-      'shell:installBower',
-      'karma:npm',
-      'karma:bower',
+      'clean:npm',
+      'copy:npm',
+      'shell:install-npm',
+      'clean:bower',
+      'shell:install-bower',
+      'shell:test-npm',
+      'shell:test-bower',
     ]);
   });
 

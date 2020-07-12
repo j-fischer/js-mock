@@ -1,3 +1,6 @@
+import JsMock from 'js-mock';
+import { $, jQuery } from 'jquery.init'; 
+
 describe('JsMock', function(){
 
   /*
@@ -38,18 +41,18 @@ describe('JsMock', function(){
         $Mock = JsMock.mockGlobal("$");
       });
 
-      expect($).not.toBe(jQuery, '$ and jQuery should not be the same.');
+      expect(global.$).not.toBe(jQuery, '$ and jQuery should not be the same.');
 
       $Mock.expect().once().with("div");
 
       expectExpectationError(JsMock.assertWatched, 'ExpectationError: Missing invocations for $():\n>>> Expectation for call 1 with args ["div"], will return undefined');
 
-      expect($.verify).toBe(undefined);
-      expect($).toBe(jQuery, '$ and jQuery should be the same.');
+      expect(global.$.verify).toBe(undefined);
+      expect(global.$).toBe(jQuery, '$ and jQuery should be the same.');
 
       // Fullfil expectation to avoid ExpactationErrors in other test cases.
       $Mock.activate();
-      $("div");
+      global.$("div");
       JsMock.assertWatched();
     });
   });

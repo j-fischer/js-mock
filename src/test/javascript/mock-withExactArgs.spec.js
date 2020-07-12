@@ -1,3 +1,6 @@
+import JsMock from 'js-mock';
+import hamjest from 'hamjest';
+
 describe('Mock', function(){
 
   var _myFunc;
@@ -8,9 +11,7 @@ describe('Mock', function(){
     });
   });
 
-  afterEach(function () {
-    JsMock.assertWatched();
-  });
+  afterEach(JsMock.assertWatched);
 
   /*
    * HELPER FUNCTIONS

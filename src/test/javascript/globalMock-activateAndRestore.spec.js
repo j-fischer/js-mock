@@ -1,3 +1,6 @@
+import JsMock from 'js-mock';
+import { $, jQuery } from 'jquery.init'; 
+
 describe('GlobalMock', function(){
 
   var _jQueryMock;
@@ -23,16 +26,16 @@ describe('GlobalMock', function(){
   describe('restore', function() {
 
     it("should restore original object", function() {
-      expect($).not.toBe(jQuery);
-      expect($).toBe(_jQueryMock.expect());
+      expect(global.$).not.toBe(jQuery);
+      expect(global.$).toBe(_jQueryMock.expect());
 
       _jQueryMock.restore();
 
-      expect($).toBe(jQuery);
+      expect(global.$).toBe(jQuery);
     });
 
     it("should return true", function() {
-      expect($).not.toBe(jQuery);
+      expect(global.$).not.toBe(jQuery);
 
       expect(_jQueryMock.restore()).toBe(true);
     });
@@ -44,11 +47,11 @@ describe('GlobalMock', function(){
         _jQueryMock.restore();
       }, 'ExpectationError: Missing invocations detected for global mock $:\nExpectationError: Missing invocations for $():\n>>> Expectation for call 1 with args ["div"], will return undefined');
 
-      expect($).toBe(jQuery);
+      expect(global.$).toBe(jQuery);
 
       _jQueryMock.activate();
 
-      $("div");
+      global.$("div");
     });
   });
 
@@ -58,11 +61,11 @@ describe('GlobalMock', function(){
 
       _jQueryMock.restoreWithoutVerifying();
 
-      expect($).toBe(jQuery);
+      expect(global.$).toBe(jQuery);
 
       _jQueryMock.activate();
 
-      $("div");
+      global.$("div");
     });
   });
 });

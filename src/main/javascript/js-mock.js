@@ -5,9 +5,9 @@
  * @author Johannes Fischer (johannes@jsmock.org)
  * @license BSD-3-Clause
  *
- * Copyright (c) 2015 Johannes Fischer
+ * Copyright (c) @@YEAR Johannes Fischer
  */
-(function () {
+export default (function () {
 
   /* diagnostic variables */
   var _logsEnabled = false;
@@ -287,15 +287,5 @@
 
   API.ExpectationError = ExpectationError;
 
-  if (typeof define === "function") {
-    define("js-mock", [], function() {
-      return API;
-    });
-  }
-
-  if (typeof window !== "undefined") {
-    window.JsMock = API;
-  } else if (typeof module !== "undefined") {
-    module.exports = API;
-  }
+  return API;
 })();
