@@ -2,7 +2,7 @@
 // https://jestjs.io/docs/en/configuration.html
 
 module.exports = {
-  coverageDirectory: "artifacts/reports/coverage/coveralls",
+  collectCoverage: false,
   moduleDirectories: [
     "artifacts/bower",
     "src/test/helpers",
