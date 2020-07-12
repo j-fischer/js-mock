@@ -173,9 +173,6 @@ module.exports = function (grunt) {
         'Gruntfile.js',
         '<%= config.app %>/{,*/}*.js',
         '<%= config.test %>/javascript/{,*/}*.js'
-      ],
-      dist: [
-        '<%= config.artifacts.build %>/<%= pkg.name %>.js'
       ]
     },
 
@@ -322,7 +319,6 @@ module.exports = function (grunt) {
       'verify',
       'build',
       'copy:dist',
-      'jshint:dist',
       'shell:test-dist',
       'website'
     ];
