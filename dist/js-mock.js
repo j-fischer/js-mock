@@ -1,37 +1,45 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 /*!
  * JsMock - A simple Javascript mocking framework.
- * @version 1.0.2
+ * @version 2.0.0
  *
  * @author Johannes Fischer (johannes@jsmock.org)
  * @license BSD-3-Clause
  *
- * Copyright (c) 2015 Johannes Fischer
+ * Copyright (c) 2020 Johannes Fischer
  */
-(function () {
-
+var _default = function () {
   /* diagnostic variables */
   var _logsEnabled = false;
   var _idCounter = 0;
-
   /* variables */
-  var _jshamcrest = null;
+
   var _shouldMonitorMocks = false;
   var _monitor = {
     mocks: [],
     globalMocks: []
   };
-
   /* global helper functions */
+
   function __generateId() {
     return _idCounter++;
   }
 
   function __format() {
     var result = arguments[0];
+    var i,
+        len = arguments.length;
 
-    var i, len = arguments.length;
     for (i = 1; i < len; i++) {
-      result = result.replace("{" + (i-1) + "}", arguments[i]);
+      result = result.replace("{" + (i - 1) + "}", arguments[i]);
     }
 
     return result;
@@ -42,11 +50,6 @@
       console.log(__format.apply(null, Array.prototype.slice.call(arguments)));
     }
   }
-
-  function __getJsHamcrest() {
-    return _jshamcrest || JsHamcrest;
-  }
-
   /**
    * @class ExpectationError
    * @classdesc An ExpectationError will be thrown in any situation where a mock
@@ -56,14 +59,16 @@
    * @property {string} message The error message for this error instance.
    * @property {string} stack A string containing the stack trace for this error instance.
    */
+
+
   function ExpectationError(message) {
     this.name = 'ExpectationError';
     this.message = 'ExpectationError: ' + (message || 'Unknown expectation failed.');
-    this.stack = (new Error()).stack;
+    this.stack = new Error().stack;
   }
+
   ExpectationError.prototype = Object.create(Error.prototype);
   ExpectationError.prototype.constructor = ExpectationError;
-
   /**
    * Internal - Instantiated by JsMock.
    *
@@ -76,23 +81,25 @@
    * the original object and allows the definition of expectations without having to use
    * the original in a test case at all.
    */
-  var __GlobalMockFactory = function (args) {
+
+  var __GlobalMockFactory = function __GlobalMockFactory(args) {
     var _mock = args.mock;
     var _context = args.context;
     var _original = args.original;
     var _propertyName = args.propertyName;
 
     var _id = __generateId();
+
     __log("Instantiating global mock '{0}:{1}'", _propertyName, _id);
 
     function verifyActive() {
-      if (_context[_propertyName] === _original)
-        throw new Error("Mock object has not been activated");
+      if (_context[_propertyName] === _original) throw new Error("Mock object has not been activated");
     }
 
     function verifyMocks() {
       var verificationErrors = [];
-      if (typeof(_mock) === "function") {
+
+      if (typeof _mock === "function") {
         try {
           _mock.verify();
         } catch (ex) {
@@ -100,7 +107,7 @@
         }
       }
 
-      Object.keys(_mock).forEach(function(propertyName) {
+      Object.keys(_mock).forEach(function (propertyName) {
         var property = _mock[propertyName];
 
         if (typeof property !== "function") {
@@ -126,6 +133,7 @@
 
     function restoreOriginal() {
       __log("Restoring global mock '{0}:{1}'", _propertyName, _id);
+
       _context[_propertyName] = _original;
     }
 
@@ -140,9 +148,8 @@
        *
        * @function GlobalMock#expect
        */
-      expect: function () {
+      expect: function expect() {
         verifyActive();
-
         return _mock;
       },
 
@@ -151,8 +158,9 @@
        *
        * @function GlobalMock#activate
        */
-      activate: function () {
+      activate: function activate() {
         __log("Activating global mock '{0}:{1}'", _propertyName, _id);
+
         _context[_propertyName] = _mock;
       },
 
@@ -174,7 +182,7 @@
        *
        * @function GlobalMock#restore
        */
-      restore: function () {
+      restore: function restore() {
         restoreOriginal();
         return verifyMocks();
       },
@@ -187,31 +195,34 @@
       restoreWithoutVerifying: restoreOriginal,
 
       /* For debugging purposes */
-      __toString: function () {
+      __toString: function __toString() {
         return __format("GlobalMock({0})", _propertyName);
       }
     };
   };
-
   /* Mock constants */
+
+
   var _STUB = "STUB"; // Makes a mock behave like a stub
+
   var _ALL_CALLS = "ALL_INVOCATIONS"; // The scope of the invocations, i.e. exactly(3).returns('foo'); means return 'foo' for all invocations
 
- /**
-  * Internal - Instantiated by JsMock.
-  *
-  * @name Mock
-  * @private
-  * @class
-  *
-  * @classdesc The object returned by <code>JsMock.mock</code> representing the mock
-  * for a function. The object contains numerous methods to define expectations for the
-  * invocations of the mocked function and will match every call of this function
-  * against those expectations.
-  */
-  var __MockFactory = function (args) {
+  /**
+   * Internal - Instantiated by JsMock.
+   *
+   * @name Mock
+   * @private
+   * @class
+   *
+   * @classdesc The object returned by <code>JsMock.mock</code> representing the mock
+   * for a function. The object contains numerous methods to define expectations for the
+   * invocations of the mocked function and will match every call of this function
+   * against those expectations.
+   */
 
+  var __MockFactory = function __MockFactory(args) {
     var _id = __generateId();
+
     var _name = args.name;
 
     __log("Instantiating mock '{0}:{1}'", _name, _id);
@@ -220,6 +231,7 @@
 
     function reset() {
       __log("Resetting mock '{0}:{1}'", _name, _id);
+
       _scope = null;
       _callCount = 0;
       _expectTotalCalls = 0;
@@ -233,14 +245,10 @@
     }
 
     function isMatcher(obj) {
-      return obj !== null &&
-        typeof obj === "object" &&
-        typeof obj.matches === "function" &&
-        typeof obj.describeTo === "function";
+      return obj !== null && _typeof(obj) === "object" && typeof obj.matches === "function" && typeof obj.describeTo === "function";
     }
 
     function doArgsMatch(expectedArgs, actualArgs) {
-
       if (expectedArgs === undefined) {
         // Wildcard - any args match
         return true;
@@ -250,7 +258,9 @@
         return false;
       }
 
-      var i, len = expectedArgs.length;
+      var i,
+          len = expectedArgs.length;
+
       for (i = 0; i < len; i++) {
         var expectedArgument = expectedArgs[i];
         var actualArgument = actualArgs[i];
@@ -259,6 +269,7 @@
           if (expectedArgument.matches(actualArgument)) {
             continue;
           }
+
           return false;
         }
 
@@ -274,6 +285,7 @@
       //find matching expectation, throw if no expectation is found
       if (_scope === _STUB) {
         var stub = _expectations[_STUB];
+
         if (!doArgsMatch(stub.args, actualArguments)) {
           throw new ExpectationError(__format("Unexpected invocation of '{0}'. Actual arguments: {1}.", _name, JSON.stringify(actualArguments)));
         }
@@ -293,6 +305,7 @@
         }
 
         __log("Matched expectation '{0}' for mock '{1}:{2}'", index, _name, _id);
+
         return expectation;
       }
 
@@ -308,7 +321,7 @@
       };
 
       if (atomicProperties[propertyName]) {
-        var propNameFilter = function (val) {
+        var propNameFilter = function propNameFilter(val) {
           return val !== propertyName;
         };
 
@@ -326,6 +339,7 @@
       verifyScope();
 
       __log("Setting '{0}' for mock '{1}:{2}'", propertyName, _name, _id);
+
       if (_scope !== _ALL_CALLS) {
         setProperty(_expectations[_scope], propertyName, value);
         return;
@@ -337,23 +351,18 @@
     }
 
     var _thisMock = function evalCall() {
-      if (_callCount === _expectTotalCalls) {
-        var msg = _expectTotalCalls === 0 ?
-          "'{0}' was not expected to be called." :
-          "'{0}' was expected to be called {1} time(s). It was just invoked for the {2} time.";
+      var actualArguments = Array.prototype.slice.call(arguments);
 
-        throw new ExpectationError(__format(msg, _name, _expectTotalCalls, (_expectTotalCalls + 1)));
+      if (_callCount === _expectTotalCalls) {
+        var msg = _expectTotalCalls === 0 ? "'{0}' was not expected to be called. The invocation used the following arguments: {1}" : "'{0}' was expected to be called {2} time(s). It was just invoked for the {3} time. The invocation used the following arguments: {1}";
+        throw new ExpectationError(__format(msg, _name, JSON.stringify(actualArguments), _expectTotalCalls, _expectTotalCalls + 1));
       }
 
-      var actualArguments = Array.prototype.slice.call(arguments);
-      var expectation = findMatchingExpectation(actualArguments);
+      var expectation = findMatchingExpectation(actualArguments); //set fulfilled
 
-      //set fulfilled
       expectation.fulfilled = true;
+      _callCount++; //execute function if applicable
 
-      _callCount++;
-
-      //execute function if applicable
       if (expectation.calls) {
         try {
           return expectation.calls.apply(null, actualArguments);
@@ -364,25 +373,23 @@
 
       if (expectation.callsAndThrows) {
         var exception = null;
+
         try {
           expectation.callsAndThrows.apply(null, actualArguments);
         } catch (ex) {
           exception = ex;
         }
 
-        throw exception ?
-          exception :
-          new ExpectationError(__format("Registered action for '{0}' was expected to throw an exception.", _name));
+        throw exception ? exception : new ExpectationError(__format("Registered action for '{0}' was expected to throw an exception.", _name));
       }
 
-      if (expectation.throws !== undefined) {
-        throw expectation.throws;
-      }
+      if (expectation["throws"] !== undefined) {
+        throw expectation["throws"];
+      } //return value
 
-      //return value
+
       return expectation.returnValue;
     };
-
     /**
      * Simply returns this {@link Mock} instance. The function was added to match the API for {@link GlobalMock} so that
      * the expectations can be defined with the same syntax, which makes switching between those types easy.
@@ -391,10 +398,11 @@
      *
      * @function Mock#expect
      */
-    _thisMock.expect = function() {
+
+
+    _thisMock.expect = function () {
       return _thisMock;
     };
-
     /**
      * Allows the mock to be called any number if times, assuming that the invocation still fulfills
      * the expectations defined with the {@link Mock#with} function.
@@ -403,16 +411,15 @@
      *
      * @function Mock#allowing
      */
-    _thisMock.allowing = function() {
-      reset();
 
+
+    _thisMock.allowing = function () {
+      reset();
       _expectTotalCalls = -1;
       _expectations[_STUB] = {};
       _scope = _STUB;
-
       return _thisMock;
     };
-
     /**
      * Set the expectation for the mock to be called 'x' number of times.
      *
@@ -422,13 +429,14 @@
      *
      * @function Mock#exactly
      */
-    _thisMock.exactly = function(count) {
+
+
+    _thisMock.exactly = function (count) {
       if (count < 0) {
         throw new Error("'count' must be 0 or higher");
       }
 
       reset();
-
       _scope = _ALL_CALLS;
       _expectTotalCalls = count;
 
@@ -438,7 +446,6 @@
 
       return _thisMock;
     };
-
     /**
      * Will set all following expectations for the given call.
      *
@@ -448,13 +455,15 @@
      *
      * @function Mock#onCall
      */
+
+
     _thisMock.onCall = function (index) {
       if (index < 1) {
         throw new Error("Call index must be larger than 0");
       }
 
       if (_expectTotalCalls < 0) {
-          throw new Error("Mock is set up as a stub. Cannot set expectations for a specific call.");
+        throw new Error("Mock is set up as a stub. Cannot set expectations for a specific call.");
       }
 
       if (index > _expectTotalCalls) {
@@ -462,13 +471,11 @@
       }
 
       _scope = index;
-
       return _thisMock;
     };
-
     /**
      * Expects the function to be called with the given arguments. Any of the given arguments can be
-     * a JsHamcrest style matcher. If a matcher is provided as an argument, the actual argument will
+     * a HamJest style matcher. If a matcher is provided as an argument, the actual argument will
      * be passed on to the `matches()` function of the matcher object.
      *
      * @param {...?(number|boolean|string|array|object|function)} arguments The arguments to be expected when the function is invoked.
@@ -477,11 +484,12 @@
      *
      * @function Mock#withExactArgs
      */
+
+
     _thisMock.withExactArgs = function () {
       setInScope("args", Array.prototype.slice.call(arguments));
       return _thisMock;
     };
-
     /**
      * Expects the function to be called to return the given value.
      *
@@ -493,11 +501,12 @@
      *
      * @function Mock#returns
      */
+
+
     _thisMock.returns = function (returnValue) {
       setInScope("returnValue", returnValue);
       return _thisMock;
     };
-
     /**
      * Executes a function if the mock was successfully matched. All arguments passed in to the mock function
      * will be passed on to the function defined in here. The function will be executed immediately and the
@@ -512,15 +521,16 @@
      *
      * @function Mock#callsAndReturns
      */
+
+
     _thisMock.callsAndReturns = function (func) {
-      if (typeof (func) !== "function") {
+      if (typeof func !== "function") {
         throw new TypeError("Argument must be a function");
       }
 
       setInScope("calls", func);
       return _thisMock;
     };
-
     /**
      * Executes a function if the mock was successfully matched. All arguments passed in to the mock function
      * will be passed on to the function defined in here. The function will be executed immediately and is
@@ -535,15 +545,16 @@
      *
      * @function Mock#willThrow
      */
+
+
     _thisMock.willThrow = function (func) {
-      if (typeof (func) !== "function") {
+      if (typeof func !== "function") {
         throw new TypeError("Argument must be a function");
       }
 
       setInScope("callsAndThrows", func);
       return _thisMock;
     };
-
     /**
      * Expects the function to be called to throw the given error.
      *
@@ -556,8 +567,10 @@
      *
      * @function Mock#throws
      */
-    _thisMock.throws = function (error) {
-      if (typeof (error) !== 'string' && typeof (error) !== 'object') {
+
+
+    _thisMock["throws"] = function (error) {
+      if (typeof error !== 'string' && _typeof(error) !== 'object') {
         throw new TypeError("Argument must either be a string or an object");
       }
 
@@ -568,7 +581,6 @@
       setInScope("throws", error);
       return _thisMock;
     };
-
     /**
      * Verifies of all set expectations of this mock are fulfilled. If not, an ExpectationError will be thrown.
      * If the verification passes, the mock will be reset to its original state.
@@ -580,15 +592,18 @@
      *
      * @function Mock#verify
      */
+
+
     _thisMock.verify = function () {
       __log("Verifying mock '{0}:{1}'", _name, _id);
+
       if (_scope === _STUB) {
         reset();
         return true;
       }
 
       var unfulfilledExpectations = [];
-      Object.keys(_expectations).forEach(function(index) {
+      Object.keys(_expectations).forEach(function (index) {
         var expectation = _expectations[index];
 
         if (!expectation.fulfilled) {
@@ -603,22 +618,24 @@
       reset();
       return true;
     };
-
-   /* helpers, i.e. once, twice, onFirstCall, etc */
-   /**
-    * Alias for exactly(0).
-    *
-    * @see {@link Mock#exactly}
-    *
-    * @returns {Mock} This {@link Mock} instance.
-    *
-    * @function Mock#never
-    */
-   _thisMock.never = function () {
-     return _thisMock.exactly(0);
-   };
-
     /* helpers, i.e. once, twice, onFirstCall, etc */
+
+    /**
+     * Alias for exactly(0).
+     *
+     * @see {@link Mock#exactly}
+     *
+     * @returns {Mock} This {@link Mock} instance.
+     *
+     * @function Mock#never
+     */
+
+
+    _thisMock.never = function () {
+      return _thisMock.exactly(0);
+    };
+    /* helpers, i.e. once, twice, onFirstCall, etc */
+
     /**
      * Alias for exactly(1).
      *
@@ -628,162 +645,122 @@
      *
      * @function Mock#once
      */
+
+
     _thisMock.once = function () {
       return _thisMock.exactly(1);
     };
+    /**
+     * Alias for exactly(2).
+     *
+     * @see {@link Mock#exactly}
+     *
+     * @returns {Mock} This {@link Mock} instance.
+     *
+     * @function Mock#twice
+     */
 
-   /**
-    * Alias for exactly(2).
-    *
-    * @see {@link Mock#exactly}
-    *
-    * @returns {Mock} This {@link Mock} instance.
-    *
-    * @function Mock#twice
-    */
+
     _thisMock.twice = function () {
       return _thisMock.exactly(2);
     };
+    /**
+     * Alias for exactly(3).
+     *
+     * @see {@link Mock#exactly}
+     *
+     * @returns {Mock} This {@link Mock} instance.
+     *
+     * @function Mock#thrice
+     */
 
-   /**
-    * Alias for exactly(3).
-    *
-    * @see {@link Mock#exactly}
-    *
-    * @returns {Mock} This {@link Mock} instance.
-    *
-    * @function Mock#thrice
-    */
+
     _thisMock.thrice = function () {
       return _thisMock.exactly(3);
     };
+    /**
+     * Alias for onCall(1).
+     *
+     * @see {@link Mock#onCall}
+     *
+     * @returns {Mock} This {@link Mock} instance.
+     *
+     * @function Mock#onFirstCall
+     */
 
-   /**
-    * Alias for onCall(1).
-    *
-    * @see {@link Mock#onCall}
-    *
-    * @returns {Mock} This {@link Mock} instance.
-    *
-    * @function Mock#onFirstCall
-    */
+
     _thisMock.onFirstCall = function () {
       return _thisMock.onCall(1);
     };
+    /**
+     * Alias for onCall(2).
+     *
+     * @see {@link Mock#onCall}
+     *
+     * @returns {Mock} This {@link Mock} instance.
+     *
+     * @function Mock#onSecondCall
+     */
 
-   /**
-    * Alias for onCall(2).
-    *
-    * @see {@link Mock#onCall}
-    *
-    * @returns {Mock} This {@link Mock} instance.
-    *
-    * @function Mock#onSecondCall
-    */
+
     _thisMock.onSecondCall = function () {
       return _thisMock.onCall(2);
     };
+    /**
+     * Alias for onCall(3).
+     *
+     * @see {@link Mock#onCall}
+     *
+     * @returns {Mock} This {@link Mock} instance.
+     *
+     * @function Mock#onThirdCall
+     */
 
-   /**
-    * Alias for onCall(3).
-    *
-    * @see {@link Mock#onCall}
-    *
-    * @returns {Mock} This {@link Mock} instance.
-    *
-    * @function Mock#onThirdCall
-    */
+
     _thisMock.onThirdCall = function () {
       return _thisMock.onCall(3);
     };
+    /**
+     * Alias for callsAndReturns.
+     *
+     * @see {@link Mock#callsAndReturns}
+     *
+     * @returns {Mock} This {@link Mock} instance.
+     *
+     * @function Mock#will
+     */
 
-   /**
-    * Alias for callsAndReturns.
-    *
-    * @see {@link Mock#callsAndReturns}
-    *
-    * @returns {Mock} This {@link Mock} instance.
-    *
-    * @function Mock#will
-    */
+
     _thisMock.will = function (func) {
       return _thisMock.callsAndReturns(func);
     };
+    /**
+     * Alias for withExactArgs.
+     *
+     * @see {@link Mock#withExactArgs}
+     *
+     * @returns {Mock} This {@link Mock} instance.
+     *
+     * @function Mock#with
+     */
 
-   /**
-    * Alias for <code>withExactArgs(JsHamcrest.Matchers.equivalentMap(arg))</code>. Only use with an actual
-    * object, <code>null</code> and <code>undefined</code> values are not supported.
-    *
-    * @see {@link Mock#withExactArgs}
-    *
-    * @param {object} arg The object to be evaluated for equivalancy.
-    *
-    * @returns {Mock} This {@link Mock} instance.
-    *
-    * @function Mock#withEquivalentObject
-    */
-    _thisMock.withEquivalentObject = function (arg) {
-      var jsHamcrest = __getJsHamcrest();
-      if (typeof(jsHamcrest) === "undefined") {
-        throw new Error("withEquivalentObject() requires JsHamcrest to be available in order to be used.");
-      }
 
-      if (arg === null || typeof(arg) !== "object" || Array.isArray(arg)) {
-        throw new TypeError("'arg' must be of type object, and cannot be null or undefined.");
-      }
-
-      return _thisMock.withExactArgs(jsHamcrest.Matchers.equivalentMap(arg));
-    };
-
-   /**
-    * Alias for <code>withExactArgs(JsHamcrest.Matchers.equivalentArray(arg))</code>. Only use with an actual array,
-    * <code>null</code> and <code>undefined</code> values are not supported.
-    *
-    * @see {@link Mock#withExactArgs}
-    *
-    * @param {array} arg The array to be evaluated for equivalancy.
-    *
-    * @returns {Mock} This {@link Mock} instance.
-    *
-    * @function Mock#withEquivalentArray
-    */
-    _thisMock.withEquivalentArray = function (arg) {
-      var jsHamcrest = __getJsHamcrest();
-      if (typeof(jsHamcrest) === "undefined") {
-        throw new Error("withEquivalentArray() requires JsHamcrest to be available in order to be used.");
-      }
-
-      if (!Array.isArray(arg)) {
-        throw new TypeError("'arg' must be of type array, and cannot be null or undefined.");
-      }
-
-      return _thisMock.withExactArgs(jsHamcrest.Matchers.equivalentArray(arg));
-    };
-
-   /**
-    * Alias for withExactArgs.
-    *
-    * @see {@link Mock#withExactArgs}
-    *
-    * @returns {Mock} This {@link Mock} instance.
-    *
-    * @function Mock#with
-    */
-    _thisMock.with = _thisMock.withExactArgs;
-
+    _thisMock["with"] = _thisMock.withExactArgs;
     /* For debugging purposes */
+
     _thisMock.__toString = function () {
       return _name + ":" + _id;
     };
 
     reset();
-
     return _thisMock;
   };
-
   /* internal functions */
+
+
   function __resetMonitor() {
     __log("Resetting monitor");
+
     _monitor = {
       mocks: [],
       globalMocks: []
@@ -797,6 +774,7 @@
 
     if (_shouldMonitorMocks) {
       __log("Adding '{0}' to monitor", newMock.__toString());
+
       _monitor.mocks.push(newMock);
     }
 
@@ -808,13 +786,9 @@
       throw new TypeError("Mocking of arrays is not supported");
     }
 
-    var result =
-      objType === "function" ?
-        __createSimpleMock(objName) :
-        {};
-
+    var result = objType === "function" ? __createSimpleMock(objName) : {};
     var errors = [];
-    Object.keys(obj).forEach(function(propertyName) {
+    Object.keys(obj).forEach(function (propertyName) {
       if (result[propertyName] !== undefined) {
         errors.push(__format("'{0}' has already been assigned to the mock object.", propertyName));
       }
@@ -835,19 +809,20 @@
 
   function __mockGlobal(globalObjectName) {
     var objectSelectors = globalObjectName.split(".");
-    var contextObject = typeof window === 'undefined' ?
-      global : //Node
-      window; //Browser
+    var contextObject = typeof window === 'undefined' ? global : //Node
+    window; //Browser
 
     var original = contextObject[objectSelectors[0]];
+    var i,
+        len = objectSelectors.length;
 
-    var i, len = objectSelectors.length;
     for (i = 1; i < len; i++) {
       contextObject = original;
       original = contextObject[objectSelectors[i]];
     }
 
-    var orgType = typeof original;
+    var orgType = _typeof(original);
+
     if (orgType !== "function" && orgType !== "object") {
       throw new TypeError(__format("Global variable '{0}' must be an object or a function, but was '{1}'", globalObjectName, orgType));
     }
@@ -867,20 +842,20 @@
 
     if (_shouldMonitorMocks) {
       __log("Adding '{0}' to monitor", globalMock.__toString());
+
       _monitor.globalMocks.push(globalMock);
     }
 
     globalMock.activate();
-
     return globalMock;
   }
 
   function __watch(factoryFunc) {
     if (typeof factoryFunc !== "function") {
       throw new TypeError("The first argument must be a function");
-    }
+    } // Clean up monitored mocks so that the same JsMock context can be used between test files
 
-    // Clean up monitored mocks so that the same JsMock context can be used between test files
+
     __resetMonitor();
 
     try {
@@ -892,33 +867,39 @@
   }
 
   function __assertWatched() {
-    var i, len = _monitor.globalMocks.length;
+    var i,
+        len = _monitor.globalMocks.length; // First restore to ensure the proper state for the next test
 
-    // First restore to ensure the proper state for the next test
     for (i = 0; i < len; i++) {
       var globalMock = _monitor.globalMocks[i];
+
       __log("Restoring global mock '{0}'", globalMock.__toString());
+
       globalMock.restoreWithoutVerifying();
     }
 
     len = _monitor.mocks.length;
+
     for (i = 0; i < len; i++) {
       var mock = _monitor.mocks[i];
+
       __log("Asserting mock '{0}'", mock.__toString());
+
       mock.verify();
     }
 
     return true;
   }
+  /**
+   * JavaScript mocking framework, which can be used with any test framework. JsMock is inspired by jMock and Sinon.js
+   * with its interface being very similar to Sinon in order to make it easy to switch between those two frameworks.<br>
+   * <br>
+   * JsMock does only support mocks where all expectations have to be set prior to making the call to the function under test.<br>
+   *
+   * @exports js-mock
+   */
 
- /**
-  * JavaScript mocking framework, which can be used with any test framework. JsMock is inspired by jMock and Sinon.js
-  * with its interface being very similar to Sinon in order to make it easy to switch between those two frameworks.<br>
-  * <br>
-  * JsMock does only support mocks where all expectations have to be set prior to making the call to the function under test.<br>
-  *
-  * @exports js-mock
-  */
+
   var API = {
     /**
      * Creates a mock object for a function.<br>
@@ -931,19 +912,19 @@
      *
      * @returns {Mock} a mock object
      */
-    mock: function (mockName, objectToBeMocked) {
+    mock: function mock(mockName, objectToBeMocked) {
       if (typeof mockName !== "string" || !mockName) {
         throw new TypeError("The first argument must be a string");
       }
 
-      var objType = typeof objectToBeMocked;
-      if (objType === "function" || (objType === "object" && objectToBeMocked !== null)) {
+      var objType = _typeof(objectToBeMocked);
+
+      if (objType === "function" || objType === "object" && objectToBeMocked !== null) {
         return __createObjectOrFunctionMock(mockName, objectToBeMocked, objType);
       }
 
       return __createSimpleMock(mockName);
     },
-
 
     /**
      * Creates a mock object for a global variable or a child property of it. For the replacement of a child property, the path to the property must be provided, separated by a '.'.<br>
@@ -960,7 +941,7 @@
      *
      * @returns {GlobalMock} mock object for the global variable
      */
-    mockGlobal: function (globalObjectName) {
+    mockGlobal: function mockGlobal(globalObjectName) {
       if (typeof globalObjectName !== "string" || !globalObjectName) {
         throw new TypeError("The first argument must be a string");
       }
@@ -1009,27 +990,16 @@
     assertWatched: __assertWatched,
 
     /* For internal debugging purposes */
-    __enableLogs: function() {
+    __enableLogs: function __enableLogs() {
       _logsEnabled = true;
     },
-
-    __disableLogs: function() {
+    __disableLogs: function __disableLogs() {
       _logsEnabled = false;
     }
   };
-
   API.ExpectationError = ExpectationError;
+  return API;
+}();
 
-  if (typeof define === "function") {
-    define("js-mock", ['jshamcrest'], function(JsHamcrest) {
-      _jshamcrest = JsHamcrest;
-      return API;
-    });
-  }
-
-  if (typeof window !== "undefined") {
-    window.JsMock = API;
-  } else if (typeof module !== "undefined") {
-    module.exports = API;
-  }
-})();
+exports["default"] = _default;
+//# sourceMappingURL=js-mock.js.map
