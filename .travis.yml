@@ -1,9 +1,10 @@
 language: node_js
 node_js:
   # https://github.com/nodejs/LTS
-  - 'v6' # ends April 2019
-  - 'v8' # ends December 2019
   - 'v10' # ends April 2021
+  - 'v12' # ends April 2021
+  - 'v13' # ends April 2021
+  - 'v14' # ends April 2021
 
 before_install:
   - npm install -g grunt-cli

@@ -1,3 +1,6 @@
+import JsMock from 'js-mock';
+import { $, jQuery } from 'jquery.init'; 
+
 describe('GlobalMock', function(){
 
   var _jQueryMock;
@@ -23,24 +26,24 @@ describe('GlobalMock', function(){
   describe('verify', function() {
 
     it("should return true if there is no ExpectationError", function () {
-      expect($).not.toBe(jQuery);
+      expect(global.$).not.toBe(jQuery);
 
       expect(_jQueryMock.verify()).toBe(true);
     });
 
     it("should verify all mocks, all at once", function() {
-      expect($).not.toBe(jQuery);
+      expect(global.$).not.toBe(jQuery);
 
       _jQueryMock.expect().once().with("div");
       _jQueryMock.expect().noConflict.once().with();
 
       expectExpectationError(_jQueryMock.verify, 'ExpectationError: Missing invocations detected for global mock $:\nExpectationError: Missing invocations for $():\n>>> Expectation for call 1 with args ["div"], will return undefined\nExpectationError: Missing invocations for $.noConflict():\n>>> Expectation for call 1 with args [], will return undefined');
 
-      $("div");
+      global.$("div");
 
       expectExpectationError(_jQueryMock.verify, 'ExpectationError: Missing invocations detected for global mock $:\nExpectationError: Missing invocations for $.noConflict():\n>>> Expectation for call 1 with args [], will return undefined');
 
-      $.noConflict();
+      global.$.noConflict();
 
       _jQueryMock.verify();
     });

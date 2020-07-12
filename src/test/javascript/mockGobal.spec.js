@@ -1,3 +1,7 @@
+import JsMock from 'js-mock';
+import { $, jQuery } from 'jquery.init'; 
+import hamjest from 'hamjest';
+
 describe('JsMock', function(){
 
   /*
@@ -28,40 +32,40 @@ describe('JsMock', function(){
     });
 
     it("throws if the global object is not null", function () {
-      window.cannotMock = null;
+      global.cannotMock = null;
       expect(function () {
         JsMock.mockGlobal("cannotMock");
       }).toThrowError(TypeError, "Global variable 'cannotMock' cannot be null");
     });
 
     it("throws if the global object is not supported", function () {
-      window.cannotMock = [];
+      global.cannotMock = [];
       expect(function () {
         JsMock.mockGlobal("cannotMock");
       }).toThrowError(TypeError, "Mocking of arrays is not supported");
     });
 
     it("should activate the global mock by default", function () {
-      expect(jQuery).toBe($);
+      expect(jQuery).toBe(global.$);
 
       var jqueryMock = JsMock.mockGlobal("$");
 
-      expect(jQuery).not.toBe($);
+      expect(jQuery).not.toBe(global.$);
 
       jqueryMock.restore();
     });
 
     it("should mock partial objects if path is provided", function () {
-      expect(jQuery).toBe($);
+      expect(jQuery).toBe(global.$);
 
       var jqueryMock = JsMock.mockGlobal("$.ajax");
 
       expect(jQuery).toBe($);
 
-      expect($.extend({1: 2}, {foo: "bar"})).toEqual({1:2, foo: "bar"});
+      expect(global.$.extend({1: 2}, {foo: "bar"})).toEqual({1:2, foo: "bar"});
 
-      expect($.ajax.verify).toBeTruthy();
-      expectExpectationError($.ajax, "ExpectationError: '$.ajax' was not expected to be called.");
+      expect(global.$.ajax.verify).toBeTruthy();
+      expectExpectationError($.ajax, "ExpectationError: '$.ajax' was not expected to be called. The invocation used the following arguments: []");
 
       jqueryMock.restore();
     });
@@ -71,7 +75,7 @@ describe('JsMock', function(){
     it("should throw if invoked without expectation", function () {
       var dateMock = JsMock.mockGlobal("Date.now");
 
-      expectExpectationError(Date.now, "ExpectationError: 'Date.now' was not expected to be called.");
+      expectExpectationError(Date.now, "ExpectationError: 'Date.now' was not expected to be called. The invocation used the following arguments: []");
 
       dateMock.restore();
     });
@@ -96,7 +100,7 @@ describe('JsMock', function(){
     it("should throw if invoked without expectation", function () {
       var setTimeoutMock = JsMock.mockGlobal("setTimeout");
 
-      expectExpectationError(setTimeout, "ExpectationError: 'setTimeout' was not expected to be called.");
+      expectExpectationError(setTimeout, "ExpectationError: 'setTimeout' was not expected to be called. The invocation used the following arguments: []");
 
       setTimeoutMock.restore();
     });
@@ -106,7 +110,7 @@ describe('JsMock', function(){
       var delayedFuncMock = JsMock.mock("delayedFunc");
       var timeoutId = "timeout123";
 
-      setTimeoutMock.expect().once().with(JsHamcrest.Matchers.func(), 500).will(function (func, delay) {
+      setTimeoutMock.expect().once().with(hamjest.func(), 500).will(function (func, delay) {
         func();
 
         return timeoutId;

@@ -142,15 +142,16 @@
     }
 
     var _thisMock = function evalCall() {
+      var actualArguments = Array.prototype.slice.call(arguments);
+      
       if (_callCount === _expectTotalCalls) {
         var msg = _expectTotalCalls === 0 ?
-          "'{0}' was not expected to be called." :
-          "'{0}' was expected to be called {1} time(s). It was just invoked for the {2} time.";
+          "'{0}' was not expected to be called. The invocation used the following arguments: {1}" :
+          "'{0}' was expected to be called {2} time(s). It was just invoked for the {3} time. The invocation used the following arguments: {1}";
 
-        throw new ExpectationError(__format(msg, _name, _expectTotalCalls, (_expectTotalCalls + 1)));
+        throw new ExpectationError(__format(msg, _name, JSON.stringify(actualArguments), _expectTotalCalls, (_expectTotalCalls + 1)));
       }
-
-      var actualArguments = Array.prototype.slice.call(arguments);
+      
       var expectation = findMatchingExpectation(actualArguments);
 
       //set fulfilled
@@ -273,7 +274,7 @@
 
     /**
      * Expects the function to be called with the given arguments. Any of the given arguments can be
-     * a JsHamcrest style matcher. If a matcher is provided as an argument, the actual argument will
+     * a HamJest style matcher. If a matcher is provided as an argument, the actual argument will
      * be passed on to the `matches()` function of the matcher object.
      *
      * @param {...?(number|boolean|string|array|object|function)} arguments The arguments to be expected when the function is invoked.
@@ -513,56 +514,6 @@
     */
     _thisMock.will = function (func) {
       return _thisMock.callsAndReturns(func);
-    };
-
-   /**
-    * Alias for <code>withExactArgs(JsHamcrest.Matchers.equivalentMap(arg))</code>. Only use with an actual
-    * object, <code>null</code> and <code>undefined</code> values are not supported.
-    *
-    * @see {@link Mock#withExactArgs}
-    *
-    * @param {object} arg The object to be evaluated for equivalancy.
-    *
-    * @returns {Mock} This {@link Mock} instance.
-    *
-    * @function Mock#withEquivalentObject
-    */
-    _thisMock.withEquivalentObject = function (arg) {
-      var jsHamcrest = __getJsHamcrest();
-      if (typeof(jsHamcrest) === "undefined") {
-        throw new Error("withEquivalentObject() requires JsHamcrest to be available in order to be used.");
-      }
-
-      if (arg === null || typeof(arg) !== "object" || Array.isArray(arg)) {
-        throw new TypeError("'arg' must be of type object, and cannot be null or undefined.");
-      }
-
-      return _thisMock.withExactArgs(jsHamcrest.Matchers.equivalentMap(arg));
-    };
-
-   /**
-    * Alias for <code>withExactArgs(JsHamcrest.Matchers.equivalentArray(arg))</code>. Only use with an actual array,
-    * <code>null</code> and <code>undefined</code> values are not supported.
-    *
-    * @see {@link Mock#withExactArgs}
-    *
-    * @param {array} arg The array to be evaluated for equivalancy.
-    *
-    * @returns {Mock} This {@link Mock} instance.
-    *
-    * @function Mock#withEquivalentArray
-    */
-    _thisMock.withEquivalentArray = function (arg) {
-      var jsHamcrest = __getJsHamcrest();
-      if (typeof(jsHamcrest) === "undefined") {
-        throw new Error("withEquivalentArray() requires JsHamcrest to be available in order to be used.");
-      }
-
-      if (!Array.isArray(arg)) {
-        throw new TypeError("'arg' must be of type array, and cannot be null or undefined.");
-      }
-
-      return _thisMock.withExactArgs(jsHamcrest.Matchers.equivalentArray(arg));
     };
 
    /**

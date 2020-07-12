@@ -5,16 +5,15 @@
  * @author Johannes Fischer (johannes@jsmock.org)
  * @license BSD-3-Clause
  *
- * Copyright (c) 2015 Johannes Fischer
+ * Copyright (c) @@YEAR Johannes Fischer
  */
-(function () {
+export default (function () {
 
   /* diagnostic variables */
   var _logsEnabled = false;
   var _idCounter = 0;
 
   /* variables */
-  var _jshamcrest = null;
   var _shouldMonitorMocks = false;
   var _monitor = {
     mocks: [],
@@ -41,10 +40,6 @@
     if (_logsEnabled && console) {
       console.log(__format.apply(null, Array.prototype.slice.call(arguments)));
     }
-  }
-
-  function __getJsHamcrest() {
-    return _jshamcrest || JsHamcrest;
   }
 
 /*INSERT ExpectationError */
@@ -292,16 +287,5 @@
 
   API.ExpectationError = ExpectationError;
 
-  if (typeof define === "function") {
-    define("js-mock", ['jshamcrest'], function(JsHamcrest) {
-      _jshamcrest = JsHamcrest;
-      return API;
-    });
-  }
-
-  if (typeof window !== "undefined") {
-    window.JsMock = API;
-  } else if (typeof module !== "undefined") {
-    module.exports = API;
-  }
+  return API;
 })();

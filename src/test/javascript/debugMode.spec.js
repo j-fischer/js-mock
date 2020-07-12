@@ -1,3 +1,5 @@
+import JsMock from 'js-mock';
+
 describe('JsMock', function(){
 
   /*

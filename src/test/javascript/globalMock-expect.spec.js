@@ -1,3 +1,6 @@
+import JsMock from 'js-mock';
+import { $, jQuery } from 'jquery.init'; 
+
 describe('GlobalMock', function(){
 
   var _jQueryMock;
@@ -34,10 +37,10 @@ describe('GlobalMock', function(){
       _jQueryMock.expect().once().with("div");
 
       expectExpectationError(function () {
-        $("span");
+        global.$("span");
       }, "ExpectationError: Unexpected invocation of '$' for call 1: actual arguments: [\"span\"].");
 
-      $("div");
+      global.$("div");
     });
 
      it("should allow to mock any property", function () {
@@ -46,7 +49,7 @@ describe('GlobalMock', function(){
 
       _jQueryMock.expect().extend.once().with(target, source).returns(target);
 
-      expect($.extend(target, source)).toBe(target);
+      expect(global.$.extend(target, source)).toBe(target);
     });
   });
 });

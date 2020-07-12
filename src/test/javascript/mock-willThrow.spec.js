@@ -1,4 +1,6 @@
 
+import JsMock from 'js-mock';
+
 describe('Mock', function(){
 
   var _myFunc;

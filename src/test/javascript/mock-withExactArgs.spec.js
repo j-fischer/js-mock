@@ -1,3 +1,6 @@
+import JsMock from 'js-mock';
+import hamjest from 'hamjest';
+
 describe('Mock', function(){
 
   var _myFunc;
@@ -8,9 +11,7 @@ describe('Mock', function(){
     });
   });
 
-  afterEach(function () {
-    JsMock.assertWatched();
-  });
+  afterEach(JsMock.assertWatched);
 
   /*
    * HELPER FUNCTIONS
@@ -106,21 +107,21 @@ describe('Mock', function(){
       _myFunc(arr);
     });
 
-    it("should support JsHamcrest.Matchers", function () {
-      _myFunc.once().withExactArgs(JsHamcrest.Matchers.equivalentArray(["foo", "bar"]));
+    it("should support hamjest", function () {
+      _myFunc.once().withExactArgs(hamjest.contains("foo", "bar"));
 
       _myFunc(["foo", "bar"]);
       _myFunc.verify();
 
-      _myFunc.thrice().withExactArgs(JsHamcrest.Matchers.between(4).and(7));
+      _myFunc.thrice().withExactArgs(hamjest.greaterThan(3));
 
       _myFunc(4);
       _myFunc(6);
       _myFunc(7);
     });
 
-    it("should throw JsHamcrest.Matchers if JsHamcrest Matcher fails", function () {
-      _myFunc.once().withExactArgs(JsHamcrest.Matchers.between(4).and(7));
+    it("should throw error if HamJest Matcher fails", function () {
+      _myFunc.once().withExactArgs(hamjest.greaterThan(3));
 
       expectUnexpectedInvocationError(1);
 
@@ -217,124 +218,6 @@ describe('Mock', function(){
       _myFunc.once().with("foo", "bar");
 
       _myFunc("foo", "bar");
-    });
-  });
-
-  describe('withEquivalentArray', function() {
-
-    it("should throw if JsHamcrest is not available", function () {
-      var backup = window.JsHamcrest;
-
-      window.JsHamcrest = undefined;
-      expect(function () {
-        _myFunc.once().withEquivalentArray(["foo", "bar"]);
-      }).toThrowError(Error, "withEquivalentArray() requires JsHamcrest to be available in order to be used.");
-
-      _myFunc.never();
-      window.JsHamcrest = backup;
-    });
-
-    it("should throw if argument is not an array", function () {
-      var expectedErrorMessage = "'arg' must be of type array, and cannot be null or undefined.";
-      _myFunc.once();
-
-      expect(function () {
-        _myFunc.withEquivalentArray({});
-      }).toThrowError(TypeError, expectedErrorMessage);
-
-      expect(function () {
-        _myFunc.withEquivalentArray(1);
-      }).toThrowError(TypeError, expectedErrorMessage);
-
-      expect(function () {
-        _myFunc.withEquivalentArray(true);
-      }).toThrowError(TypeError, expectedErrorMessage);
-
-      expect(function () {
-        _myFunc.withEquivalentArray("someString");
-      }).toThrowError(TypeError, expectedErrorMessage);
-
-      _myFunc.never();
-    });
-
-    it("should not allow array to be null or undefined", function () {
-      var expectedErrorMessage = "'arg' must be of type array, and cannot be null or undefined.";
-      _myFunc.once();
-
-      expect(function () {
-        _myFunc.withEquivalentArray(null);
-      }).toThrowError(TypeError, expectedErrorMessage);
-
-      expect(function () {
-        _myFunc.withEquivalentArray(undefined);
-      }).toThrowError(TypeError, expectedErrorMessage);
-
-      _myFunc.never();
-    });
-
-    it("should set proper expectation", function () {
-      _myFunc.once().withEquivalentArray(["foo", "bar"]);
-
-      _myFunc(["foo", "bar"]);
-    });
-  });
-
-  describe('withEquivalentObject', function() {
-
-    it("should throw if JsHamcrest is not available", function () {
-      var backup = window.JsHamcrest;
-
-      window.JsHamcrest = undefined;
-      expect(function () {
-        _myFunc.once().withEquivalentObject({"foo": "bar"});
-      }).toThrowError(Error, "withEquivalentObject() requires JsHamcrest to be available in order to be used.");
-
-      _myFunc.never();
-      window.JsHamcrest = backup;
-    });
-
-    it("should throw if argument is not an object", function () {
-      var expectedErrorMessage = "'arg' must be of type object, and cannot be null or undefined.";
-      _myFunc.once();
-
-      expect(function () {
-        _myFunc.withEquivalentObject([]);
-      }).toThrowError(TypeError, expectedErrorMessage);
-
-      expect(function () {
-        _myFunc.withEquivalentObject(1);
-      }).toThrowError(TypeError, expectedErrorMessage);
-
-      expect(function () {
-        _myFunc.withEquivalentObject(true);
-      }).toThrowError(TypeError, expectedErrorMessage);
-
-      expect(function () {
-        _myFunc.withEquivalentObject("someString");
-      }).toThrowError(TypeError, expectedErrorMessage);
-
-      _myFunc.never();
-    });
-
-    it("should not allow object to be null or undefined", function () {
-      var expectedErrorMessage = "'arg' must be of type object, and cannot be null or undefined.";
-      _myFunc.once();
-
-      expect(function () {
-        _myFunc.withEquivalentObject(null);
-      }).toThrowError(TypeError, expectedErrorMessage);
-
-      expect(function () {
-        _myFunc.withEquivalentObject(undefined);
-      }).toThrowError(TypeError, expectedErrorMessage);
-
-      _myFunc.never();
-    });
-
-    it("should set proper expectation", function () {
-      _myFunc.once().withEquivalentObject({"foo": "bar"});
-
-      _myFunc({"foo": "bar"});
     });
   });
 });

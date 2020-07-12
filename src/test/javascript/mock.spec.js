@@ -1,3 +1,6 @@
+import JsMock from 'js-mock';
+import { $, jQuery } from 'jquery.init'; 
+
 describe('JsMock', function(){
 
   /*
@@ -117,6 +120,7 @@ describe('JsMock', function(){
         jqueryMock = JsMock.mock("$", $);
       });
 
+      expect(jqueryMock.extend).toBeDefined();
       expect(jqueryMock.extend).not.toBe($.extend);
 
       jqueryMock.once().with("div").returns("foo");

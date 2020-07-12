@@ -1,3 +1,6 @@
+import JsMock from 'js-mock';
+import { $, jQuery } from 'jquery.init'; 
+
 describe('Mock', function(){
 
   var _myFunc;
