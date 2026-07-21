@@ -58,6 +58,10 @@
     "requirejs": "2.3.6",
     "time-grunt": "2.0.0"
   },
+  "overrides": {
+    "handlebars": "^4.7.9",
+    "bl": "^1.2.3"
+  },
   "files": [
     "dist",
     "LICENSE.txt",
