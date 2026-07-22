@@ -65,7 +65,8 @@
     "hosted-git-info": "^2.8.9",
     "set-getter": "^0.1.1",
     "mout": "^1.2.3",
-    "decode-uri-component": "^0.2.2"
+    "decode-uri-component": "^0.2.2",
+    "qs": "^6.3.3"
   },
   "files": [
     "dist",
