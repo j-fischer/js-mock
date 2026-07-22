@@ -61,7 +61,8 @@
   "overrides": {
     "handlebars": "^4.7.9",
     "bl": "^1.2.3",
-    "ini": "^1.3.7"
+    "ini": "^1.3.7",
+    "hosted-git-info": "^2.8.9"
   },
   "files": [
     "dist",
