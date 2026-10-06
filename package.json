@@ -21,7 +21,7 @@
   "devDependencies": {
     "@babel/core": "^7.10.4",
     "@babel/preset-env": "^7.10.4",
-    "grunt": "1.5.3",
+    "grunt": "^1.6.3",
     "grunt-babel": "^8.0.0",
     "grunt-bump": "^0.8.0",
     "grunt-check-dependencies": "1.0.0",
@@ -30,7 +30,7 @@
     "grunt-contrib-compress": "1.6.0",
     "grunt-contrib-copy": "1.0.0",
     "grunt-contrib-jshint": "2.1.0",
-    "grunt-contrib-nodeunit": "2.1.0",
+    "grunt-contrib-nodeunit": "5.0.0",
     "grunt-contrib-uglify": "4.0.1",
     "grunt-contrib-watch": "1.1.0",
     "grunt-coveralls": "^2.0.0",
@@ -55,7 +55,7 @@
     "jshint-stylish": "2.2.1",
     "request": "^2.88.2",
     "request-promise-native": "^1.0.8",
-    "requirejs": "2.3.6",
+    "requirejs": "^2.3.8",
     "time-grunt": "2.0.0"
   },
   "overrides": {
